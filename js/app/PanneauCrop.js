@@ -42,8 +42,7 @@ class PanneauCrop extends Panneau {
       const top_cur = parseInt(tops[i],10)
       const top_next = parseInt(tops[i_plus1],10)
       var h = top_next - top_cur ;
-      console.debug(`Image #${iPlus1Str} : top_cur=${top_cur} / h=${h} (top_next=${top_next})`)
-      codes.push([top_cur, h])
+      codes.push({top: top_cur, height: h})
     }
     console.debug("codes: ", codes)
     Score.current.crop(codes, this.confirmCrop.bind(this))

@@ -23,11 +23,11 @@ def assemble_systems
   code_assemblage = []
   odd_or_even = 'odd'
   current_top = 0
-  current_height = CROP_LINES_DATA[0][1]
+  current_height = CROP_LINES_DATA[0]['height']
   (0...CROP_LINES_DATA.count).each do |idx|
     data_curline = CROP_LINES_DATA[idx]
     data_nexline = CROP_LINES_DATA[idx + 1]
-    current_top += data_curline[1] # la hauteur de l'image 1
+    current_top += data_curline['height'] # la hauteur de l'image 1
     iimg = idx.to_s.rjust(3,'0')
     if idx == 0
       curimage_name = "score-#{iimg}.jpg"
@@ -61,14 +61,14 @@ BASH
   res = system("#{code_assemblage}\n")
   log("res: #{res.inspect}")
 
-  # # Ne pas oublier qu'ils ont été inversés à la fin de la boucle
-  # autre_expanded_name = "score_expanded_#{odd_or_even}.jpg"
-  # score_expanded_name = "score_expanded_#{odd_or_even == 'odd' ? 'even' : 'odd'}.jpg"
-  # autre_expanded_path = File.join(FACTORY_FOLDER,autre_expanded_name)
-  # score_expanded_path = File.join(FACTORY_FOLDER,score_expanded_name)
-  # File.delete(autre_expanded_path) if File.exists?(autre_expanded_path)
-  # # On renomme enfin le fichier final
-  # FileUtils.move(score_expanded_path, File.join(FACTORY_FOLDER,'score_expanded.jpg'))
+  # Ne pas oublier qu'ils ont été inversés à la fin de la boucle
+  autre_expanded_name = "score_expanded_#{odd_or_even}.jpg"
+  score_expanded_name = "score_expanded_#{odd_or_even == 'odd' ? 'even' : 'odd'}.jpg"
+  autre_expanded_path = File.join(FACTORY_FOLDER,autre_expanded_name)
+  score_expanded_path = File.join(FACTORY_FOLDER,score_expanded_name)
+  File.delete(autre_expanded_path) if File.exists?(autre_expanded_path)
+  # On renomme enfin le fichier final
+  FileUtils.move(score_expanded_path, File.join(FACTORY_FOLDER,'score_expanded.jpg'))
 
 
 end #/ assemble_systems

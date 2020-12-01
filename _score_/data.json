@@ -1,1 +1,1 @@
-{"crop_lines":[[419,205],[624,182],[806,207]],"crop_lines":[[419,205],[624,182],[806,207],[1013,190],[1203,202],[1405,253]]}
+{"crop_lines":[{"top":416,"height":212},{"top":628,"height":177},{"top":805,"height":203},{"top":1008,"height":198},{"top":1206,"height":204},{"top":1410,"height":237}],"score_ini_path":"/Users/philippeperret/Programmation/ScoreTagger/xdev/scores/mozart-score.jpg","crop_lines":[{"top":416,"height":212},{"top":628,"height":177},{"top":805,"height":203},{"top":1008,"height":198},{"top":1206,"height":204},{"top":1410,"height":237}]}
