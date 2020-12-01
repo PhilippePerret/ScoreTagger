@@ -1,2 +1,49 @@
-<h1>Analyse de la partition</h1>
-<img src="_score_/score_expanded.jpg" alt="Page complète">
+<img id="score-expanded" src="_score_/score_expanded.jpg" alt="Page complète">
+<button type="button" id="analyse-help-button" class="big">Aide…</button>
+<div id="objets">
+  <div id="objets-type">
+    <button type="button" id="otype-chord" data-value="chord" data-type-aobject="otype" class="obb selected">Accord</button>
+    <button type="button" id="otype-harmony" data-value="harmony" data-type-aobject="otype" class="obb">Harmonie</button>
+    <button type="button" id="otype-modulation" data-value="modulation" data-type-aobject="otype" class="obb">Modulation</button>
+    <button type="button" id="otype-cadence" data-value="cadence" data-type-aobject="otype" class="obb">Cadence</button>
+  </div>
+  <div id="objets-notes">
+    <button type="button" id="onote-c" data-type-aobject="note" data-value="c" class="obb selected">do</button>
+    <button type="button" id="onote-d" data-type-aobject="note" data-value="d" class="obb">ré</button>
+    <button type="button" id="onote-e" data-type-aobject="note" data-value="e" class="obb">mi</button>
+    <button type="button" id="onote-f" data-type-aobject="note" data-value="f" class="obb">fa</button>
+    <button type="button" id="onote-g" data-type-aobject="note" data-value="g" class="obb">sol</button>
+    <button type="button" id="onote-a" data-type-aobject="note" data-value="a" class="obb">la</button>
+    <button type="button" id="onote-b" data-type-aobject="note" data-value="b" class="obb">si</button>
+  </div>
+  <div id="objets-alterations">
+    <button type="button" id="alteration-becarre" data-value="♮" data-type-aobject="alteration" class="obb selected">♮</button>
+    <button type="button" id="alteration-diese" data-value="♯" data-type-aobject="alteration" class="obb">♯</button>
+    <button type="button" id="alteration-bemol" data-value="♭" data-type-aobject="alteration" class="obb">♭</button>
+  </div>
+  <div id="objets-harmonies" class="hidden">
+    <button type="button" id="harmony-1" data-value="I" data-type-aobject="harmony" class="obb selected">I</button>
+    <button type="button" id="harmony-5" data-value="V" data-type-aobject="harmony" class="obb">V</button>
+    <button type="button" id="harmony-2" data-value="II" data-type-aobject="harmony" class="obb">II</button>
+    <button type="button" id="harmony-7" data-value="VII" data-type-aobject="harmony" class="obb">VII</button>
+    <button type="button" id="harmony-6" data-value="VI" data-type-aobject="harmony" class="obb">VI</button>
+    <button type="button" id="harmony-4" data-value="IV" data-type-aobject="harmony" class="obb">IV</button>
+    <button type="button" id="harmony-3" data-value="III" data-type-aobject="harmony" class="obb">III</button>
+  </div>
+  <div id="objets-natures">
+    <button type="button" id="nature-M" data-value="Maj" data-type-aobject="nature" class="obb selected">Maj.</button>
+    <button type="button" id="nature-m" data-value="min" data-type-aobject="nature" class="obb">min.</button>
+    <button type="button" id="nature-dom" data-value="7" data-type-aobject="nature" class="obb">7</button>
+    <button type="button" id="nature-o" data-value="7dim" data-type-aobject="nature" class="obb">7dim</button>
+    <button type="button" id="nature-o" data-value="5dim" data-type-aobject="nature" class="obb">5dim</button>
+    <button type="button" id="nature-o" data-value="6aug" data-type-aobject="nature" class="obb">6aug</button>
+    <button type="button" id="nature-o" data-value="6nap" data-type-aobject="nature" class="obb">6nap</button>
+  </div>
+  <div id="objets-cadences" class="hidden">
+    <button type="button" data-type-aobject="cadence" id="cadence-P" data-value="C.P." class="obb selected">C.P.</button>
+    <button type="button" data-type-aobject="cadence" id="cadence-I" data-value="C.Imp." class="obb">C.Imp.</button>
+    <button type="button" data-type-aobject="cadence" id="cadence-I" data-value="C.Ital." class="obb">C.Ital.</button>
+    <button type="button" data-type-aobject="cadence" id="cadence-D" data-value="½ C." class="obb">½ Cad.</button>
+    <button type="button" data-type-aobject="cadence" id="cadence-R" data-value="C.R" class="obb">C.R.</button>
+  </div>
+</div>

@@ -55,9 +55,6 @@ class Panneau {
     this.constructor.setCurrent(this)
     this.onActivate()
   }
-  onActivate(){
-
-  }
 
   get obj(){return this._obj ||(this._obj = $(`div#tab-${this.name}`))}
 

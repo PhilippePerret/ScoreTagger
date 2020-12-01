@@ -18,6 +18,7 @@ class PanneauCrop extends Panneau {
     }
   }
   onDesactivate(){
+    $('.hline').remove()
     this.unobserveBody()
   }
 
@@ -26,7 +27,7 @@ class PanneauCrop extends Panneau {
     * la partition originale
   ***/
   onCrop(ev){
-    message("Je découpe la partition… merci de patienter.")
+    message("Je découpe la partition… merci de patienter (ça peut prendre un moment).")
     var tops = []
     document.querySelectorAll('.hline').forEach(line => {
       tops.push( line.offsetTop + 20)

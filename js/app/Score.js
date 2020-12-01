@@ -1,12 +1,23 @@
 'use strict';
 
 class Score {
-  static get current(){ return this._current }
+  static get current(){ return this._current || (this._current = new Score())}
   static set current(v){ this._current = v }
 
 
   constructor() {
     this.scoreIniPath = null // chemin d'accès à la partition originale
+    this.getData()
+  }
+
+  get data(){ return this._data }
+
+  getData(){
+    Ajax.send('get_data.rb')
+    .then(ret => {
+      console.log("ret:", ret)
+      this._data = ret.data
+    })
   }
 
   /**

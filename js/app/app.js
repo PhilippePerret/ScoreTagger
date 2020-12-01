@@ -6,6 +6,9 @@ class App {
   static initialisation(){
     return new Promise((ok,ko) => {
       console.log("Initialisation en cours…")
+      // On instancie le score courant (l'instance doit toujours exister)
+      // L'instanciation charge les données (ou pas)
+      Score.current = new Score()
       UI.init()
       UI.insert('tab-home', 'div#tab-home')
       .then(UI.insert.bind(UI,'tab-crop', 'div#tab-crop'))
