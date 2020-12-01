@@ -28,7 +28,7 @@ class PanneauCrop extends Panneau {
   onCrop(ev){
     message("Je découpe la partition… merci de patienter.")
     var tops = []
-    document.querySelector('div#score-container').querySelectorAll('.hline').forEach(line => {
+    document.querySelectorAll('.hline').forEach(line => {
       tops.push( line.offsetTop + 20)
     })
     tops.sort((a,b) => a - b);
@@ -43,11 +43,16 @@ class PanneauCrop extends Panneau {
       const top_next = parseInt(tops[i_plus1],10)
       var h = top_next - top_cur ;
       console.debug(`Image #${iPlus1Str} : top_cur=${top_cur} / h=${h} (top_next=${top_next})`)
-      codes.push(`[${top_cur}, ${h}]`)
+      codes.push([top_cur, h])
     }
     console.debug("codes: ", codes)
-    // TODO On doit l'envoyer par ajax et procéder à la découpe
-    message("Je ne découpe pas encore")
+    Score.current.crop(codes, this.confirmCrop.bind(this))
+  }
+
+  confirmCrop(retour){
+    console.debug(retour)
+    message("La partition a été découpée avec succès.")
+    message("Tu peux activer l'onglet “Analyse” pour procéder à son analyse.")
   }
 
   /**

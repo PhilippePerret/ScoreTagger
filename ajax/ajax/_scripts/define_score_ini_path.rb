@@ -12,7 +12,13 @@ score_ini_path  = Ajax.param(:path)
 begin
 
   if File.exists?(score_ini_path)
+
+
     score_ini_name = "score_ini#{File.extname(score_ini_path)}"
+
+    # On enregistre ce path dans les données du score
+    Score.set(score_ini_path: score_ini_path)
+    
     dst = File.join(SCORE_FOLDER,score_ini_name)
     FileUtils.copy(score_ini_path, dst)
     Ajax << {
