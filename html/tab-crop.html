@@ -1,1 +1,15 @@
-<img id="score" src="" />
+
+<!-- Container pour placer la partition initiale, pour découpe -->
+<div id="score-container" class="hidden">
+  <img id="score-ini" src="" />
+</div>
+
+<!-- Container pour définir le path initial -->
+<div id="path_define_container" class="hidden" style="padding:2em;">
+  <p>Il faut définir le chemin d'accès absolu à la partition originale, que nous allons découper.</p>
+  <span id="label-score-ini">Chemin d'accès absolu à la partitition originale (non découpée)</span>
+  <div>
+    <input type="text" name="score-ini-path" id="score-ini-path" value="/Users/philippeperret/Programmation/ScoreTagger/xdev/scores/mozart-score.jpg" style="width:100%">
+  </div>
+  <button type="button" id="btn-set-score-ini-path">Définir</button>
+</div>

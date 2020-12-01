@@ -16,18 +16,8 @@ class UI {
     // Garder toujours cette observation du bouton pour essayer du code
     // this.listenClick(DGet('#btn-try'), this.run_script_essai.bind(this))
     // On observe les boutons des onglets
-    this.current_tab = 'home'
-    TABS.forEach( tabName => {
-      $(`button#btn-tab-${tabName}`).bind('click', this.onClickTabButton.bind(this,tabName))
-    })
-  }
-
-  // Quand on clic sur un onglet pour changer de panneau
-  // 
-  static onClickTabButton(tabName){
-    $(`div#tab-${this.current_tab}`).addClass('hidden')
-    $(`div#tab-${tabName}`).removeClass('hidden')
-    this.current_tab = tabName
+    TABS.forEach(tab => Panneau.get(tab).observe())
+    Panneau.current = Panneau.get('home')
   }
 
   // Pour faire des tests en ruby
