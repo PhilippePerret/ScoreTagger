@@ -1,0 +1,150 @@
+/*
+  Réglage des dimensions générales
+*/
+div.listing div.listing-barre-titre {
+  height:30px;
+}
+div.listing div.listing-barre-centrale{
+  height:400px;
+}
+div.listing div.listing-barre-centrale form.listing-form {
+  height: calc(400px - 28px - 4px);
+}
+div.listing div.listing-barre-boutons {
+  height: 28px;
+}
+
+
+div.listing {
+  position: absolute;
+  display:inline-block;
+  border:1px solid #999999;
+  box-shadow: 7px 7px 7px 7px #e4e4e4;
+  user-select:none;
+  -webkit-user-select:none;
+  background-color:white;
+}
+div.listing div.listing-barre-titre {
+  /* Pour height, voir au-dessus */
+  background-color:black;
+  color:white;
+  font-size:16pt;
+  font-variant:small-caps;
+  padding: 4px 1em;
+}
+div.listing div.listing-barre-centrale {
+  /* Pour les hauteurs voir au-dessus */
+  margin:0;
+  padding:0;
+}
+div.listing div.listing-barre-centrale ul {
+  list-style: none;
+  float:left;
+  height:inherit;
+  overflow:auto;
+  margin:0;
+  padding:0;
+  user-select:none;
+  -webkit-user-select:none;
+  width: 240px; /* à reproduire ci-dessous */
+}
+div.listing div.listing-barre-centrale form {
+  margin-left:240px;
+}
+
+/*
+    LES ÉLÉMENTS DE LISTE
+ */
+div.listing ul li {
+  padding: 0 8px;
+  white-space:nowrap;
+}
+div.listing ul li:nth-child(odd) {background-color: #c7ffd4}
+div.listing ul li:nth-child(even) {background-color: #b1e9b9}
+div.listing ul li:hover {
+  background-color: #DDDDFF;
+}
+
+div.listing ul li.selected {
+  background-color: #1a67db;
+  color:white;
+}
+
+
+/*
+    /FIN DES ÉLÉMENTS DE LISTE
+*/
+
+/*
+  LE FORMULAIRE D'AFFICHAGE
+*/
+div.listing div.listing-barre-centrale form.listing-form {
+  /* Pour height, voir au-dessus */
+  width: 420px;
+  overflow:auto;
+  padding: 1em 0;
+}
+
+form.listing-form div.row {
+  vertical-align: top;
+  padding:0 1em;
+  margin-top: 0.6em;
+}
+form.listing-form div.row.field-error {
+  background-color:rgb(233, 177, 177);
+}
+form.listing-form div.row.field-error label {
+  color: white;
+}
+form.listing-form div.row.field-error div.error-message {
+  font-size:9pt;
+  padding:0 3em 0 0;
+  color: rgb(214, 40, 40);
+}
+form.listing-form div.row label {
+  display:inline-block;
+  font-size:9.9pt;
+  width: 80px;
+  color: #777777;
+  font-style:italic;
+  vertical-align: top;
+}
+form.listing-form input[type="text"],
+form.listing-form textarea {
+  border:none;
+  background-color:#EEEEEE;
+  font-size: inherit;
+  font-family:inherit;
+  width:280px;
+}
+form.listing-form textarea {
+  height:80px;
+  resize:none;
+}
+
+
+/*
+  ---------------------------------------------------------------------
+    BARRE DES BOUTONS
+*/
+div.listing div.listing-barre-boutons {
+  /* Pour height, voir au-dessus */
+  background-color:#CCCCCC;
+  border: 1px solid grey;
+  padding:0;
+}
+div.listing div.listing-barre-boutons > button {
+  border-style: solid;
+  border-color: grey;
+  padding:1px 11px 4px;
+  margin:0;
+  font-size: 14pt;
+  background-color: white;
+}
+
+div.listing div.listing-barre-boutons > button:not(.fright) {
+  border-width: 0 1px 0 0;
+}
+div.listing div.listing-barre-boutons > button.fright {
+  border-width: 0 0 0 1px;
+}

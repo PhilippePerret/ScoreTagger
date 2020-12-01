@@ -1,0 +1,94 @@
+/*
+  Généraux
+*/
+fieldset legend, span.libelle {
+  font-family:'Arial Narrow',Helvetica,Geneva;
+  font-style: italic;
+  color:#777777;
+}
+
+span.libelle {display:inline-block;/* pour pouvoir donner une dimension */}
+span.libelle:after {content:' :'}
+span.libelle + span {margin-left:8px}
+
+.tools {
+  text-align: right;
+  margin-top:1em;
+}
+/*
+  Détail
+*/
+div#div-tools {
+  position:fixed;
+  width:calc(100% - 16px);
+  padding:8px;
+  bottom:0;
+  left:0;
+  background-color:black;
+  color:white;
+  z-index:1000;
+  text-align: right;
+}
+div#div-tools > div {
+  display:inline-block;
+  text-align: center;
+  border:1px solid white;
+}
+div#div-tools > div > button {
+  display: block;
+  width:100%;
+}
+
+
+div.listing-genres {
+}
+
+span.span-cb-genre,
+span.span-cb-categorie {
+  display:inline-block;
+  vertical-align:middle !important;
+}
+span.span-cb-genre {
+  width: 124px !important;
+}
+
+span.span-cb-categorie {
+  width: 170px !important;
+}
+
+span.span-cb-genre label,
+span.span-cb-categorie label {
+  font-style:normal !important;
+  vertical-align:middle !important;
+  margin-left:4px;
+}
+span.span-cb-genre label {width: 100px !important;}
+span.span-cb-categorie label {width: 120px !important;}
+
+/* Pour marquer le "publisher" dans le listing
+  publisher = maison d'édition qui a publié un livre
+*/
+li.publisher {
+  background-color:purple!important;
+  color:white!important;
+}
+
+
+/*
+  ENVOIS
+*/
+/* BOITE D'OUTILS DES ENVOIS */
+.envoi-toolbox {
+  position:fixed;
+  top:20px;
+  right:4em;
+  background-color:#588a58;
+  padding:1em;
+  width:500px;
+  text-align:left;
+  z-index:1000;
+}
+.envoi-toolbox div.title {
+  font-size:1em;
+  margin-bottom:2em;
+}

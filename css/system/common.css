@@ -1,0 +1,39 @@
+.fright {float:right;}
+.fleft {float:left;}
+
+.right {text-align:right}
+.left {text-align:left}
+
+.invisible {visibility:hidden;}
+
+.small {font-size:0.8em}
+.tiny {font-size:0.65em}
+
+.red {color:red}
+.blue {color:blue}
+.green{color:green}
+
+.titre {
+  display:inline-block;
+  margin-bottom:0.8em;
+  font-weight:bold;
+  font-size:1.22em;
+  font-variant:small-caps;
+}
+
+/* "mt" pour "margin-top" */
+.mt1 {margin-top:1em}
+.mt2 {margin-top:2em}
+
+/*
+LES BOUTONS
+*/
+button.main, a.main, input[type="button"].main {
+  all:unset;
+  font-size:1.32em;
+  font-family: Futura,Geneva,Helvetica,Arial;
+  padding:9px 31px;
+  background-color:green;
+  color:white;
+  border-radius:5px;
+}

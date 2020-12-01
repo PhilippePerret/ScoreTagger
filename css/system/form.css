@@ -1,0 +1,16 @@
+textarea,
+input[type="text"]
+{
+  font-family:inherit;
+  font-size:inherit;
+  font-style:inherit;
+}
+
+/* Pour des rangées avec un libellé et un champ de saisie qui s'allonge
+jusqu'au bout */
+div.row-flex {display:flex}
+div.row-flex span.libelle {}
+div.row-flex input[type="text"] {
+  flex-grow:2;
+  margin-left:8px;
+}

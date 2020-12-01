@@ -1,0 +1,49 @@
+body {
+  position:relative;
+}
+
+button {
+  cursor: pointer;
+}
+
+input[type="checkbox"] + label {
+  margin-left:4px;
+  vertical-align:unset!important;
+}
+
+.hidden {display:none!important;}
+
+/* Pour les boutons close des fenêtres */
+.btn-close {
+  position:absolute;
+  right:4px;top:4px;
+  font-size:9pt;
+  margin:0 0 1em 1em;
+  cursor:pointer;
+}
+.btn-close:before{content:'🔴';}
+
+/*
+  Pour les messages (class Message)
+*/
+div#messages-container {
+  position:fixed;
+  bottom:40px;
+  left:0;
+  height:auto;
+  z-index: 5000;
+  -webkit-user-select:none;
+  user-select:none;
+}
+div.message {
+  color:white;
+  padding:0.2em 1em;
+  border-radius:0.3em;
+  z-index:2000;
+}
+.message:not(.error) {
+  background-color:rgb(59, 59, 158);
+}
+.message.error {
+  background-color:rgb(214, 40, 40);
+}

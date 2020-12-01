@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Score Tagger</title>
+  <link rel="stylesheet" href="css/system/system.css">
+  <link rel="stylesheet" href="css/system/Listing.css">
+  <link rel="stylesheet" href="css/system/common.css">
+  <link rel="stylesheet" href="css/system/ui.css">
+  <link rel="stylesheet" href="css/system/common.css">
+  <link rel="stylesheet" href="css/system/Listing.css">
+  <link rel="stylesheet" href="css/main_sass.css">
+</head>
+<body>
+<!-- SOUS CETTE LIGNE LE CODE HTML -->
+<!--  ***************************************************************** -->
+
+<!-- Les tabs (découpe partition, tag partition, préférences, etc.) -->
+
+<aside id="tabs-buttons">
+  <button type="button" id="btn-tab-home" class="tabbutton">Accueil</button>
+  <button type="button" id="btn-tab-crop" class="tabbutton">Découpe partition</button>
+  <button type="button" id="btn-tab-analyse" class="tabbutton">Analyse</button>
+  <button type="button" id="btn-tab-export" class="tabbutton">Export</button>
+</aside>
+
+<section id="tabs">
+  <div id="tab-home" class="tab"></div>
+  <div id="tab-crop" class="tab hidden"></div>
+  <div id="tab-analyse" class="tab hidden"></div>
+  <div id="tab-export" class="tab hidden"></div>
+</section>
+
+
+<!--  ***************************************************************** -->
+<!-- ÉLÉMENTS APPLICATION À CHARGER EN PREMIER -->
+
+<script type="text/javascript" src="js/_config.js"></script>
+<script type="text/javascript" src="js/system/jquery-min.js"></script>
+<script type="text/javascript" src="js/system/jquery-ui-min.js"></script>
+<script type="text/javascript" src="js/system/Prefs.js"></script>
+<script type="text/javascript" src="js/system/DB.js"></script>
+<script type="text/javascript" src="js/system/IO.js"></script>
+<script type="text/javascript" src="js/system/Handies.js"></script>
+<script type="text/javascript" src="js/system/Ajax.js"></script>
+<script type="text/javascript" src="js/UI.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/system/dom.js"></script>
+<script type="text/javascript" src="js/system/constants.js"></script>
+<script type="text/javascript" src="js/system/Listing.js"></script>
+<script type="text/javascript" src="js/system/Message.js"></script>
+<script type="text/javascript" src="js/app/app.js" defer></script>
+</body>
+</html>
