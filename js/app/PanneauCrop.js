@@ -17,6 +17,58 @@ class PanneauCrop extends Panneau {
       this.show_score_ini()
     }
   }
+  onDesactivate(){
+    this.unobserveBody()
+  }
+
+  /**
+    * Méthode appelée quand on clique sur le bouton "Découper" pour découper
+    * la partition originale
+  ***/
+  onCrop(ev){
+    message("Je découpe la partition… merci de patienter.")
+    var tops = []
+    document.querySelector('div#score-container').querySelectorAll('.hline').forEach(line => {
+      tops.push( line.offsetTop + 20)
+    })
+    tops.sort((a,b) => a - b);
+    console.debug("Tops classés obtenus : ", tops)
+    var codes = []
+    var len, i;
+    for(i = 0, len = tops.length - 1; i < len; ++ i){
+      const i_plus1 = 1 + Number(i)
+      var iPlus1Str = String(i_plus1)
+      while(iPlus1Str.length < 3){iPlus1Str = "0" + iPlus1Str}
+      const top_cur = parseInt(tops[i],10)
+      const top_next = parseInt(tops[i_plus1],10)
+      var h = top_next - top_cur ;
+      console.debug(`Image #${iPlus1Str} : top_cur=${top_cur} / h=${h} (top_next=${top_next})`)
+      codes.push(`[${top_cur}, ${h}]`)
+    }
+    console.debug("codes: ", codes)
+    // TODO On doit l'envoyer par ajax et procéder à la découpe
+    message("Je ne découpe pas encore")
+  }
+
+  /**
+    * Méthode évènement appelée quand on clique sur le body, avec la
+    * partition originale affichée
+  ***/
+
+  onClickBody(ev){
+    console.debug("-> onClickBody")
+    // On ne doit rien faire si le target est une ligne (qu'on déplace)
+    // console.log(ev)
+    if (ev.target.classList.contains('hline')) {
+      console.debug("C'est une ligne qui est cliquée, on ne fait rien.")
+      return false
+    } else if (ev.target.tagName == 'BUTTON') {
+      console.debug("C'est un bouton qui est cliqué, on ne fait rien.")
+      return false
+    }
+    console.debug("Placement d'une ligne à ", ev.offsetY)
+    new Line(ev.offsetY).build()
+  }
 
   observe(){
     super.observe()
@@ -36,6 +88,8 @@ class PanneauCrop extends Panneau {
     this.obj.find('div#score-container').removeClass('hidden')
     $('img#score-ini')[0].src = Score.current.scoreIniPath
     message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
+    this.observeBody()
+    this.observeButtonCrop()
   }
 
 
@@ -63,6 +117,25 @@ observeButtonSetScoreIni(){
   if ( !this.buttonSetScoreIniIsObserved ) {
     $('button#btn-set-score-ini-path').bind('click', this.onSetScoreIniPath.bind(this))
     this.buttonSetScoreIniIsObserved = true
+  }
+}
+observeButtonCrop(){
+  if ( !this.buttonCropIsObserved ) {
+    $('button#btn-crop').bind('click', this.onCrop.bind(this))
+    this.buttonCropIsObserved = true
+  }
+}
+observeBody(){
+  console.debug("-> PanneauCrop#observeBody")
+  if (!this.bodyObserved){
+    $('body').bind('click', this.onClickBody.bind(this))
+    this.bodyObserved = true
+  }
+}
+unobserveBody(){
+  if (this.bodyObserved){
+    $('body').unbind('click', this.onClickBody.bind(this))
+    this.bodyObserved = false
   }
 }
 }

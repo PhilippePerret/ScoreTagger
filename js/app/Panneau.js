@@ -38,9 +38,14 @@ class Panneau {
   constructor(tabName) {
     this.name = tabName
   }
-  open(){this.obj.removeClass('hidden')}
+  open(){
+    this.obj.removeClass('hidden')
+  }
 
-  close(){this.obj.addClass('hidden')}
+  close(){
+    if ( 'function' == typeof(this.onDesactivate) ) this.onDesactivate.call(this)
+    this.obj.addClass('hidden')
+  }
 
   observe(){
     $(`button#btn-tab-${this.name}`).bind('click', this.onClick.bind(this))

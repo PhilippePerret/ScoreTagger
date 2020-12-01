@@ -19,8 +19,8 @@ class Score {
     .then(ret =>{
       if (ret.error) { erreur(ret.error)}
       else {
-        message("Chemin d'accès défini, on peut poursuivre.")
-        this.scoreIniPath = path
+        this.scoreIniName = ret.score_ini_name
+        this.scoreIniPath = `_score_/${ret.score_ini_name}`
         callback.call()
       }
     })
