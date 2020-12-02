@@ -12,6 +12,8 @@ class UI {
 
   static observe(){
     TABS.forEach(tab => Panneau.get(tab))
+    // On observe les boutons d'onglet
+    $('button.tabbutton').on('click', Panneau.onClickOnglet.bind(Panneau))
   }
 
   // Pour faire des tests en ruby

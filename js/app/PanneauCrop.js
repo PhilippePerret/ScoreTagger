@@ -6,9 +6,6 @@ class PanneauCrop extends Panneau {
   }
 
   onActivate(){
-    if ( undefined == Score.current ) {
-      Score.current = new Score()
-    }
     const score = Score.current
     if ( ! score.score_ini_path ) {
       this.ask_for_score_ini_path()
@@ -16,7 +13,7 @@ class PanneauCrop extends Panneau {
       this.show_score_ini()
     }
   }
-  
+
   onDesactivate(){
     $('.hline').remove()
     this.unobserveBody()
@@ -88,9 +85,7 @@ class PanneauCrop extends Panneau {
     this.obj.find('div#path_define_container').removeClass('hidden')
   }
   show_score_ini(){
-    this.obj.find('div#path_define_container').addClass('hidden')
-    this.obj.find('div#score-container').removeClass('hidden')
-    $('img#score-ini')[0].src = Score.current.scoreIniPath
+    $('img#score-ini')[0].src = Score.current.data.score_ini_path
     message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
     this.observeBody()
     this.observeButtonCrop()

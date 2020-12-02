@@ -37,6 +37,12 @@ class Panneau {
     this.current = panneau
     this.current.open()
   }
+
+  static onClickOnglet(ev){
+    const ongletId = $(ev.target).data('id')
+    this.setCurrent(this.get(ongletId))
+  }
+
   /**
     * Instance *
   ***/
@@ -55,7 +61,6 @@ class Panneau {
   }
 
   observe(){
-    $(`button#btn-tab-${this.name}`).on('click', this.onClick.bind(this))
   }
 
   onClick(ev){
