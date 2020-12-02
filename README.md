@@ -1,78 +1,36 @@
-# Web App Scaffold
+# Score Tagger
 
-Échaffaudage pour créer une application HTML/JS/CSS/AJAX simple.
+Petite application permettant de faciliter l'analyse harmonique d'une pièce, en "taggant" la partition.
 
-## Utilisation
+Score Tagger facilite les opérations suivantes.
 
-* Dupliquer ce dossier et renommez-le,
-* utiliser l'adresse `http://localhost/<nouveau nom>` pour charger la nouvelle application,
-* lire la suite,
-* jouer les boutons présents pour tester le bon fonctionnement.
+* La découpe de la partition en système pour les écarter et avoir de la place, en définissant des "lignes de coupe" très rapidement.
+* En mémorisant les positions des systèmes au fil des pages pour les déplacer plus facilement.
+* En magnétisant les positions verticales des éléments, pour qu'ils soient automatiquement bien alignés.
 
-## Base de données
+## Découpage de la partition
 
-Si une base de données MySql est utilisée, il faut définir les donnnées dans `./ajax/secret/mysql.rb`.
+1. Choisir l'onglet "Découpe",
+* entrer dans le champ le chemin d'accès absolu à la partition (son fichier image, pas pdf),
+* placer les lignes de coupe en cliquant à côté de la partition
+* lancer la découpe en cliquant sur le bouton "Découper"
 
-## Requête ajax
+## Analyse de la partition
 
-~~~javascript
+> La partition précédemment découpée est automatiquement choisie.
 
-Ajax.send({<data>})
+1. Lancer l'application,
+* choisir l'onglet "Analyse",
+* choisir le type de l'élément à placer dans la boite d'informations en haut à droite,
+* cliquer à l'endroit voulu du système voulu,
+* ajuster la position de l'élément,
+* pousuivre avec l'objet d'analyse suivant.
 
-~~~
+## Impression de la partition
 
-Dans les scripts `ajax/ajax/_scripts/` on récupère les données par :
+> La partition a été précédemment découpée et analysée
 
-~~~ruby
-
-valeur = Ajax.param(:<key>)
-
-~~~
-
-Par exemple :
-
-~~~javascript
-// Dans le fichier .js
-
-Ajax.send({script: "mon_script.rb", maValue:"Ceci est une valeur transmise"})
-
-~~~
-
-~~~ruby
-# Dans le script
-
-valeur = Ajax.param(:maValue)
-# valeur = "Ceci est une valeur transmise"
-
-~~~
-
-### Pour retourner une valeur :
-
-~~~ruby
-# Dans le script ruby want_retour.rb
-
-Ajax << {retour: "Ceci est mon retour"}
-
-~~~
-
-~~~javascript
-// Dans le fichier javascript
-
-function fonctionRetour(rdata){
-
-  console.log(rdata.retour)
-  // Écrit en console : "Ceci est mon retour"
-
-}
-
-Ajax.send({script: "exemple-retour.rb"}, fonctionRetour)
-
-~~~
-
-## Construction de la page index.html
-
-Pour le moment, elle doit être construite en dur. Par exemple, lorsqu'un script est ajouté, ou une feuille CSS, il faut coder son inclusion à la main (en s'inspirant des codes déjà présents).
-
-## Librairie jQuery
-
-Par défaut, on a accès aux librairies jQuery (ui et min) pour ces applications rapides.
+1. Lancer l'application
+- choisir l'onglet "Exporter",
+- régler les paramètres voulus,
+- cliquer sur le bouton "Procéder à l'export".

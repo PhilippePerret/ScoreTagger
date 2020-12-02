@@ -1,6 +1,6 @@
 'use strict';
 
-class ChordObject extends AObjects {
+class ChordObject extends AObject {
 constructor(data) {
   super(data)
 }
