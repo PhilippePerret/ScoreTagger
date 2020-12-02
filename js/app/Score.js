@@ -64,7 +64,7 @@ class Score {
     * les lignes de découpe définies dans +cropLinesData+
   ***/
   crop(cropLinesData, callback){
-    Ajax.send('crop_score_ini.rb', {data: cropLinesData, score_ini_path: this.scoreIniPath})
+    Ajax.send('crop_score_ini.rb', {data: cropLinesData, page: 1})
     .then(callback)
   }
 }

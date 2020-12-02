@@ -6,11 +6,13 @@ class PanneauCrop extends Panneau {
   }
 
   onActivate(){
+    document.body.style.width = null ;
     const score = Score.current
     if ( ! score.data.score_ini_path ) {
       this.ask_for_score_ini_path()
     } else {
       this.show_score_ini()
+      this.observeBody()
     }
   }
 
@@ -76,7 +78,6 @@ class PanneauCrop extends Panneau {
     super.observe()
   }
 
-
   // Affiche le div qui permet d'entrer le chemin d'accès à la partition
   // initiale (donc non découpée)
   ask_for_score_ini_path(){
@@ -90,32 +91,7 @@ class PanneauCrop extends Panneau {
   }
 
 
-  // Méthode permettant de définir le path absolu de la partition
-  onSetScoreIniPath(ev){
-    const score_ini_path = $('input#score-ini-path').val().trim()
-    if ( score_ini_path != '' ) {
-      Score.current.setPathIni(score_ini_path, this.afterDefineScorePathIni.bind(this))
-    } else {
-      erreur("Il faut donner le chemin d'accès absolu à la partition non découpée.")
-    }
-  }
-
-  // Méthode appelée quand on a défini le chemin d'accès de la partition
-  // avec succès. On va pouvoir la découper.
-  afterDefineScorePathIni(ev){
-    this.show_score_ini()
-  }
-
-
-
-
 // - private -
-observeButtonSetScoreIni(){
-  if ( !this.buttonSetScoreIniIsObserved ) {
-    $('button#btn-set-score-ini-path').bind('click', this.onSetScoreIniPath.bind(this))
-    this.buttonSetScoreIniIsObserved = true
-  }
-}
 observeButtonCrop(){
   if ( !this.buttonCropIsObserved ) {
     $('button#btn-crop').bind('click', this.onCrop.bind(this))

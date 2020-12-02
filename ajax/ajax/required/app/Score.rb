@@ -72,7 +72,13 @@ end
 def page_path(page, ext = '.jpg')
   File.join(pages_folder,"page-#{page}#{ext}")
 end
+def relative_page_path(num_page)
+  "./pages/page-#{num_page}.jpg"
+end
 
+def factory_folder
+  @factory_folder ||= File.join(folder,'factory')
+end
 def pages_folder
   @pages_folder ||= File.join(folder,'pages')
 end
