@@ -16,9 +16,10 @@ CODE_APPEND_SYSTEM = '/usr/local/bin/convert %{img1_name} %{img2_name} -append -
 
 
 def add_system_mensurations(id, top, height)
-  dsys = {top: top, height: height, id: id, page: PAGE}
-  mdline = (top + height.to_f / 2).to_i
-  dsys.merge!(median_line: mdline, objects:[], id: id)
+  dsys = {top: top, height: height, id: id, page: PAGE, objects:[]}
+  mdline = (top + (height.to_f / 2)).to_i - 10
+  log("Ajout mensurations : ##{id} / top:#{top} / height:#{height} / mdline:#{mdline}")
+  dsys.merge!(median_line: mdline)
   SYSTEMS_DATA.merge!( id => dsys)
 end
 
@@ -45,15 +46,16 @@ BASH
   odd_or_even = 'even'
 
   current_height = CROP_LINES_DATA[0]['height']
-  add_system_mensurations(1, current_top, current_height)
+  # add_system_mensurations(1, current_top, current_height)
   (0...CROP_LINES_DATA.count).each do |idx|
     data_curline = CROP_LINES_DATA[idx]
+    add_system_mensurations(idx + 1, current_top, data_curline['height'])
     data_nexline = CROP_LINES_DATA[idx + 1]
     current_top += data_curline['height'] # la hauteur de l'image 1
-    # On ajoute les mensurations du système courant (next)
-    if not data_nexline.nil?
-      add_system_mensurations(idx + 2, current_top, data_nexline['height'])
-    end
+    # # On ajoute les mensurations du système courant (next)
+    # if not data_nexline.nil?
+    #   add_system_mensurations(idx + 2, current_top, data_curline['height'])
+    # end
     iimg = idx.to_s.rjust(3,'0')
     curimage_name = "score_expanded_#{odd_or_even == 'odd' ? 'even' : 'odd'}.jpg"
     neximage_name = "system-#{PAGE}-#{(idx+1).to_s.rjust(3,'0')}.jpg"

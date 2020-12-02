@@ -11,13 +11,16 @@ class PanneauAnalyse extends Panneau {
     if(!this.observed){this.observe()}
     this.numPage = 1 // Pour le moment
   }
+  onUnactivate(){
+    // TODO Surveiller que ce soit bien enregistré
+  }
 
   observe(){
     super.observe()
     $('button#analyse-help-button').bind('click', this.showHelp.bind(this))
     // On observe tous les boutons obb
     $('button.obb').bind('click', this.onClickButtonOBB.bind(this))
-    $('img#score-expanded').bind('click', this.onClickScore.bind(this))
+    $('img#expanded-score-current-page').bind('click', this.onClickScore.bind(this))
     // On construit le bouton d'incrément de page
     this.buttonIncrementPage = new IncButton({container:'#analyse-container-page-number', min: 0})
     this.buttonIncrementPage.build()
@@ -26,7 +29,9 @@ class PanneauAnalyse extends Panneau {
   }
 
   get numPage(){ return this.buttonIncrementPage.value }
-
+  get dataPage(){
+    return this.Score.current.data.pages[num]
+  }
   // On appelle cette méthode pour changer la page (ça fait tout)
   set numPage(num){
     this.buttonIncrementPage.value = num
@@ -34,13 +39,23 @@ class PanneauAnalyse extends Panneau {
   }
 
   setPage(num){
+    Score.current.current_page = num // Pour AObject notamment
     DGet('#expanded-score-current-page').src = `_score_/${CURRENT_ANALYSE}/analyses/page-${num}.jpg`
-    console.log("Données", Score.current.data.pages[num])
-    const systemsData = Score.current.data.pages[num].systems_data;
+    // this.showMedianLines();
+
+  }
+
+
+  /**
+    * Méthode qui affiche les lignes médianes servant à estimer l'appartenance
+    * d'un élément
+  ***/
+  showMedianLines(){
+    const systemsData = this.dataPage.systems_data;
     for(var isys in systemsData){
       const sysData = systemsData[isys]
       const top = `${sysData.median_line}px`
-      const line = DCreate('DIV', {class:'hline'})
+      const line = DCreate('DIV', {class:'hline medline'})
       document.body.appendChild(line)
       line.style.top = top
     }
@@ -54,7 +69,7 @@ class PanneauAnalyse extends Panneau {
 
   onClickScore(ev){
     console.info("Click sur le score à", ev.offsetY, ev.offsetX)
-    if ( ev.target.id == "score-expanded") {
+    if ( ev.target.id == "expanded-score-current-page") {
       AObject.create(ev)
     } else {
       message("Ce n'est pas vraiment un clic sur la partition")
