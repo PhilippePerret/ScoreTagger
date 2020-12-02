@@ -7,7 +7,7 @@ class PanneauCrop extends Panneau {
 
   onActivate(){
     const score = Score.current
-    if ( ! score.score_ini_path ) {
+    if ( ! score.data.score_ini_path ) {
       this.ask_for_score_ini_path()
     } else {
       this.show_score_ini()
@@ -80,12 +80,10 @@ class PanneauCrop extends Panneau {
   // Affiche le div qui permet d'entrer le chemin d'accès à la partition
   // initiale (donc non découpée)
   ask_for_score_ini_path(){
-    this.observeButtonSetScoreIni()
-    this.obj.find('div#score-container').addClass('hidden')
-    this.obj.find('div#path_define_container').removeClass('hidden')
+    message("Vous devez définir le chemin d'accès à la partition (image) initiale.")
   }
   show_score_ini(){
-    $('img#score-ini')[0].src = Score.current.data.score_ini_path
+    $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/pages/page-1.jpg`
     message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
     this.observeBody()
     this.observeButtonCrop()
