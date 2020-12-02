@@ -10,11 +10,13 @@
 # Par exemple par
 CROP_LINES_DATA = Ajax.param(:data)
 SCORE_INI_PATH  = Ajax.param(:score_ini_path)
+CURRENT_ANALYSE = Ajax.param(:current_analyse)
+PAGE = Ajax.param(:page) || 1
 
 begin
 
   # On enregistre ces lignes de découpe
-  Score.set(crop_lines: CROP_LINES_DATA)
+  Score.new(CURRENT_ANALYSE).set(crop_lines: CROP_LINES_DATA)
 
   require_relative 'crop_score/crop'
   res = proceed_crop_score_ini

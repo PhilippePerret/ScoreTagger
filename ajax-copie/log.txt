@@ -1,0 +1,58 @@
+--- [2020-12-02 06:54:17 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:54:17 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:55:23 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:55:23 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:55:24 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:55:24 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:56:35 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:56:35 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:56:38 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:56:38 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:57:07 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:57:07 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:58:00 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:58:00 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:58:02 +0100] Entrée dans ajax.rb
+--- [2020-12-02 06:58:02 +0100] Entrée dans ajax.rb
+Chargement des modules
+Chargement des modules
+--- [2020-12-02 06:59:33 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 06:59:34 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:04:24 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:04:28 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:06:22 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:07:28 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:07:47 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:07:49 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:08:10 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:09:00 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:09:02 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:09:37 +0100] Entrée dans ajax.rb
+Chargement des modules
+--- [2020-12-02 07:09:40 +0100] Entrée dans ajax.rb
+Chargement des modules

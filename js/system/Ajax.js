@@ -5,7 +5,10 @@ class Ajax {
     Return une Promise
   **/
   static send(script, hdata = {}){
-    Object.assign(hdata, {script: script})
+    Object.assign(hdata, {
+      script: script,
+      current_analyse: CURRENT_ANALYSE // Propre à l'application ScoreTagger
+    })
     hdata = this.prepareData(hdata)
     // console.log("Data ajax : ", data)
     return new Promise((ok,ko)=>{

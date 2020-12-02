@@ -13,12 +13,18 @@ class Panneau {
   static get(tabName){
     if (undefined == this.items){this.items = {}}
     switch (tabName) {
+      case 'home':
+        if ( undefined == this.items['home']){ Object.assign(this.items, {home: new PanneauHome()}) }
+        return this.items['home']
       case 'crop':
         if ( undefined == this.items['crop'] ) {Object.assign(this.items, {crop: new PanneauCrop()})}
         return this.items['crop']
       case 'analyse':
         if ( undefined == this.items['analyse']){ Object.assign(this.items, {analyse: new PanneauAnalyse()}) }
         return this.items['analyse']
+      case 'export':
+        if ( undefined == this.items['export']){ Object.assign(this.items, {export: new PanneauExport()}) }
+        return this.items['export']
       default:
         if ( undefined == this.items[tabName]){ Object.assign(this.items, {[tabName]: new Panneau(tabName)}) }
         return this.items[tabName]
@@ -40,6 +46,7 @@ class Panneau {
   }
   open(){
     this.obj.removeClass('hidden')
+    if ('function' == typeof(this.onActivate)){this.onActivate.call(this)}
   }
 
   close(){
@@ -48,12 +55,11 @@ class Panneau {
   }
 
   observe(){
-    $(`button#btn-tab-${this.name}`).bind('click', this.onClick.bind(this))
+    $(`button#btn-tab-${this.name}`).on('click', this.onClick.bind(this))
   }
 
   onClick(ev){
     this.constructor.setCurrent(this)
-    this.onActivate()
   }
 
   get obj(){return this._obj ||(this._obj = $(`div#tab-${this.name}`))}

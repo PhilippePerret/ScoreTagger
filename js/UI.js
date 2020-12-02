@@ -8,32 +8,16 @@ class UI {
     this.observe()
   }
   static prepare(){
-    // Garder toujours ce bouton pour pouvoir essayer du code
-    // this.divTools.appendChild(DCreate('BUTTON',{id:'btn-try', class:'fleft', text:'Essayer…'}))
   }
 
   static observe(){
-    // Garder toujours cette observation du bouton pour essayer du code
-    // this.listenClick(DGet('#btn-try'), this.run_script_essai.bind(this))
-    // On observe les boutons des onglets
-    TABS.forEach(tab => Panneau.get(tab).observe())
-    Panneau.current = Panneau.get('home')
+    TABS.forEach(tab => Panneau.get(tab))
   }
 
   // Pour faire des tests en ruby
   static run_script_essai(){
     Ajax.send('_essai_.rb').then(onAjaxSuccess).catch(onError)
   }
-
-  /**
-    ---------------------------------------------------------------------
-      ÉLÉMENTS
-    ---------------------------------------------------------------------
-  **/
-  static get homeTab(){return $('section#tabs div#tab-home')}
-  static get cropTab(){return $('section#tabs div#tab-crop')}
-  static get analyseTab(){return $('section#tabs div#tab-analyse')}
-  static get exportTab(){return $('section#tabs div#tab-export')}
 
   /** ---------------------------------------------------------------------
       MÉTHODES PUBLIQUES

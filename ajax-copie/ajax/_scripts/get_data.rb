@@ -5,7 +5,9 @@
 
 =end
 begin
-  Ajax << { data: Score.data }
+  # score = Score.new(Ajax.params[:current_analyse])
+  # Ajax << { data: score.data }
+  Ajax << {data: {}}
 rescue Exception => e
   Ajax.error(e)
 end

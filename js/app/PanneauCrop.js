@@ -6,7 +6,6 @@ class PanneauCrop extends Panneau {
   }
 
   onActivate(){
-    super.onActivate()
     if ( undefined == Score.current ) {
       Score.current = new Score()
     }
@@ -17,6 +16,7 @@ class PanneauCrop extends Panneau {
       this.show_score_ini()
     }
   }
+  
   onDesactivate(){
     $('.hline').remove()
     this.unobserveBody()
@@ -77,7 +77,6 @@ class PanneauCrop extends Panneau {
 
   observe(){
     super.observe()
-    console.log("J'ai observé le panneau de découpe")
   }
 
 

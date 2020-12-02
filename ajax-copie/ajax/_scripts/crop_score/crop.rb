@@ -7,7 +7,7 @@
 # CROP_LINES_DATA = [[418, 209],[627, 179],[806, 203],[1009, 198],[1207, 204],[1411, 239]]
 
 # Ligne pour extraire le système de la partition originale
-CODE_CROP_IMAGE = "/usr/local/bin/convert #{File.basename(SCORE_INI_PATH)} -crop 0x%{height}+0+%{top} ./factory/score-%{iimg}.jpg"
+CODE_CROP_IMAGE = "/usr/local/bin/convert #{File.basename(SCORE_INI_PATH)} -crop 0x%{height}+0+%{top} ./factory/system-#{PAGE}-%{iimg}.jpg"
 
 def proceed_crop_score_ini
   FileUtils.rm_rf(FACTORY_FOLDER) if File.exists?(FACTORY_FOLDER)

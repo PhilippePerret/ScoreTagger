@@ -7,10 +7,7 @@ fieldset legend, span.libelle {
   color:#777777;
 }
 
-span.libelle {display:inline-block;/* pour pouvoir donner une dimension */}
-span.libelle:after {content:' :'}
-span.libelle + span {margin-left:8px}
-
+span.libelle {vertical-align: top}
 .tools {
   text-align: right;
   margin-top:1em;
