@@ -20,7 +20,7 @@ class PanneauHome extends Panneau {
   }
 
   onClickSaveButton(ev){
-    console.info("Je dois enregistrer les données")
+    Score.current.getValuesAndSave()
   }
 
   onClickLoadButton(ev){

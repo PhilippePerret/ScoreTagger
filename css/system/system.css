@@ -28,7 +28,7 @@ input[type="checkbox"] + label {
 */
 div#messages-container {
   position:fixed;
-  bottom:40px;
+  bottom:0px;
   left:0;
   height:auto;
   z-index: 5000;

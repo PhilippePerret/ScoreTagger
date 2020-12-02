@@ -1,12 +1,17 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 require 'yaml'
+require_relative './app_constants'
 
 class Score
 attr_reader :name # nom du dossier
 def initialize(name)
   @name = name
 end #/ initialize
+
+def exists?
+  File.exists?(folder)
+end
 
 def set(hdata)
   @data = data.merge!(hdata)
@@ -40,5 +45,4 @@ def folder
   @folder ||= File.join(SCORE_FOLDER,name)
 end
 
-end #/<< self
 end #/Score
