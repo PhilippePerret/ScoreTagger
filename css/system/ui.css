@@ -1,6 +1,10 @@
 /*
   Généraux
 */
+body * {
+  -webkit-user-select: none;
+}
+
 fieldset legend, span.libelle {
   font-family:'Arial Narrow',Helvetica,Geneva;
   font-style: italic;

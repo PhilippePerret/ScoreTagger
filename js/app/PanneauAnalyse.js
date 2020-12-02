@@ -7,17 +7,49 @@ class PanneauAnalyse extends Panneau {
   }
 
   onActivate(){
-    console.info("Activation de l'analyse")
-    this.observe()
+    document.body.style.width = null
+    if(!this.observed){this.observe()}
+    this.numPage = 1 // Pour le moment
   }
 
   observe(){
     super.observe()
     $('button#analyse-help-button').bind('click', this.showHelp.bind(this))
     // On observe tous les boutons obb
-    $('button.obb')
-      .bind('click', this.onClickButtonOBB.bind(this))
+    $('button.obb').bind('click', this.onClickButtonOBB.bind(this))
     $('img#score-expanded').bind('click', this.onClickScore.bind(this))
+    // On construit le bouton d'incrément de page
+    this.buttonIncrementPage = new IncButton({container:'#analyse-container-page-number', min: 0})
+    this.buttonIncrementPage.build()
+    this.buttonIncrementPage.onChange = this.onChangePage.bind(this)
+    this.observed = true
+  }
+
+  get numPage(){ return this.buttonIncrementPage.value }
+
+  // On appelle cette méthode pour changer la page (ça fait tout)
+  set numPage(num){
+    this.buttonIncrementPage.value = num
+    this.setPage(num)
+  }
+
+  setPage(num){
+    DGet('#expanded-score-current-page').src = `_score_/${CURRENT_ANALYSE}/analyses/page-${num}.jpg`
+    console.log("Données", Score.current.data.pages[num])
+    const systemsData = Score.current.data.pages[num].systems_data;
+    for(var isys in systemsData){
+      const sysData = systemsData[isys]
+      const top = `${sysData.median_line}px`
+      const line = DCreate('DIV', {class:'hline'})
+      document.body.appendChild(line)
+      line.style.top = top
+    }
+  }
+
+  // Méthode appelée quand on change le numéro de page, pour analyser une
+  // autre page
+  onChangePage(num){
+    message("Je dois afficher la page #"+num)
   }
 
   onClickScore(ev){
