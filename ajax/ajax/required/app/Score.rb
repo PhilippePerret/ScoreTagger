@@ -76,6 +76,9 @@ def relative_page_path(num_page)
   "./pages/page-#{num_page}.jpg"
 end
 
+def analyses_folder
+  @analyses_folder ||= File.join(folder,'analyses')
+end
 def factory_folder
   @factory_folder ||= File.join(folder,'factory')
 end

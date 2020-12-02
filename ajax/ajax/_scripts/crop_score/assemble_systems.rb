@@ -90,7 +90,7 @@ BASH
   score_expanded_path = File.join(SCORE.factory_folder,score_expanded_name)
   File.delete(autre_expanded_path) if File.exists?(autre_expanded_path)
   # On renomme enfin le fichier final
-  FileUtils.move(score_expanded_path, File.join(SCORE_FOLDER,"score-p#{PAGE}.jpg"))
+  FileUtils.move(score_expanded_path, File.join(SCORE.analyses_folder,"page-#{PAGE}.jpg"))
 
   return true
 end #/ assemble_systems
