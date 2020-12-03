@@ -14,9 +14,7 @@ begin
     Ajax << {error: "La partition originale doit absolument être un fichier image. Or son extension est '#{File.extname(data[:score_ini_path])}'…"}
   else
     score = Score.new(CURRENT_ANALYSE)
-    if not(score.exists?)
-      FileUtils.mkdir_p(score.folder)
-    end
+    score.mkdir_p_folders if not(score.exists?)
     data = score.data.merge!(data)
     score.set(data)
   end

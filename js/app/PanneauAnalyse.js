@@ -78,4 +78,7 @@ class PanneauAnalyse extends Panneau {
     }
   }
 
+  get container(){
+    return this._cont || (this._cont = document.querySelector('#score-analyse-container'))
+  }
 }

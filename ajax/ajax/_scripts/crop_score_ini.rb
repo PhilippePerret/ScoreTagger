@@ -22,7 +22,6 @@ begin
   DATA[:pages][PAGE].merge!(crop_lines: CROP_LINES_DATA)
   SCORE.set(DATA)
 
-  FACTORY_FOLDER = SCORE.factory_folder
   # séparation en pixels entre les système
   SYSTEMS_SEPARATOR = SCORE.data[:systems_separator] || 200
   # On va profiter pour enregistrer les données utiles des systèmes courants,

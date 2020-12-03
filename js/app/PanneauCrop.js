@@ -17,6 +17,7 @@ class PanneauCrop extends Panneau {
   }
 
   onDesactivate(){
+    console.debug("-> PanneauCrop#onDesactivate")
     $('.hline').remove()
     this.unobserveBody()
   }

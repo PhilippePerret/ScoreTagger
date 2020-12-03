@@ -52,12 +52,14 @@ class Panneau {
   }
   open(){
     this.obj.removeClass('hidden')
-    if ('function' == typeof(this.onActivate)){this.onActivate.call(this)}
+    this.onglet.addClass('activated')
+    this.onActivate && this.onActivate()
   }
 
   close(){
-    if ( 'function' == typeof(this.onDesactivate) ) this.onDesactivate.call(this)
+    this.onDesactivate && this.onDesactivate()
     this.obj.addClass('hidden')
+    this.onglet.removeClass('activated')
   }
 
   observe(){
@@ -69,4 +71,5 @@ class Panneau {
 
   get obj(){return this._obj ||(this._obj = $(`div#tab-${this.name}`))}
 
+  get onglet(){return this._onglet || (this._onglet = $(`button#btn-tab-${this.name}`))}
 }

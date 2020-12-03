@@ -10,7 +10,9 @@
 CODE_CROP_IMAGE = "/usr/local/bin/convert #{SCORE.relative_page_path(PAGE)} -crop 0x%{height}+0+%{top} ./factory/system-#{PAGE}-%{iimg}.jpg"
 
 def proceed_crop_score_ini
-  FileUtils.mkdir_p(FACTORY_FOLDER)
+
+  # Pour supprimer ce qui a été fait
+  SCORE.reset_folders
 
   # Produire le code qui va découper
   code_decoupe = []

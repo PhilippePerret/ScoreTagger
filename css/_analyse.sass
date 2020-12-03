@@ -3,21 +3,46 @@ div#analyse-container-page-number
   top: 0
   right: 0
 
-img#expanded-score-current-page, img#score-ini
-  width: 19cm
+div#score-analyse-container
+  zoom: 100%
+  width: auto
+// img#expanded-score-current-page, img#score-ini
 
-div#objets
+div#marge-tools
   position: fixed
-  top: 100px
   right: 0
-  text-align: left
+  top: 0
+  height: -webkit-fill-available
+  width: 550px
+  background-color: #DDDDDD
 
-  button
-    &.obb
-      // Un bouton outil sélection
-      &.selected
-        background-color: darkgreen
-        color: white
+  // La boite d'édition de l'objet
+  div#aobject-toolbox
+    position: absolute
+    right: 0
+    top: 300px
+    background-color: #CFC
+    padding: 1em
+    border: 1px solid
+    border-radius: 0.2em
+
+    // Le div contenant l'ID de l'objet édité
+    div#div-id
+      font-weight: bold
+
+  // La boite des propriétés de l'objet à créer
+  div#objets
+    position: absolute
+    top: 100px
+    right: 0
+    text-align: left
+
+    button
+      &.obb
+        // Un bouton outil sélection
+        &.selected
+          background-color: darkgreen
+          color: white
 
 
 // Les objets de l'analyse
@@ -29,16 +54,3 @@ div.aobjet
 
   &.selected
     border-color: blue
-
-// La boite d'édition de l'objet
-div#aobject-toolbox
-  position: fixed
-  right: 0
-  top: 300px
-  background-color: grey
-  padding: 1em
-  border: 1px solid
-  border-radius: 0.5em
-
-  div#div-id
-    font-weight: bold

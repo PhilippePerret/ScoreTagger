@@ -89,7 +89,9 @@ class AObject {
 
 
     div.setAttribute('style', `top:${real_top}px;left:${left}px;`)
-    document.body.appendChild(div)
+    // On ajoute l'objet d'analyse au container d'analyse (le div qui
+    // sera imprimé)
+    Panneau.get('analyse').container.appendChild(div)
 
     this._obj = $(div)
 

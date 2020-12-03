@@ -9,6 +9,20 @@ def initialize(name)
   @name = name
 end #/ initialize
 
+# Fabrication de tous les dossiers de l'analyse
+def mkdir_p_folders
+  [folder, factory_folder, pages_folder, analyses_folder].each do |dossier|
+    FileUtils.mkdir_p(dossier)
+  end
+end
+# Pour recommencer le découpage par exemple
+def reset_folders
+  [factory_folder, analyses_folder].each do |dossier|
+    FileUtils.rm_rf(dossier)
+  end
+  mkdir_p_folders
+end
+
 def exists?
   File.exists?(folder)
 end
