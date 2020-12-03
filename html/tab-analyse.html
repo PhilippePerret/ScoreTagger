@@ -1,7 +1,19 @@
 <img id="expanded-score-current-page" src="" alt="Page complète">
-<div id="analyse-container-page-number" class="incbutton">
+<!-- Pour le bouton pour choisir la page -->
+<div id="analyse-container-page-number" class="incbutton" label="Page"></div>
 
+<!-- Toolbox pour les propriétés précises de l'objet d'analyse courant
+    (sélectionné)
+  -->
+<div id="aobject-toolbox" class="hidden">
+  <div id="div-id">OBJET #<span class="aobj-id"></span></div>
+  <span id="aobj-pos-x" class="incbutton" label="X"></span>
+  <span id="aobj-pos-y" class="incbutton" label="Y"></span>
+  <div class="buttons">
+    <button type="button" id="btn-destroy-aobject">Détruire</button>
+  </div>
 </div>
+<!-- Toolbox des propriétés à choisir de l'objet d'analyse -->
 <div id="objets">
   <div id="objets-type">
     <button type="button" id="otype-chord" data-value="chord" data-type-aobject="otype" class="obb selected">Accord</button>

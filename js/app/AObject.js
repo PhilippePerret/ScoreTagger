@@ -17,6 +17,10 @@ class AObject {
   // On peut utiliser AObject.selection.add ou AObject.selection.remove pour
   // ajouter ou supprimer des éléments à la sélection
   static get selection(){return this._selection||(this._selection = new Selection(this))}
+  static onSelect(item) { item.edit() }
+  static onDeselect(item){
+    AObjectToolbox.reset()
+  }
 
   /**
     * Retourne les propriétés de l'objet
@@ -41,6 +45,7 @@ class AObject {
 
   constructor(data) {
     this.data = data
+    this.id = this.data.id
   }
 
   /**
@@ -71,7 +76,6 @@ class AObject {
     for ( var isys in systemsData ){
       const medline = systemsData[isys].median_line
       const dist    = Math.abs(medline - top)
-      console.log("iSystem: %i, distance: %i (mini actuelle: %i)", isys, dist, mindist)
       if ( iSystem === null || mindist > dist ) {
         iSystem = isys; mindist = dist;
       }
@@ -91,6 +95,12 @@ class AObject {
 
     this.observe()
   }
+
+  edit(){
+    this.isEdited = true
+    AObjectToolbox.show(this)
+  }
+  unedit(){ this.isEdited = false }
 
   // Return la marque à écrire sur la partition en fonction du type
   get mark(){

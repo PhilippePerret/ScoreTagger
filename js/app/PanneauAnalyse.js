@@ -31,7 +31,7 @@ class PanneauAnalyse extends Panneau {
 
   get numPage(){ return this.buttonIncrementPage.value }
   get dataPage(){
-    return this.Score.current.data.pages[num]
+    return Score.current.data.pages[this.numPage]
   }
   // On appelle cette méthode pour changer la page (ça fait tout)
   set numPage(num){
@@ -55,6 +55,7 @@ class PanneauAnalyse extends Panneau {
     const systemsData = this.dataPage.systems_data;
     for(var isys in systemsData){
       const sysData = systemsData[isys]
+      console.log("sysData", sysData)
       const top = `${sysData.median_line}px`
       const line = DCreate('DIV', {class:'hline medline'})
       document.body.appendChild(line)

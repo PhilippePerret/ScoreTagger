@@ -1,7 +1,22 @@
 'use strict'
 /** ---------------------------------------------------------------------
-  *   Pour la fabrication d'un bouton d'incrémentation, avec
-  *   un champ affichant la valeur
+*   Pour la fabrication d'un bouton d'incrémentation, avec
+*   un champ affichant la valeur
+*
+*   Procédure
+*   ---------
+*     - Mettre un conteneur dans la page, avec la classe 'incbutton' et
+*       et un attribut 'label' si nécessaire
+*         <span id="mon-incbutton" class="incbutton" label="Valeur"></span>
+*     - Instancier un incButton :
+*       const monBouton = new IncButton({
+*         container: '#mon-incbutton',
+*         min: valeur minimum
+*         max: valeur maximale
+*         value: valeur courante
+*       })
+*     - Construire le bouton au moment voulu
+*         monBouton.build()
 *** --------------------------------------------------------------------- */
 class IncButton {
   constructor(data) {
@@ -34,13 +49,27 @@ class IncButton {
   }
 
   build(){
-    const div = DCreate('DIV',{class:'incbutton', inner: [
+    if ('string' == typeof(this.data.container)){ this.data.container = document.querySelector(this.data.container)}
+    const conteneur = this.data.container
+
+    // Si le conteneur définit l'attribut 'label' on doit en faire un
+    // label
+    const labelTxt = this.data.container.getAttribute('label')
+    if ( labelTxt ) {
+      conteneur.appendChild(DCreate('LABEL', {text: labelTxt}))
+    }
+
+    const elements = [
       DCreate('SPAN', {class:'incbutton-value', text: this.value}),
       DCreate('SPAN', {class:'arrow top', text:'▲'}),
       DCreate('SPAN', {class:'arrow bottom', text:'▼'})
-    ]})
-    if ('string' == typeof(this.data.container)){ this.data.container = document.querySelector(this.data.container)}
-    this.data.container.appendChild(div)
+    ]
+    const div = DCreate('DIV',{class:'incbutton', inner:elements})
+    conteneur.appendChild(div)
+
+    conteneur.classList.remove('incbutton')
+    conteneur.classList.add('incbutton-container')
+
     this.obj = div
     this.observe()
   }
