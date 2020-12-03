@@ -10,16 +10,53 @@ class Score {
     this._data = data || {}
   }
 
-  // Sauvegarde les données générales de la partition
+  // Sauvegarde les données générales de la partition (titre, auteur,
+  // chemin d'accès, date, etc.)
   save(callback){
     Ajax.send('save_data.rb', {data: this.data}).then(ret => {
       if(ret.error)erreur(ret.error)
       else {
         message("Données de l'analyse enregistrées.")
-        if ('function' == typeof(callback)) callback.call()
+        callback && callback.call()
       }
     })
   }
+
+  /**
+  * Procède à la sauvegarde des objets d'analyse lorsque c'est nécessaire
+  * Ces données sont enregistrées dans le fichier `objets_analyse.yaml` du
+  * dossier de l'analyse courante
+  ***/
+  saveObjetsAnalyse(callback){
+    Ajax.send('save_objets_analyse.rb', {data: AObject.getAllObjectsData()})
+    .then(ret => {
+      if ( ret.error ) return erreur(ret.error)
+      message("Les données des objets d'analyse ont été enregistrés.")
+      callback && callback.call()
+    })
+  }
+
+  /**
+  * Chargement des objets d'analyse
+  ***/
+  loadObjetsAnalyse(callback){
+    Ajax.send('get_data_objets').then(ret => {
+      if ( ret.error ) return erreur(ret.error)
+      this.dispatchObjetsAnalyse(ret.data)
+      callback && callback.call()
+    })
+  }
+
+  /**
+  * Méthode qui, après le chargement des données des objets d'analyse,
+  * les dispatch dans AObject et les reconstruit
+  ***/
+  dispatchObjetsAnalyse(data){
+    // TODO Régler AObject.lastId avec la valeur du dernier ID
+    console.info("Je dois dispatcher les objets enregistrés")
+  }
+
+
 
   // Méthode pour imprimer la partition analysée
   print(){
@@ -32,6 +69,7 @@ class Score {
   dispatchData(){
     $('input#analyse_folder_name').val(CURRENT_ANALYSE)
     $('input#analyse_partition_path').val(this.data.score_ini_path)
+    // TODO Ajouter titre, auteur, date, etc.
   }
 
   getValuesAndSave(){
@@ -50,12 +88,10 @@ class Score {
     return true
   }
 
-
   get data(){ return this._data }
 
   getData(){
-    Ajax.send('get_data.rb')
-    .then(ret => {
+    Ajax.send('get_data.rb').then(ret => {
       if (ret.error){
         erreur(ret.error)
         ret.data = {}

@@ -18,6 +18,10 @@ class AObject {
     return ++ this.lastId;
   }
 
+  static add(item){
+    if (undefined == this.items) this.items = {};
+    Object.assign(this.items, {[item.id]: item})
+  }
   /**
     * Pour créer un objet
   ***/
@@ -35,6 +39,19 @@ class AObject {
       delete this.items[item.id]
     }
     item.obj.remove()
+  }
+
+  /**
+  * Retourne les données de tous les objets d'analyse
+  ***/
+
+  static getAllObjectsData(){
+    var alldata = []
+    if ( this.items ) {
+      for (var k in this.items ) { alldata.push(this.items[k].getData2save()) }
+    }
+    console.debug("alldata:", alldata)
+    return alldata
   }
 
   // On peut utiliser AObject.selection.add ou AObject.selection.remove pour
@@ -55,7 +72,8 @@ class AObject {
     const harmony = $('button[data-type-aobject="harmony"].obb.selected')[0].getAttribute('data-value')
     const nature = $('button[data-type-aobject="nature"].obb.selected')[0].getAttribute('data-value')
     const cadence = $('button[data-type-aobject="cadence"].obb.selected')[0].getAttribute('data-value')
-    return { note:note, type:type, harmony:harmony, nature:nature, alteration:alteration }
+    const segment = $('button[data-type-aobject="segment"].obb.selected')[0].getAttribute('data-value')
+    return { note:note, type:type, harmony:harmony, nature:nature, alteration:alteration, segment:segment }
   }
 
 
@@ -69,12 +87,28 @@ class AObject {
   constructor(data) {
     this.data = data
     this.id = this.data.id
+    this.constructor.add(this)
+  }
+
+  /**
+  * Les données de l'objet qu'il faut sauvegarder
+  ***/
+  getData2save(){
+    return {
+        id:     this.id
+      , system: this.system
+      , page:   this.page // purement indicatif
+      , top:    this.top
+      , left:   this.data.left // indépendant de l'affichage
+      , width:  this.data.width // indépendant de l'affichage
+      , type:   this.objetProps.type
+      , value:  this.objetProps[this.objetProps.type]
+    }
   }
 
   /**
   * Actualisation (après modification dans la boite d'édition)
   ***/
-
   update(what){
     switch(what){
       case 'width':
@@ -109,27 +143,41 @@ class AObject {
 
     const systemsData = score.data.pages[score.current_page].systems_data
 
-    this.objetProps = this.constructor.getObjetProps()
+    const oProps = this.objetProps = this.constructor.getObjetProps()
     // Les propriétés d'objet sélectionnés
     // console.debug("objetProps:", this.objetProps)
 
     // Le DIV PRINCIPAL qui sera ajouté au document (appelé aussi TAG)
     const div_id = `ao-${this.data.id}`
-    const div = DCreate('DIV', {id: div_id, text:null, class: `aobjet ${this.objetProps.type}`})
+    var css = ['aobjet', oProps.type]
+    if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
+    const div = DCreate('DIV', {id: div_id, text:null, class: css.join(' ')})
 
 
-    // On va prendre le système le plus prêt de top
-    var mindist = null
+    /**
+    * On recherche à quel système appartient l'objet
+    * On renseigne par la même occasion la propriété 'this.system' qui
+    * permettra de replace l'objet enregistré.
+    ***/
     var iSystem = null
-    for ( var isys in systemsData ){
-      const medline = systemsData[isys].median_line
-      const dist    = Math.abs(medline - top)
-      if ( iSystem === null || mindist > dist ) {
-        iSystem = isys; mindist = dist;
+    if ( undefined === this.system ) {
+      var mindist = null
+      for ( var isys in systemsData ){
+        const medline = systemsData[isys].median_line
+        const dist    = Math.abs(medline - top)
+        if ( iSystem === null || mindist > dist ) {
+          iSystem = isys; mindist = dist;
+          this.system = (score.current_first_system || 0) + isys
+        }
       }
+    } else {
+      // Si c'est un objet enregistré précédemment
+      iSystem = this.system - (score.current_first_system || 0)
     }
 
-    // On calcule le top véritable
+    /**
+    * On calcule le top véritable en fonction du type
+    ***/
     const sysTop = systemsData[iSystem].top
     const sysBot = systemsData[iSystem].top + systemsData[iSystem].height
     const real_top = this.realTopPerType(this.objetProps.type, sysTop, sysBot)
@@ -202,6 +250,7 @@ class AObject {
     switch(otype){
       case 'harmony': mark = objProps.harmony; break;
       case 'modulation': mark = ENG_NOTE_TO_ITA_NOTE[objProps.note].toUpperCase(); break;
+      case 'segment': return '';
       default: mark = objProps.note.toUpperCase()
     }
     mark = `<span class="nom">${mark}</span>`
@@ -222,6 +271,9 @@ class AObject {
       case 'modulation':  return sysTop - 50; // TODO <= prefs
       case 'chord':       return sysTop - 20; // TODO <= prefs
       case 'cadence':     return sysBot + 50; // TODO <= prefs
+      case 'segment':
+        if (this.objetProps.segment == "up") {return sysTop - 70;/* TODO idem */}
+        else { return sysBot + 70 /* TODO idem */}
     }
   }
 

@@ -38,17 +38,22 @@ class PropsAObjectToolbox {
   get natureButtons(){
     return this._naturebuttons || (this._naturebuttons = this.container.find('div#objets div#objets-natures'))
   }
+  get segmentButtons(){
+    return this._segmentbuttons || (this._segmentbuttons = this.container.find('div#objets div#objets-segments'))
+  }
 
   // Méthode qui affiche ou masque les éléments en fonction du type
   // d'objet voulu.
   setInterfaceForType(ot){
     console.debug(`-> setInterfaceForType(ot = ${ot})`)
     this.currentOType = ot
-    new DOM(this.noteButtons).showIf(!['harmony','cadence'].includes(ot))
-    new DOM(this.alterButtons).showIf(!['harmony','cadence'].includes(ot))
+    const deflistCad = ['harmony','segment','cadence']
+    new DOM(this.noteButtons).showIf(!deflistCad.includes(ot))
+    new DOM(this.alterButtons).showIf(!deflistCad.includes(ot))
     new DOM(this.cadenceButtons).showIf(ot == 'cadence')
-    new DOM(this.natureButtons).showIf(ot != 'cadence')
+    new DOM(this.natureButtons).showIf(!['cadence','segment'].includes(ot))
     new DOM(this.harmonyButtons).showIf(['harmony','modulation'].includes(ot))
+    new DOM(this.segmentButtons).showIf(ot == 'segment')
     // Si c'est le bouton modulation, il faut sélection "sans degré harmonique"
     // par défaut
     if ( ot == 'modulation' ) {

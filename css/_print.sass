@@ -7,7 +7,10 @@
       zoom: 75%
 
     .aobjet
-      background-color: white !important
+      &:not(.segment)
+        background-color: white !important
+      .segment
+        background-color: transparent!important
 
     aside#tabs-buttons
       display: none

@@ -36,6 +36,10 @@ def save
   File.open(data_file_path,'wb'){|f| f.write(YAML.dump(data))}
 end
 
+def save_data_objets(data)
+  File.open(data_objets_path,'wb'){|f| f.write(YAML.dump(data))}
+end #/ set_data_objets
+
 # Méthode qui s'assure que la partition soit bien copiée dans le
 # dossier 'pages' du dossier d'analyse
 def check_score_ini
@@ -78,8 +82,22 @@ def data
   end
 end #/ data
 
+def data_objets
+  @data_objets ||= begin
+    if File.exists?(data_objets_path)
+      YAML.load_file(data_objets_path)
+    else
+      []
+    end
+  end
+end #/ data_objets
+
 def data_file_path
   @data_file_path ||= File.join(folder,'data.yaml')
+end
+
+def data_objets_path
+  @data_objets_path ||=  File.join(folder,'data_objets.yaml')
 end
 
 # Le path vers la page de score +page+ (1-start)
