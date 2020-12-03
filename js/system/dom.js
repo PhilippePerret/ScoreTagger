@@ -51,3 +51,14 @@ function DCreate(tagName,attrs){
   }
   return o;
 }
+
+class DOM {
+  static showIf(domEl, condition){
+    domEl[condition ? 'removeClass' : 'addClass']('hidden')
+    return condition
+  }
+  constructor(domEl){
+    this.obj = domEl
+  }
+  showIf(condition){ return this.constructor.showIf(this.obj, condition)}
+}

@@ -8,7 +8,11 @@ class PanneauAnalyse extends Panneau {
 
   onActivate(){
     document.body.style.width = null
-    if(!this.observed){this.observe()}
+    if(!this.observed){
+      this.propsAObjectToolbox = new PropsAObjectToolbox()
+      this.propsAObjectToolbox.observe()
+      this.observe()
+    }
     this.numPage = 1 // Pour le moment
   }
   onUnactivate(){
