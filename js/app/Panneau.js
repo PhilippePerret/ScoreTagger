@@ -33,6 +33,7 @@ class Panneau {
   static get current(){return this._current}
   static set current(v){this._current = v}
   static setCurrent(panneau){
+    if ( 'string' == typeof(panneau)) panneau = this.get(panneau)
     this.current.close()
     this.current = panneau
     this.current.open()

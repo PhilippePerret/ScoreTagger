@@ -21,6 +21,11 @@ class Score {
     })
   }
 
+  // Méthode pour imprimer la partition analysée
+  print(){
+    Panneau.setCurrent('analyse')
+    window.print()
+  }
   /**
     * Méthode qui place les données dans les fenêtres/onglets
   ***/
