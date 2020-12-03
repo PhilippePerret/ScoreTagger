@@ -1,0 +1,198 @@
+/*  Tous les éléments, ou presque, doivent être de position absolute
+    Non, c'est inutile puisque la méthode jQUery.draggable les rendra
+    absolus. Ça permet, dans un premier temps, d'avoir les éléments
+    les uns au-dessous des autres (en tout cas les images)
+*/
+/* @import 'tags/texts.css' screen; */
+
+/* La section qui contient tous les tags */
+section#tags {
+  position: relative;
+  background-color: white;
+  /* background-color: #EEEEFF; */
+  width: 180.1mm;
+  margin-left:10mm;
+  margin-top:10mm;
+  /* background-color: white; */
+  display: block;
+  z-index: 0;
+  height: 20000cm;
+  /* border:1px solid green; */
+}
+/* image, div {
+  position: absolute;
+} */
+img.tag {
+  z-index: 0;
+}
+/* Des spans ou des divs */
+.tag {
+  position: absolute;
+  display:  inline-block;
+  background-color: transparent;
+  padding:  4px;
+  z-index:  10;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #EFEFEF;
+}
+.tag.selected, .tag.selectedtag {
+  border-color: blue !important;
+  color: blue !important;
+  background-color: #EEEEFF;
+}
+.tag.preselected {
+  border: 1px dashed blue;
+}
+.tag.warntag {
+  background-color: #FFBBBB !important;
+}
+.tag.locked {
+  opacity: 0.5;
+}
+.tag.grouped.selected {
+  border-color: green !important;
+}
+
+
+.tag.dragged {
+  border:   1px dashed red;
+}
+span.tag.harmony {
+  font-weight: bold;
+
+}
+span.tag.cadence {
+  font-weight:    bold;
+  border-width:   0 1px 1px 0;
+  border-color:   black;
+  border-style:   solid;
+  padding-right:  0.5em;
+  padding-bottom: 4px;
+  padding:top:    1em;
+  text-align:     right;
+  background-color: transparent;
+  min-width:      60px;
+  z-index: 9 /* pour le pas recouvrir les éléments */
+}
+span.tag.cadence:after {
+  position: absolute;
+  bottom: -1.6em;
+  right:  0px;
+  text-align: right;
+  font-weight: normal;
+}
+span.tag.cadence.parfaite:after {
+  content: 'Cad.Parf.';
+}
+span.tag.cadence.imparfaite:after {
+  content: 'Cad.Imp.';
+}
+span.tag.cadence.italienne:after {
+  content: 'Cad.Ital.';
+}
+span.tag.cadence.plagale:after {
+  content: 'Cad.Plag.';
+}
+span.tag.cadence.demi:after {
+  content: 'Demi-cad.';
+}
+span.tag.cadence.rompue:after {
+  content: 'Cad.Romp.';
+}
+span.tag.cadence.faureenne:after {
+  content: 'Cad.Faur.';
+}
+span.tag.cadence.baroque:after {
+  content: 'Cad.Baroq.';
+}
+
+/* === ACCORDS === */
+span.tag.chord {
+  font-family:    Helvetica, Arial;
+  z-index: 50;
+}
+
+/* --------------------------------------------------------------------- */
+
+/* Les textes  */
+
+/* --------------------------------------------------------------------- */
+
+/* Les lignes et les boites */
+span.line {
+  background-color: transparent !important;
+  padding: 0;
+}
+span.line0T0, span.line1T0, span.line1T1, span.line0T1 {
+  border-top: 1px solid black;
+}
+span.line0B0, span.line1B0, span.line1B1, span.line0B1 {
+  border-bottom: 1px solid black;
+}
+span.line1T0, .line1T1, .line1B0, .line1B1 {
+  border-left: 1px solid black;
+}
+span.line0T1, .line1T1, .line0B1, .line1B1 {
+  border-right: 1px solid black;
+}
+
+/* === BOITES / BOX === */
+span.box {
+  background-color: #CCCCCC;
+  z-index:  9; /* pour que les autres éléments passent devant */
+}
+
+/* La liste des codes de tags */
+ul#ultags {
+  background-color: #444444;
+  color:white;
+  list-style: none;
+  padding: 1em;
+  overflow-y: scroll;
+  height: 600px;
+}
+/* Voir aussi dans ui.css */
+ul#ultags li {
+  font-family: monospace;
+  font-size: 13pt;
+  border-width: 2px;
+  border-color: #444444;
+  padding: 2px;
+  border-style: solid;
+}
+ul#ultags li.activated,
+#tags .tag.activated
+{
+  border-color: #9ACD28;
+}
+
+/**
+  * Styles de texte
+  */
+.tag.text.date:after{content:')'}
+.tag.text.date:before{content:'('}
+
+.text.degree {
+  font-size: 10.1pt;
+  height: 12px;
+  text-align: center;
+  border: 1px solid #333;
+  border-radius: 1em;
+  padding: 1px 2px 4px;
+  min-width: 12px;
+}
+.text.part {
+  font-size: 1.1rem;
+  border: 1px solid #333;
+  padding: 2px 4px;
+  font-variant: small-caps;
+  transform: rotate(-38.9deg);
+  transform-origin: center;
+}
+/* Numéros de mesure */
+.text.measure {
+  font-size: 0.9rem;
+  border: 1px solid #333;
+  padding: 3px 3px 1px 2px;
+}

@@ -1,0 +1,47 @@
+// Les objets de l'analyse
+div.aobjet
+  position: absolute
+  background-color: #CCCCCC
+  padding: 0.2em 1em
+  border: 2px solid transparent
+  font-family: Georgia
+
+  &.selected
+    border-color: blue
+
+  /* Tag complexe modulation */
+  &.modulation
+    height: 20px
+    display: inline-block
+    width: 100px
+    div.ton
+      display: inline-block
+      position: absolute
+      transform: rotate(-20deg)
+      transform-origin: bottom left
+      border-bottom: 4px solid
+      padding: 0 0 16px 4px
+      height: 16px
+      width: 80px
+      top: -12px
+      left: 23px
+      span.rel // la précision "(V)"
+        margin-left: 4px
+    div.vline
+      position: absolute
+      display: inline-block
+      top: 20px
+      border-left: 2px solid
+      height: 100px // devra pouvoir être changé
+
+  span.alte
+    margin: 0 !important
+    padding: 0 !important
+    margin-left: -4px
+
+  /* Tag complexe cadence */
+  &.cadence
+    border-right: 3px solid
+    border-bottom: 3px solid
+    padding: 0 4px 4px 0
+    width: 60px // modifiable

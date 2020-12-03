@@ -1,4 +1,8 @@
 'use strict';
+const ENG_NOTE_TO_ITA_NOTE = {
+    'c':'do', 'd':'ré', 'e':'mi', 'f':'fa', 'g':'sol', 'a':'la', 'b':'si'
+  }
+
 class AObject {
 
   static newId(){
@@ -56,8 +60,8 @@ class AObject {
   build(){
     // On a besoin du score courant
     const score = Score.current
-        , top = this.data.top
-        , left = this.data.left
+        , top   = this.data.top
+        , left  = this.data.left
 
     const systemsData = score.data.pages[score.current_page].systems_data
 
@@ -65,9 +69,9 @@ class AObject {
     // Les propriétés d'objet sélectionnés
     // console.debug("objetProps:", this.objetProps)
 
-    // Le div qui sera ajouté au document
+    // Le DIV PRINCIPAL qui sera ajouté au document (appelé aussi TAG)
     const div_id = `ao-${this.data.id}`
-    const div = DCreate('DIV', {id: div_id, text:this.mark, class: "aobjet"})
+    const div = DCreate('DIV', {id: div_id, text:null, class: `aobjet ${this.objetProps.type}`})
 
 
     // On va prendre le système le plus prêt de top
@@ -95,7 +99,24 @@ class AObject {
 
     this._obj = $(div)
 
+    /**
+    * En fonction du type (modulation, cadence, etc) on peut avoir à
+    * ajouter des éléments
+    ***/
+    switch(this.objetProps.type){
+      case 'modulation': this.buildAsModulation();break;
+      default: this.obj.html(this.mark)
+    }
+
     this.observe()
+  }
+
+  buildAsModulation(){
+    const elements = [
+      DCreate('DIV', {class:'ton', text: this.mark}),
+      DCreate('DIV', {class:'vline'})
+    ]
+    this.obj.append(elements)
   }
 
   edit(){
@@ -108,14 +129,21 @@ class AObject {
   get mark(){
     var mark ;
     const objProps = this.objetProps;
-    if (objProps.type == 'harmony'){
-      mark = objProps.harmony
-    } else {
-      mark = objProps.note.toUpperCase()
+    const otype = objProps.type
+    switch(otype){
+      case 'harmony': mark = objProps.harmony; break;
+      case 'modulation': mark = ENG_NOTE_TO_ITA_NOTE[objProps.note].toUpperCase(); break;
+      default: mark = objProps.note.toUpperCase()
     }
-    if ( objProps.alteration != '♮' ) { mark += objProps.alteration }
+    mark = `<span class="nom">${mark}</span>`
+    console.log("mark '%s'", mark)
+    if ( objProps.alteration != '♮' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
+    console.log("mark '%s'", mark)
     if (objProps.nature != 'Maj') {
-      mark += ` ${objProps.nature}`
+      mark += `<span class="nat">${objProps.nature}</span>`
+    }
+    if (otype == 'modulation' && objProps.harmony != 'none') {
+      mark += `<span class="rel">(${objProps.harmony})</span>`
     }
     return mark
   }
