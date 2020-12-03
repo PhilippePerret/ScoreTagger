@@ -20,14 +20,19 @@ class AObjectToolbox {
     this.hide()
   }
 
+  // On met les valeurs de l'objet d'analyse dans ses champs
   static setValues(){
     console.log("aobject: ", this.owner)
-    this.obj.find('.aobj-id').html(this.owner.id)
+    const o = this.owner
+    this.obj.find('.aobj-id').html(o.id)
+    this.selectNote.val(o.objetProps.note)
   }
 
   // Pour supprimer l'objet (définitivement)
   static removeObjet(ev){
-    console.log("Je dois détruire l'objet")
+    if ( confirm("Es-tu certain de vouloir détruire cet élément ?")){
+      AObject.remove(this.owner)
+    }
   }
 
   static get obj(){return this._obj || (this._obj = $('#aobject-toolbox'))}
@@ -38,6 +43,8 @@ class AObjectToolbox {
     this.buttonPoxY = new IncButton({container:'#aobj-pos-y'})
     this.buttonPosX.build()
     this.buttonPoxY.build()
+    this.selectNote = $('#aobj-note')
+    this.selectAlteration = $('#aobj-alteration')
 
     // Observation
     this.observe()
@@ -46,5 +53,16 @@ class AObjectToolbox {
 
   static observe(){
     $('#btn-destroy-aobject').on('click', this.removeObjet.bind(this))
+    this.selectNote.on('change', this.changeNote.bind(this))
+    this.selectAlteration.on('change', this.changeAlteration.bind(this))
+  }
+
+  static changeNote(){
+    this.owner.objetProps.note = this.selectNote.val();
+    this.owner.update()
+  }
+  static changeAlteration(){
+    this.owner.objetProps.alteration = this.selectAlteration.val();
+    this.owner.update()
   }
 }

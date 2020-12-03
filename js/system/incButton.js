@@ -14,6 +14,7 @@
 *         min: valeur minimum
 *         max: valeur maximale
 *         value: valeur courante
+*         values: {Array} Les valeurs à utiliser si ça n'est pas un
 *       })
 *     - Construire le bouton au moment voulu
 *         monBouton.build()

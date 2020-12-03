@@ -18,6 +18,17 @@ class AObject {
     aobj.build()
   }
 
+  /**
+  * Pour détruire un objet
+  ***/
+  static remove(item){
+    this.selection.remove(item)
+    if (undefined != this.items) {
+      delete this.items[item.id]
+    }
+    item.obj.remove()
+  }
+
   // On peut utiliser AObject.selection.add ou AObject.selection.remove pour
   // ajouter ou supprimer des éléments à la sélection
   static get selection(){return this._selection||(this._selection = new Selection(this))}
@@ -53,10 +64,19 @@ class AObject {
   }
 
   /**
+  * Actualisation (après modification dans la boite d'édition)
+  ***/
+
+  update(){
+    switch(this.objetProps.type){
+      case 'modulation': this.updateAsModulation();break;
+      default: this.obj.html(this.mark)
+    }
+  }
+  /**
     * Construction de l'objet d'analyse
     *
   ***/
-
   build(){
     // On a besoin du score courant
     const score = Score.current
@@ -117,6 +137,9 @@ class AObject {
       DCreate('DIV', {class:'vline'})
     ]
     this.obj.append(elements)
+  }
+  updateAsModulation(){
+    this.obj.find('.ton').text(this.mark)
   }
 
   edit(){

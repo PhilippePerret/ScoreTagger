@@ -6,6 +6,13 @@ input[type="text"]
   font-style:inherit;
 }
 
+select {
+  all: unset !important;
+  border: 1px solid black !important;
+  border-radius: 4px;
+  padding: 0 16px!important;
+}
+
 /* Pour des rangées avec un libellé et un champ de saisie qui s'allonge
 jusqu'au bout */
 div.row-flex {display:flex}
