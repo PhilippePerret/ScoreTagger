@@ -3,6 +3,14 @@ const ENG_NOTE_TO_ITA_NOTE = {
     'c':'do', 'd':'ré', 'e':'mi', 'f':'fa', 'g':'sol', 'a':'la', 'b':'si'
   }
 
+/**
+* Pour les accords (chord) et les marques harmoniques (harmony), la
+* largeur minimale que doit avoir le div de l'objet pour que le trait
+* apparaisse (en pixel). Par exemple pour faire "C ------"
+***/
+
+const MIN_WIDTH_OBJET_WITH_TRAIT = 40
+
 class AObject {
 
   static newId(){
@@ -14,7 +22,7 @@ class AObject {
     * Pour créer un objet
   ***/
   static create(ev){
-    const aobj = new AObject({id: this.newId(), top: ev.offsetY, left: ev.offsetX - 20})
+    const aobj = new AObject({id: this.newId(), top: parseInt(ev.offsetY,10), left: parseInt(ev.offsetX - 20,10)})
     aobj.build()
   }
 
@@ -67,10 +75,26 @@ class AObject {
   * Actualisation (après modification dans la boite d'édition)
   ***/
 
-  update(){
-    switch(this.objetProps.type){
-      case 'modulation': this.updateAsModulation();break;
-      default: this.obj.html(this.mark)
+  update(what){
+    switch(what){
+      case 'width':
+        if(['chord','harmony'].includes(this.objetProps.type)){
+          const method = this.data.width > MIN_WIDTH_OBJET_WITH_TRAIT ? 'remove' : 'add'
+          this.obj.find('.trait')[`${method}Class`]('hidden')
+        }
+        // On laisse filer pour la suite
+      case 'left':
+      case 'top':
+        this.obj.css(what, this.data[what]);
+        break;
+      default:
+        switch(this.objetProps.type){
+          case 'modulation': this.updateAsModulation();break;
+          case 'chord':
+          case 'harmony':
+            this.updateAsWithTrait();break;
+          default: this.obj.html(this.mark)
+        }
     }
   }
   /**
@@ -109,8 +133,9 @@ class AObject {
     const sysTop = systemsData[iSystem].top
     const sysBot = systemsData[iSystem].top + systemsData[iSystem].height
     const real_top = this.realTopPerType(this.objetProps.type, sysTop, sysBot)
-    console.log("real_top", real_top)
+    // console.log("real_top", real_top)
 
+    this.data.top = real_top
 
     div.setAttribute('style', `top:${real_top}px;left:${left}px;`)
     // On ajoute l'objet d'analyse au container d'analyse (le div qui
@@ -124,10 +149,15 @@ class AObject {
     * ajouter des éléments
     ***/
     switch(this.objetProps.type){
-      case 'modulation': this.buildAsModulation();break;
+      case 'modulation':
+        this.buildAsModulation();
+        break;
+      case 'chord':
+      case 'harmony':
+        this.buildAsWithTrait();
+        break;
       default: this.obj.html(this.mark)
     }
-
     this.observe()
   }
 
@@ -139,8 +169,24 @@ class AObject {
     this.obj.append(elements)
   }
   updateAsModulation(){
-    this.obj.find('.ton').text(this.mark)
+    this.obj.find('.ton').html(this.mark)
   }
+
+  /**
+  * Pour les accords et les harmonies, on ajoute un tiret possible à partir
+  * d'une certaine longueur
+  ***/
+  buildAsWithTrait(){
+    const elements = [
+      DCreate('DIV', {class:'text', text: this.mark}),
+      DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`})
+    ]
+    this.obj.append(elements)
+  }
+  updateAsWithTrait(){
+    this.obj.find('.text').html(this.mark)
+  }
+
 
   edit(){
     this.isEdited = true
@@ -159,9 +205,7 @@ class AObject {
       default: mark = objProps.note.toUpperCase()
     }
     mark = `<span class="nom">${mark}</span>`
-    console.log("mark '%s'", mark)
     if ( objProps.alteration != '♮' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
-    console.log("mark '%s'", mark)
     if (objProps.nature != 'Maj') {
       mark += `<span class="nat">${objProps.nature}</span>`
     }
@@ -183,9 +227,18 @@ class AObject {
 
   observe(){
     // La rendre déplaçable sur l'axe des x
-    this.obj.draggable({axis:'x'})
+    const my = this
+    this.obj.draggable({
+      axis:'x',
+      stop: my.onChangeXByDrag.bind(my)
+    })
     // Le rendre sensible au click pour le sélectionner
     this.obj.on('click', this.toggleSelect.bind(this))
+  }
+
+  onChangeXByDrag(ev, ui){
+    this.data.left = parseInt(ui.position.left, 10)
+    if ( this.isEdited ) AObjectToolbox.buttonPosX.set(this.data.left)
   }
 
   toggleSelect(ev){

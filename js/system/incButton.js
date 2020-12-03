@@ -11,6 +11,7 @@
 *     - Instancier un incButton :
 *       const monBouton = new IncButton({
 *         container: '#mon-incbutton',
+*         onChange:  {function} La méthode à appeler quand ça change
 *         min: valeur minimum
 *         max: valeur maximale
 *         value: valeur courante
@@ -23,9 +24,14 @@ class IncButton {
   constructor(data) {
     this.data = data
     this.value = this.data.defaultValue || this.data.value || 0
+    this.onChange = data.onChange || data.onchange
     if ( undefined === this.data.min ) this.data.min = null
     if ( undefined === this.data.max ) this.data.max = null
   }
+
+  // Méthode publique
+  set(val){ this.setValue(val) }
+
   onPlus(ev){
     var val = 1
     return this.incValue(ev, val)
@@ -36,17 +42,18 @@ class IncButton {
   }
   incValue(ev, upto){
     if ( ev.shiftKey ){ upto = upto * 10 }
+    if ( ev.metaKey ) { upto = upto * 2  }
     const valprov = this.value + upto
     if (this.data.min !== null && valprov < this.data.min){return false}
     if (this.data.max !== null && valprov > this.data.max){return false}
-    this.setValue(this.value + upto)
+    this.setValue(parseInt(this.value+upto, 10))
     // Si une fonction est à appeler au changement, il faut l'appeler
-    if ('function' == typeof(this.onChange)){
-      this.onChange.call(null, this.value)
-    }
+    this.onChange && this.onChange.call(null, this.value)
   }
   setValue(v){
+    this.value = v
     this.spanValue.innerHTML = this.value
+    this.onChange && this.onChange.call(null, this.value)
   }
 
   build(){

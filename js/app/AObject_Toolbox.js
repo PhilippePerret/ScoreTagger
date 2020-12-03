@@ -22,10 +22,15 @@ class AObjectToolbox {
 
   // On met les valeurs de l'objet d'analyse dans ses champs
   static setValues(){
-    console.log("aobject: ", this.owner)
     const o = this.owner
+    console.log("aobject: ", o)
+    console.log("o.obj", o.obj)
     this.obj.find('.aobj-id').html(o.id)
+    this.buttonPosX.set(o.data.left)
+    this.buttonPosY.set(o.data.top)
+    this.buttonWidth.set( o.data.width || parseInt(o.obj.width(),10) )
     this.selectNote.val(o.objetProps.note)
+    this.selectAlteration.val(o.objetProps.alteration)
   }
 
   // Pour supprimer l'objet (définitivement)
@@ -39,10 +44,12 @@ class AObjectToolbox {
 
   static prepare(){
     // Les boutons à incrémentation
-    this.buttonPosX = new IncButton({container:'#aobj-pos-x'})
-    this.buttonPoxY = new IncButton({container:'#aobj-pos-y'})
+    this.buttonPosX = new IncButton({container:'#aobj-pos-x', onchange:this.onChangeX.bind(this)})
+    this.buttonPosY = new IncButton({container:'#aobj-pos-y', onchange:this.onChangeY.bind(this)})
+    this.buttonWidth = new IncButton({container:'#aobj-pos-w', onchange:this.onChangeW.bind(this)})
     this.buttonPosX.build()
-    this.buttonPoxY.build()
+    this.buttonPosY.build()
+    this.buttonWidth.build()
     this.selectNote = $('#aobj-note')
     this.selectAlteration = $('#aobj-alteration')
 
@@ -64,5 +71,17 @@ class AObjectToolbox {
   static changeAlteration(){
     this.owner.objetProps.alteration = this.selectAlteration.val();
     this.owner.update()
+  }
+  static onChangeX(newValue){
+    this.owner.data.left = Number(newValue)
+    this.owner.update('left')
+  }
+  static onChangeY(newValue){
+    this.owner.data.top = Number(newValue)
+    this.owner.update('top')
+  }
+  static onChangeW(newValue){
+    this.owner.data.width = Number(newValue)
+    this.owner.update('width')
   }
 }
