@@ -1,3 +1,49 @@
+aside#tabs-buttons
+  position: fixed
+  bottom: 0
+  right: 0
+  background-color: black
+  padding: 0.5em 1em
+  z-index: 1010
+
+  button.tabbutton
+    border-right: 1px solid #CCCCCC
+    font-variant: all-small-caps
+    font-size: 13pt
+    padding: 0.4em 1em
+    &.activated
+      background-color: grey
+      color: white
+
+button
+  &#btn-crop
+    background-color: green
+    color: white
+    position: fixed
+    bottom: 80px
+    right: 4px
+
+section#tabs
+
+  div#panneau-home, div#panneau-export
+    padding: 2em
+
+  // Le panneau pour la découpe
+  div#panneau-crop
+
+    div#score-container
+      position: relative
+      margin: 0!important
+      padding: 0!important
+
+div.hline
+  position: absolute
+  left: 0
+  height: 20px
+  border-bottom: 1px solid blue
+  width: 100%
+  cursor: move
+
 // Tous les panneaux possède une marge droite d'outils
 div.marge-tools
   z-index: 1000

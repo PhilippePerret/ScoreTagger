@@ -70,7 +70,7 @@ class Panneau {
     this.constructor.setCurrent(this)
   }
 
-  get obj(){return this._obj ||(this._obj = $(`div#tab-${this.name}`))}
+  get obj(){return this._obj ||(this._obj = $(`div#panneau-${this.name}`))}
 
-  get onglet(){return this._onglet || (this._onglet = $(`button#btn-tab-${this.name}`))}
+  get onglet(){return this._onglet || (this._onglet = $(`button#btn-panneau-${this.name}`))}
 }

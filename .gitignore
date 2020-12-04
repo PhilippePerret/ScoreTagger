@@ -5,6 +5,6 @@ data/secret/
 
 ajax/secret/
 
-.sass-cache/
+.sass-cache/*
 
 _score_/
