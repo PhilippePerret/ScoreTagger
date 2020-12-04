@@ -13,6 +13,10 @@ class PanneauAnalyse extends Panneau {
       this.propsAObjectToolbox.observe()
       this.observe()
     }
+    if (!this.isDrawn){
+      // On affiche la partition (ses systèmes)
+      this.loadSystems().then(this.drawSystems.bind(this))
+    }
   }
   onUnactivate(){
     // TODO Surveiller que ce soit bien enregistré
@@ -28,38 +32,37 @@ class PanneauAnalyse extends Panneau {
     this.observed = true
   }
 
-  get dataPage(){
-    return Score.current.data.pages[this.numPage]
+  loadSystems(){
+    return Ajax.send('get_data_pages.rb')
   }
-  // On appelle cette méthode pour changer la page (ça fait tout)
-  set numPage(num){
-    this.buttonIncrementPage.value = num
-    this.setPage(num)
-  }
-
-  setPage(num){
-    Score.current.current_page = num // Pour AObject notamment
-    DGet('#expanded-score-current-page').src = `_score_/${CURRENT_ANALYSE}/analyses/page-${num}.jpg`
-    // this.showMedianLines();
-
-  }
-
-
-  /**
-    * Méthode qui affiche les lignes médianes servant à estimer l'appartenance
-    * d'un élément
-  ***/
-  showMedianLines(){
-    const systemsData = this.dataPage.systems_data;
-    for(var isys in systemsData){
-      const sysData = systemsData[isys]
-      console.log("sysData", sysData)
-      const top = `${sysData.median_line}px`
-      const line = DCreate('DIV', {class:'hline medline'})
-      document.body.appendChild(line)
-      line.style.top = top
+  drawSystems(ret){
+    if (ret.error) return erreur(ret.error)
+    if (ret.data_pages){
+      // console.debug("ret.data_pages:", ret.data_pages)
+      for ( var ipage in ret.data_pages ){
+        const dpage = ret.data_pages[ipage]
+        const data_cutlines = dpage.cutlines
+        // console.log("data_cutlines:", data_cutlines)
+        for ( var isys = 0, len = data_cutlines.length - 1; isys < len ; ++ isys  ) {
+          this.drawSystem(ipage, 1 + Number(isys), data_cutlines[isys])
+        }
+      }
+    } else {
+      message("Aucune donnée de système n'est défini…")
     }
+    this.isDrawn = true
   }
+
+  drawSystem(ipage, isystem, dcutline){
+    Object.assign(dcutline, {ipage: ipage, isystem: isystem})
+    new ASystem(dcutline).build()
+  }
+
+  // On appelle cette méthode pour changer la page (ça fait tout)
+  set current_page(num){
+    this.buttonIncrementPage.value = num
+  }
+  get current_page() { this.buttonIncrementPage.value }
 
   // Méthode appelée quand on change le numéro de page, pour analyser une
   // autre page

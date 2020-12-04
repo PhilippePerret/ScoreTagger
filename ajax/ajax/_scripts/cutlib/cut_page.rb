@@ -20,7 +20,7 @@ def proceed_crop_score_ini
   # Produire le code qui va découper la page
   code_decoupe = []
   CUTLINES_DATA.each_with_index do |dline, idx|
-    dline = dline.merge(iimg: idx.to_s.rjust(2,'0')).to_sym
+    dline = dline.merge(iimg: (idx+1).to_s.rjust(2,'0')).to_sym
     code_decoupe << CODE_CROP_IMAGE % dline
   end
   # On supprime la derniere coupe qui doit être le vide
