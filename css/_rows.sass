@@ -1,18 +1,34 @@
+$libelle_width: 200px
+
 div.row
   width:  1020px
+  vertical-align: middle
   // border: 1px dashed green
   > span
     display: inline-block
+    vertical-align: middle
     // border: 1px dashed red
 
     &.libelle
-      width:  200px
+      width:  $libelle_width
       font-size: 0.85em
 
     &.value
-      width: 800px
+      width: 640px
 
       input[type="text"], textarea
         width: 100%
-        font-size: 0.9em !important
-        padding: 4px 8px
+        font-size: 0.85em !important
+
+    &.button
+      width: 120px
+      // text-align: right // ne fonctionne pas (inline-block?)
+      margin-left: 1em
+      button
+        font-size: 12pt
+
+  > div
+    &.explication
+      font-size: 13pt
+      font-style: italic
+      margin-left: $libelle_width

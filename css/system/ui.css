@@ -1,7 +1,7 @@
 /*
   Généraux
 */
-body * {
+body *:not(input[type="text"]):not(textarea):not(input[type="password"]) {
   -webkit-user-select: none;
 }
 

@@ -4,6 +4,24 @@ class Score {
   static get current(){ return this._current || (this._current = new Score())}
   static set current(v){ this._current = v }
 
+  /**
+  * Initialisation de la partition (au chargement de l'application)
+  ***/
+  static initialize(){
+    const my = this
+    if (CURRENT_ANALYSE){
+      $('#analyse_folder_name').val(CURRENT_ANALYSE)
+      return Ajax.send('get_data.rb').then(ret => {
+        if (ret.error) erreur(ret.error)
+        else {
+          my.current = new Score(ret.data)
+          my.current.dispatchData()
+        }
+      })
+    } else {
+      return new Promise((ok,ko) => {ok()})
+    }
+  }
 
   constructor(data) {
     this.scoreIniPath = null // chemin d'accès à la partition originale

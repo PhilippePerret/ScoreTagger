@@ -2,14 +2,59 @@
 
 
 
+## Hiérarchie des éléments de programmation
+
+~~~bash
+
+Score							La partition, dans son entier
+ASystem						Un système, donc une portée horizontale
+AObject						Un objet d'analyse, par exemple un accord, une
+									modulation, un texte, un segment, etc.
+~~~
+
+
+
+## Constitution du dossier de l'analyse
+
+~~~bash
+
+<dossier analyse>
+	|-- systems
+	|				|-- images		(dossier contenant les images)
+	|				|-- data			(dossier contenant les données)
+	|-- score
+	|			|-- data.yml		(données générales de la partition)
+	|			|-- prefs.yml		(préférences)
+	|			|-- images			(dossier des images du score original)
+	|						|-- pages	(dossier des pages du score original en jpg)
+~~~
+
+
+
+## Positionnement des systèmes
+
+Chaque système est enregistré dans un fichier image unique dans le dossier `images` de l’analyse.
+
+La difficulté consiste à les positionner correctement sur la page pour qu’ils ne se retrouvent pas entre deux pages lors de l’impression/sortie PDF de la partition complète.
+
+
+
 ## Fonctionnements
+
+#### Enregistrement des données
+
+Les données de chaque système sont enregistrées dans des fichiers séparés, au format `YAML` dans le dossier `data`.
 
 ### Découpage de la partition originale
 
-* On procède au découpage de la partition originale en systèmes, de façon manuelle, grâce à la section « découpe » de l’application.
+* On procède au découpage de la partition originale en systèmes, de façon manuelle, grâce à la section « découpe » de l’application. Cette découpe s’appuie sur des « lignes de coupe » (crop lines) définies dans l’onglet « Découpe ». On peut procéder à cette découpe avec une partition entière ou par pages.
 * Les systèmes sont alors répartis en pages qui font toute la taille normale de 21 cm par 29,7 cm. De cette manière, les fichiers PDF peuvent être consultés et imprimés convenablement.
 
 
+
+#### Placement des objets d'analyse
+
+Pour placer un objet d’analyse, on clique sur un système. Cet objet d’analyse est toujours associé au système pour lequel il a été créé.
 
 ## Mise en place des « objets d'analyse »
 

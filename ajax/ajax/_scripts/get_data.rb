@@ -12,9 +12,6 @@ begin
     if score.exists?
       if File.exists?(score.data_file_path)
         Ajax << { data: score.data }
-        # On s'assure que la page de la partition (ou les pages) soit toujours là. Le
-        # cas échéant, on la replace
-        score.check_score_ini
       else
         Ajax << {error: "Le fichier des données n'existe pas… Il faut redéfinir les éléments…"}
       end

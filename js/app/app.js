@@ -15,7 +15,7 @@ class App {
       .then(UI.insert.bind(UI,'tab-analyse', 'div#tab-analyse'))
       .then(UI.insert.bind(UI,'tab-export', 'div#tab-export'))
       .then(this.setPanneauCourant.bind(this))
-      .then(this.finInitialisation.bind(this))
+      .then(Score.initialize.bind(Score))
       .then(ok)
     })
   }
@@ -26,24 +26,6 @@ class App {
       ok()
     })
   }
-
-  static finInitialisation(){
-    return new Promise((ok,ko)=>{
-      if (CURRENT_ANALYSE){
-        Ajax.send('get_data.rb').then(ret => {
-          if (ret.error) erreur(ret.error)
-          else {
-            Score.current = new Score(ret.data)
-            Score.current.dispatchData()
-          }
-          ok()
-        })
-      } else {
-        ok()
-      }
-    })
-  }
-
   // Quand tout est prêt
   static start(){
     // console.clear()
