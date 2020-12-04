@@ -23,14 +23,18 @@ def proceed_crop_score_ini
     dline = dline.merge(iimg: idx.to_s.rjust(2,'0')).to_sym
     code_decoupe << CODE_CROP_IMAGE % dline
   end
+  # On supprime la derniere coupe qui doit être le vide
+  code_decoupe.pop
 
+  # *** Code final de coupe ***
   code_decoupe = <<-BASH
 cd "#{SCORE.folder}"
 #{code_decoupe.join("\n")}
 
 BASH
   log("Code de découpe:\n#{code_decoupe}")
-  # res = `#{code_decoupe}\n`
+
+  # === On procède à la découpe ===
   res = system("#{code_decoupe}\n")
 
   return res

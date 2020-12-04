@@ -6,19 +6,15 @@ class PanneauCrop extends Panneau {
   }
 
   onActivate(){
+    this.isObserved || this.observe()
     document.body.style.width = null ;
     const score = Score.current
-    if ( ! score.data.score_ini_path ) {
-      this.ask_for_score_ini_path()
-    } else {
-      this.show_score_ini()
-      this.observeBody()
-    }
+    this.show_score_ini()
+    this.observeBody()
   }
 
   onDesactivate(){
-    console.debug("-> PanneauCrop#onDesactivate")
-    $('.hline').remove()
+    this.removeAllCutLines()
     this.unobserveBody()
   }
 
@@ -33,19 +29,21 @@ class PanneauCrop extends Panneau {
       tops.push( line.offsetTop + 20)
     })
     tops.sort((a,b) => a - b);
-    console.debug("Tops classés obtenus : ", tops)
     var codes = []
     var len, i;
-    for(i = 0, len = tops.length - 1; i < len; ++ i){
+    for(i = 0, len = tops.length; i < len; ++ i){
       const i_plus1 = 1 + Number(i)
       var iPlus1Str = String(i_plus1)
       while(iPlus1Str.length < 3){iPlus1Str = "0" + iPlus1Str}
       const top_cur = parseInt(tops[i],10)
       const top_next = parseInt(tops[i_plus1],10)
       var h = top_next - top_cur ;
+      // On ne prend pas les portions trop courts, elles correspondent à
+      // des "blancs" entre les systèmes
+      if ( h < 150 ) continue ;
       codes.push({top: top_cur, height: h})
     }
-    console.debug("codes: ", codes)
+    // Pour procéder à la découpe
     Score.current.cutPage(this.current_page, codes, this.confirmCrop.bind(this))
   }
 
@@ -60,24 +58,18 @@ class PanneauCrop extends Panneau {
     * partition originale affichée
   ***/
 
-  onClickBody(ev){
-    console.debug("-> onClickBody")
-    // On ne doit rien faire si le target est une ligne (qu'on déplace)
-    // console.log(ev)
-    if (ev.target.classList.contains('hline')) {
-      console.debug("C'est une ligne qui est cliquée, on ne fait rien.")
-      return false
-    } else if (ev.target.tagName == 'BUTTON') {
-      console.debug("C'est un bouton qui est cliqué, on ne fait rien.")
-      return false
-    }
-    console.debug("Placement d'une ligne à ", ev.offsetY)
-    new Line(ev.offsetY).build()
+  onClickScore(ev){
+    console.debug("-> onClickScore")
+    if ( ev.target.id != 'score-ini' ) return false
+    this.drawCutLine({top: ev.offsetY})
   }
 
   observe(){
     super.observe()
     this.buttonPageNumber = new IncButton({container:'#crop-page-number', min:1, value:1, onchange: this.showPage.bind(this)})
+    this.buttonPageNumber.build()
+    message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
+    this.isObserved = true
   }
 
   // Affiche le div qui permet d'entrer le chemin d'accès à la partition
@@ -102,11 +94,29 @@ class PanneauCrop extends Panneau {
     }
   }
   showPage(ipage){
-    $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
-    message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
     this.current_page = Number(ipage)
+    Ajax.send('get_data_page.rb', {num: this.current_page})
+    .then(ret => {
+      if ( ret.error ) return erreur(ret.error)
+      this.removeAllCutLines()
+      $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
+      if ( ret.data_page ) this.drawCutLines(ret.data_page.cutlines)
+    })
   }
 
+  /**
+  * Pour redessiner des lignes de coupe si elles existent déjà
+  ***/
+  drawCutLines(cutlines){
+    cutlines.forEach(dline => this.drawCutLine(dline))
+  }
+  // Pour dessiner une ligne de coupe
+  drawCutLine(dline){
+    new Line(dline.top).build()
+  }
+  removeAllCutLines(){
+    $('.hline').remove()
+  }
 
 // - private -
 observeButtonCrop(){
@@ -117,13 +127,13 @@ observeButtonCrop(){
 }
 observeBody(){
   if (!this.bodyObserved){
-    $('body').bind('click', this.onClickBody.bind(this))
+    $('body').bind('click', this.onClickScore.bind(this))
     this.bodyObserved = true
   }
 }
 unobserveBody(){
   if (this.bodyObserved){
-    $('body').unbind('click', this.onClickBody.bind(this))
+    $('body').unbind('click', this.onClickScore.bind(this))
     this.bodyObserved = false
   }
 }
