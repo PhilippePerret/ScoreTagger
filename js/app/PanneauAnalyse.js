@@ -39,12 +39,13 @@ class PanneauAnalyse extends Panneau {
     if (ret.error) return erreur(ret.error)
     if (ret.data_pages){
       // console.debug("ret.data_pages:", ret.data_pages)
+      var index = 0
       for ( var ipage in ret.data_pages ){
         const dpage = ret.data_pages[ipage]
         const data_cutlines = dpage.cutlines
         // console.log("data_cutlines:", data_cutlines)
         for ( var isys = 0, len = data_cutlines.length - 1; isys < len ; ++ isys  ) {
-          this.drawSystem(ipage, 1 + Number(isys), data_cutlines[isys])
+          this.drawSystem(ipage, 1 + Number(isys), data_cutlines[isys], index ++)
         }
       }
     } else {
@@ -53,8 +54,8 @@ class PanneauAnalyse extends Panneau {
     this.isDrawn = true
   }
 
-  drawSystem(ipage, isystem, dcutline){
-    Object.assign(dcutline, {ipage: ipage, isystem: isystem})
+  drawSystem(ipage, isystem, dcutline, index){
+    Object.assign(dcutline, {ipage: ipage, isystem: isystem, index: index})
     new ASystem(dcutline).build()
   }
 
