@@ -13,7 +13,6 @@ class PanneauAnalyse extends Panneau {
       this.propsAObjectToolbox.observe()
       this.observe()
     }
-    this.numPage = 1 // Pour le moment
   }
   onUnactivate(){
     // TODO Surveiller que ce soit bien enregistré
@@ -23,13 +22,12 @@ class PanneauAnalyse extends Panneau {
     super.observe()
     $('img#expanded-score-current-page').bind('click', this.onClickScore.bind(this))
     // On construit le bouton d'incrément de page
-    this.buttonIncrementPage = new IncButton({container:'#analyse-container-page-number', min: 0})
+    this.buttonIncrementPage = new IncButton({container:'#analyse-container-page-number', min: 0, value: 1})
     this.buttonIncrementPage.build()
     this.buttonIncrementPage.onChange = this.onChangePage.bind(this)
     this.observed = true
   }
 
-  get numPage(){ return this.buttonIncrementPage.value }
   get dataPage(){
     return Score.current.data.pages[this.numPage]
   }

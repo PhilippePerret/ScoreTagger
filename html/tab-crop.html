@@ -1,7 +1,16 @@
 
-<!-- Container pour placer la partition initiale, pour découpe -->
+<!--
+  Container pour placer la partition initiale, pour découpe
+  Noter qu'elle ne doit pas être redimensionnée ou quoi que ce soit
+  d'autre pour ne pas modifier les valeurs des lignes de découpe
+-->
 <div id="score-container">
   <img id="score-ini" src="" />
-  <button type="button" id="btn-crop" class="big">Découper</button>
   <div style="margin-top:400px;">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</div>
+
+
+<div class="marge-tools">
+  <button type="button" id="btn-crop" class="big">Découper</button>
+  <div id="crop-page-number" class="incbutton" label="Page"></div>
 </div>

@@ -122,8 +122,8 @@ class Score {
     * Méthode qui lance la découpe de la partition originale d'après
     * les lignes de découpe définies dans +cropLinesData+
   ***/
-  crop(cropLinesData, callback){
-    Ajax.send('crop_score_ini.rb', {data: cropLinesData, page: 1})
+  cutPage(numPage, cropLinesData, callback){
+    Ajax.send('cut_page.rb', {data: cropLinesData, page: numPage})
     .then(callback)
   }
 }

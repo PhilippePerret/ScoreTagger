@@ -46,7 +46,7 @@ class PanneauCrop extends Panneau {
       codes.push({top: top_cur, height: h})
     }
     console.debug("codes: ", codes)
-    Score.current.crop(codes, this.confirmCrop.bind(this))
+    Score.current.cutPage(this.current_page, codes, this.confirmCrop.bind(this))
   }
 
   confirmCrop(retour){
@@ -77,6 +77,7 @@ class PanneauCrop extends Panneau {
 
   observe(){
     super.observe()
+    this.buttonPageNumber = new IncButton({container:'#crop-page-number', min:1, value:1, onchange: this.showPage.bind(this)})
   }
 
   // Affiche le div qui permet d'entrer le chemin d'accès à la partition
@@ -85,10 +86,25 @@ class PanneauCrop extends Panneau {
     message("Vous devez définir le chemin d'accès à la partition (image) initiale.")
   }
   show_score_ini(){
-    $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/pages/page-1.jpg`
-    message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
+    this.showPage(1)
     this.observeBody()
     this.observeButtonCrop()
+  }
+
+  showNextPage(){
+    this.showPage(this.current_page + 1)
+  }
+  showPrevPage(){
+    if ( this.current_page == 1 ) {
+      message("C'est la première page !")
+    } else {
+      this.showPage(this.current_page - 1)
+    }
+  }
+  showPage(ipage){
+    $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
+    message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
+    this.current_page = Number(ipage)
   }
 
 
@@ -100,7 +116,6 @@ observeButtonCrop(){
   }
 }
 observeBody(){
-  console.debug("-> PanneauCrop#observeBody")
   if (!this.bodyObserved){
     $('body').bind('click', this.onClickBody.bind(this))
     this.bodyObserved = true
