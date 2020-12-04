@@ -13,11 +13,38 @@ class PanneauAnalyse extends Panneau {
       this.propsAObjectToolbox.observe()
       this.observe()
     }
+    // // DEBUG POUR ESSAYER DE TROUVER LE MILIEU
+    // const topLine = DCreate('DIV', {id: 'topline', class:"absolute bgred",
+    //   style: 'top:0px;height:1px;width:100%;'
+    // })
+    // 
+    // // Les Tops absolus des pages
+    // document.querySelector('#systems-container').appendChild(topLine)
+    // const bottomPage = DCreate('DIV',{id:'toplinenp', class:"absolute bggreen",
+    //   style: `top:${TOP_PAGE - 1}px;height:1px;width:100%;`
+    // })
+    // document.querySelector('#systems-container').appendChild(bottomPage)
+    //
+    // for(var i = 0; i < 5 ; ++ i){
+    //   var lpage = DCreate('DIV',{id:`pageline-${i}`, class:"absolute bgblue",
+    //     style: `top:${TOP_PAGE * i}px;height:1px;width:100%;`
+    //   })
+    //   document.querySelector('#systems-container').appendChild(lpage)
+    //   var lpagebas = DCreate('DIV',{id:`pagelinebas-${i}`, class:"absolute bggreen",
+    //     style: `top:${(TOP_PAGE * (i+1)) - 1}px;height:1px;width:100%;`
+    //   })
+    //   document.querySelector('#systems-container').appendChild(lpagebas)
+    // }
+    // document.querySelector('#systems-container').style.height = '200cm'
+    // return
+    // // /DEBUG
+
     if (!this.isDrawn){
       // On affiche la partition (ses systèmes)
       this.loadSystems().then(this.drawSystems.bind(this))
     }
   }
+
   onUnactivate(){
     // TODO Surveiller que ce soit bien enregistré
   }

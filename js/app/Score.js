@@ -1,6 +1,9 @@
 'use strict';
 
+const TOP_PAGE = 1065
+
 class Score {
+
   static get current(){ return this._current || (this._current = new Score())}
   static set current(v){ this._current = v }
 
@@ -21,6 +24,48 @@ class Score {
     } else {
       return new Promise((ok,ko) => {ok()})
     }
+  }
+
+  /**
+  * Méthode qui calcule les dimensions
+  *
+  * On part du principe qu'un système se présente sous cette forme : cf.
+  * le manuel.
+  * +data_systems+ Les données des systèmes de l'analyse
+  ***/
+  static calculateDim(data_systems){
+    /**
+    * D'abord, on a besoin de connaitre la hauteur moyenne des systèmes de
+    * cette analyse. On prend tous les systèmes et on en calcule la hauteur
+    * moyenne
+    ***/
+    if (undefined == data_systems){
+      return Ajax.send('get_data_pages.rb').then(ret => {
+        if (ret.error) return erreur(ret.error)
+        Score.calculateDim(ret.data_pages)
+      })
+    }
+
+    console.log("On va calculer la hauteur moyenne avec ", data_systems)
+
+    var allheights = 0
+    var nbrheights = 0
+    for ( var ipage in data_systems ) {
+      for ( var isys in data_systems[ipage] ) {
+        allheights += data_systems[ipage][isys].height
+        ++ nbrheights
+      }
+    }
+    this.hauteur_system_moyenne = parseInt(allheight / nbrheights, 10)
+    console.info("this.hauteur_system_moyenne = %i", this.hauteur_system_moyenne)
+
+    /**
+    * La première page étant particulière, on la traite à part : on considère
+    * que trois systèmes seulement seront posés dessus et on les compte à
+    * l'envers, en partant du dessous.
+    ***/
+
+
   }
 
   constructor(data) {

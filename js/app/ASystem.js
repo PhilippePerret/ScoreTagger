@@ -8,6 +8,9 @@
 
 // Nombre de pixels pour un centimètre
 const CM2PIXELS = 37.795280352161
+const PAGE_HEIGHT_PX = parseInt(CM2PIXELS * 29.7, 10)
+console.info("PAGE_HEIGHT_PX = %i", PAGE_HEIGHT_PX)
+const VMARGE_PX = CM2PIXELS * 2
 
 class ASystem {
 
@@ -58,9 +61,38 @@ class ASystem {
     } else {
       fromY = 0
     }
-    this.top = fromY + (Score.current.space_between_systems || 100)
-    const bottomForCheck = this.top + this.height
-    console.log("bottomForCheck = ", bottomForCheck)
+
+    /**
+    * J'essaie de placer les systèmes en fonction d'un nombre de systèmes
+    * qui pourra être défini sur la page d'accueil
+    ***/
+    const NombreSystemsPerPage = Score.current.nombre_systems_per_page || 4
+    if ( undefined == Score.current.isystem_of_page){
+      Score.current.isystem_of_page = -1
+      const portionsHeight = parseInt(PAGE_HEIGHT_PX / NombreSystemsPerPage, 10)
+      console.log("Hauteur de portion :", portionsHeight)
+      ASystem.TopsPortions = []
+      for(var i = 0; i < NombreSystemsPerPage; ++ i){
+        ASystem.TopsPortions.push( i * portionsHeight )
+      }
+    }
+    ++ Score.current.isystem_of_page
+    if ( Score.current.isystem_of_page > NombreSystemsPerPage - 1 ){
+      Score.current.isystem_of_page = 0
+    }
+    console.log("Score.current.isystem_of_page = %i", Score.current.isystem_of_page)
+    const topRelThisSystem = ASystem.TopsPortions[Score.current.isystem_of_page]
+    console.log("Top relatif de ce système : %i", topRelThisSystem)
+
+    const SpaceBetweenSystems = Score.current.space_between_systems || 80
+    this.top = fromY + SpaceBetweenSystems
+
+    const pageNumber = Math.floor(this.top / PAGE_HEIGHT_PX) + 1
+    console.log("pageNumber = ", pageNumber)
+    const bordTopPage = (pageNumber - 1) * PAGE_HEIGHT_PX
+    this.top = bordTopPage + topRelThisSystem
+    console.log("Top absolu de ce système : %i", this.top)
+
     this.obj.style.top = `${this.top}px`
   }
 

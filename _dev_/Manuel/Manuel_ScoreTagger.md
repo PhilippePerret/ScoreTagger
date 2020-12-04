@@ -39,6 +39,25 @@ La difficulté consiste à les positionner correctement sur la page pour qu’il
 
 
 
+#### Éléments d’un système
+
+~~~bash
+
+
+
+-------------|
+-------------|
+-------------|
+-------------|
+-------------|
+
+I    V							Harmonie
+
+________| CP				Cadence
+~~~
+
+
+
 ## Fonctionnements
 
 #### Enregistrement des données
