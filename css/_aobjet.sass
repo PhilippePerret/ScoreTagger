@@ -1,13 +1,14 @@
 // Les objets de l'analyse
 div.aobjet
   position: absolute
-  background-color: #CCCCCC
-  padding: 0.2em 0.5em
+  background-color: #DDDDDD
+  padding: 0 6px
   border: 2px solid transparent
   font-family: Georgia
+  line-height: 1
 
   &.selected
-    border-color: blue
+    border-color: blue!important
 
   &.segment
     border-style: solid
@@ -44,11 +45,11 @@ div.aobjet
       transform: rotate(-20deg)
       transform-origin: bottom left
       border-bottom: 4px solid
-      padding: 0 0 16px 4px
+      padding: 0 0 2px 8px
       height: 16px
-      width: 80px
-      top: -12px
-      left: 23px
+      width: 60px
+      top: 0px
+      left: 7px
       span.rel // la précision "(V)"
         margin-left: 4px
     div.vline
@@ -68,4 +69,5 @@ div.aobjet
     border-right: 3px solid
     border-bottom: 3px solid
     padding: 0 4px 4px 0
-    width: 60px // modifiable
+    min-width: 60px
+    text-align: right

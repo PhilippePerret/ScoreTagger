@@ -64,12 +64,12 @@ get space_between_systems(){
 ***/
 get lignes(){
   return this._lignes || {
-      ligne_segment:      70
-    , ligne_modulation:   50
-    , ligne_accord:       20
-    , ligne_harmonie:     20
-    , ligne_cadence:      40
-    , ligne_pedale:       60
+      segment:      -(40 + 17) // ou garder pour mode analyse structurelle ?
+    , modulation:   -(20 + 20)
+    , chord:        -(0 + 17)
+    , harmony:      0
+    , cadence:      20
+    , pedale:       40
   }
 }
 

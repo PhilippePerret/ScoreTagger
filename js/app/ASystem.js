@@ -9,46 +9,103 @@
 // Nombre de pixels pour un centimètre
 const CM2PIXELS = 37.795280352161
 const PAGE_HEIGHT_PX = parseInt(CM2PIXELS * 29.7, 10)
-console.info("PAGE_HEIGHT_PX = %i", PAGE_HEIGHT_PX)
 const VMARGE_PX = CM2PIXELS * 2
 
 class ASystem {
 
-  static get(index){
-    return this.items[index]
-  }
-  static add(system){
-    if ( undefined == this.items ) this.items = {}
-    Object.assign(this.items, { [system.index]: system})
-  }
+static get(index){
+  return this.items[index]
+}
+static add(system){
+  if (undefined == this.items) this.items = {}
+  Object.assign(this.items, { [system.index]: system})
+}
 
   constructor(data) {
     this.data = data
     this.index    = data.index // l'index absolu du system
     this.isystem  = data.isystem
     this.ipage    = data.ipage
-    this.height   = data.height
     this.score    = Score.current
+    this.modified = false
     this.constructor.add(this)
+  }
+
+  /**
+  * Méthode de sauvegarde du system
+  *
+  * Un système est sauvé avec ses données générales et ses objets dans
+  * un fichier séparé, dans le dossier <analyse>/systems/data/
+  ***/
+  save(){
+    const my = this
+    Ajax.send('save_system.rb', {data: this.data2save}).then(ret => {
+      if (ret.error) return erreur(ret.error)
+      console.info("Système %s sauvé avec succès.", this.minid)
+      my.modified = false
+    })
+  }
+
+  get data2save(){
+    var data_aobjects = []
+    if ( this.aobjets ) {
+      this.aobjets.forEach(aobj => data_aobjects.push(aobj.data2save))
+    }
+    return {
+        minid: this.minid
+      , index: this.index
+      , top: this.top
+      , rheight: this.rHeight
+      , aobjects: data_aobjects
+    }
   }
 
   /**
   * Méthode qui reçoit le clic sur le système
   ***/
   onClick(ev){
-    const y = ev.offsetY // pas vraiment utile
-    const x = ev.offsetX
-    // TODO Créer l'objet
+    if ( ev.target.className == 'system' ) {
+      this.createNewAObjet(ev)
+    }
   }
 
+  /**
+  * Pour créer un nouvel objet
+  ***/
+  createNewAObjet(ev){
+    const objProps = AObject.getObjetProps()
+    const odata = {
+        id: AObject.newId()
+      , left: ev.offsetX - 10
+      , top: this.topPerTypeObjet(objProps.type)
+      , objetProps: objProps
+      , system: this
+    }
+    AObject.create(odata)
+    this.modified = true
+  }
 
+  /**
+  * Pour ajouter l'objet au système.
+  * Ça consiste à :
+  *   - ajouter l'élément DOM de l'objet
+  *   - ajouter l'instance à la liste des objets
+  * +aobj+  Instance de l'objet
+  ***/
+  append(aobj){
+    if ( undefined == this.aobjets ) this.aobjets = []
+    this.obj.appendChild(aobj.obj)
+    this.aobjets.push(aobj)
+  }
 
   build(){
-    const img = DCreate('IMG', {id: this.id, class:'system'})
-    img.src = this.imageSrc
-    img.setAttribute('data-id', this.minid)
-    this.container.appendChild(img)
-    this.obj = img
+    // const img = DCreate('IMG', {class:'system', 'data-id': this.minid, src: this.imageSrc})
+    const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': this.minid, inner:[
+      DCreate('IMG', {class:'system', 'data-id': this.minid, src: this.imageSrc})
+    ]})
+    // div.appendChild(img)
+    this.container.appendChild(div)
+    this.obj = div
     this.positionne()
     this.observe()
   }
@@ -65,36 +122,45 @@ class ASystem {
       // Tout premier système
 
       this.top = this.score.preferences.first_page.first_system_top
+      // console.debug("Première page, this.top = %i", this.top)
 
     } else {
 
       var prev_system = ASystem.get(this.index - 1)
       fromY = prev_system.bottom_limit
+      // console.debug("fromY (prev_system.bottom_limit) = %i", prev_system.bottom_limit)
 
       // La distance entre système (Space Between Systems)
       const SBS = this.score.preferences.space_between_systems
+      // console.debug("space_between_systems = %i", SBS)
 
       // La page sur laquelle on se trouve
       let current_page = Math.floor(fromY / HEIGHT_PAGE) + 1
+      // console.debug("Page courante : %i", current_page)
 
       // La ligne basse de cette page, la ligne à ne pas franchir
       const bottom_limit = current_page * HEIGHT_PAGE
+      // console.debug("bottom_limit = %i", bottom_limit)
 
       // Si le système et ses objets inférieurs dépassent le bord bas, on
       // doit passer le système sur la page suivante
+      // console.debug("this.hauteur_totale = %i", this.hauteur_totale)
+      // console.debug("fromY + SBS + this.hauteur_totale / bottom_limit", fromY + SBS + this.hauteur_totale, bottom_limit)
       if ( fromY + SBS + this.hauteur_totale < bottom_limit ) {
         // <= La limite n'est pas franchie (on a la place)
         // => On pose le système dans le flux normal, à distance définie
         // Note : on parle ici du top de l'image du système, donc il faut
         // ajouter la distance avec la ligne supérieure maximale, la ligne
         // de segment
-        this.top = fromY + SBS + this.lprefs.ligne_segment
+        // => On ne modifie pas le fromY
       } else {
         // <= La limite est franchie
         // => Il faut mettre le système sur la page suivante
-        this.top = bottom_limit + this.lprefs.ligne_segment
+        // => On modifie le formY
+        fromY = bottom_limit
       }
-
+      this.top = fromY + SBS - this.topPerTypeObjet('segment')
+      // console.debug("this.top final = %i", this.top)
     }
 
     // On position le système
@@ -118,29 +184,43 @@ class ASystem {
   * Chaque propriété retourne la position en pixel
   ***/
 
-  get ligne_segment(){return this._lseg || (this._lseg = this.top - this.lprefs.ligne_segment)}
-  get ligne_modulation(){return this._lmod || (this._lmod = this.top - this.lprefs.ligne_modulation)}
-  get ligne_accord(){return this._lacc || (this._lacc = this.top - this.lprefs.ligne_accord)}
-  get ligne_harmonie(){return this._lhar || (this._lhar = this.bottom + this.lprefs.ligne_harmonie)}
-  get ligne_cadence(){return this._lcad || (this._lcad = this.bottom + this.lprefs.ligne_cadence)}
+  // Méthode principale qui retourne le top de l'objet en fonction de son
+  // type
+  topPerTypeObjet(otype){
+    let tpto = Score.current.preferences.lignes[otype]
+    if ( tpto >= 0 ) tpto += this.rHeight
+    return tpto
+  }
 
   // La hauteur totale du système courant
   // Cette propriété n'a pas besoin de connaitre this.top
-  get hauteur_totale(){return this._htot || (this._htot = this.lprefs.ligne_segment + this.height + this.lprefs.ligne_cadence + 20)}
+  get hauteur_totale(){
+    return this._htot || (this._htot = this.calcHauteurTotale())
+  }
 
   // La limite vraiment inférieure du système, tout compris
-  // Cette propriété a besoin de connaitre this.top
-  get bottom_limit(){return this._bottom_limit || (this._bottom_limit = this.ligne_cadence + 20)}
-
-  // Raccourci
-  get lprefs(){return this.score.preferences.lignes}
+  get bottom_limit(){
+    return this._bottom_limit || (this._bottom_limit = this.calcBottomLimit())
+  }
 
   /**
   * Données générales
   ***/
 
+  /**
+  * La hauteur du système
+  * ---------------------
+  * Il faut tenir compte du fait que l'image est diminuée dans l'affichage
+  * pour tenir dans un div de 19cm. La hauteur dont il faut tenir compte — pour
+  * le placement et la position des éléments) est donc la hauteur réelle,
+  * affichée.
+  ***/
+  get rHeight(){
+    return this._hreal || (this._hreal = $(this.obj).height())
+  }
+
   get bottom(){
-    return this._bottom || (this._bottom = this.top + this.height)
+    return this._bottom || (this._bottom = this.top + this.rHeight)
   }
 
   get imageSrc(){
@@ -158,4 +238,17 @@ class ASystem {
   get container(){
     return this._cont || (this._cont = $('#systems-container')[0])
   }
+
+/**
+* Méthodes de calcul
+* ------------------
+***/
+calcHauteurTotale(){
+  return (-this.topPerTypeObjet('segment')) + this.rHeight + this.topPerTypeObjet('pedale') + 20
+}
+calcBottomLimit(){
+  return this.bottom + this.topPerTypeObjet('pedale') + 20
+}
+
+
 }

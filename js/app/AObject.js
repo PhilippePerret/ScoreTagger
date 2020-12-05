@@ -23,11 +23,13 @@ class AObject {
     Object.assign(this.items, {[item.id]: item})
   }
   /**
-    * Pour créer un objet
+  * Création d'un nouvel objet d'analyse
+  *
   ***/
-  static create(ev){
-    const aobj = new AObject({id: this.newId(), top: parseInt(ev.offsetY,10), left: parseInt(ev.offsetX - 20,10)})
+  static create(odata){
+    const aobj = new AObject(odata)
     aobj.build()
+    odata.system.append(aobj)
   }
 
   /**
@@ -39,19 +41,6 @@ class AObject {
       delete this.items[item.id]
     }
     item.obj.remove()
-  }
-
-  /**
-  * Retourne les données de tous les objets d'analyse
-  ***/
-
-  static getAllObjectsData(){
-    var alldata = []
-    if ( this.items ) {
-      for (var k in this.items ) { alldata.push(this.items[k].getData2save()) }
-    }
-    console.debug("alldata:", alldata)
-    return alldata
   }
 
   // On peut utiliser AObject.selection.add ou AObject.selection.remove pour
@@ -79,30 +68,32 @@ class AObject {
 
   /**
     * data:
-    *   id:   Identifiant (nombre)
-    *   top:  Hauteur de départ
+    *   id:     Identifiant (nombre)
+    *   top:    Hauteur de départ
+    *   left:   Décalage x
+    *   objetProps: Les propriétés d'objet, telles que définie dans la toolbox
     *
   ***/
 
   constructor(data) {
     this.data = data
     this.id = this.data.id
+    this.system = this.data.system
+    this.objetProps = data.objetProps
     this.constructor.add(this)
   }
 
   /**
   * Les données de l'objet qu'il faut sauvegarder
   ***/
-  getData2save(){
+  get data2save(){
     return {
-        id:     this.id
-      , system: this.system
-      , page:   this.page // purement indicatif
-      , top:    this.top
-      , left:   this.data.left // indépendant de l'affichage
-      , width:  this.data.width // indépendant de l'affichage
-      , type:   this.objetProps.type
-      , value:  this.objetProps[this.objetProps.type]
+        id:         this.id
+      , system:     this.system.minid
+      , top:        this.top
+      , left:       this.data.left
+      , width:      this.data.width
+      , objetProps: this.objetProps
     }
   }
 
@@ -114,12 +105,12 @@ class AObject {
       case 'width':
         if(['chord','harmony'].includes(this.objetProps.type)){
           const method = this.data.width > MIN_WIDTH_OBJET_WITH_TRAIT ? 'remove' : 'add'
-          this.obj.find('.trait')[`${method}Class`]('hidden')
+          $(this.obj).find('.trait')[`${method}Class`]('hidden')
         }
         // On laisse filer pour la suite
       case 'left':
       case 'top':
-        this.obj.css(what, this.data[what]);
+        $(this.obj).css(what, this.data[what]);
         break;
       default:
         switch(this.objetProps.type){
@@ -127,7 +118,7 @@ class AObject {
           case 'chord':
           case 'harmony':
             this.updateAsWithTrait();break;
-          default: this.obj.html(this.mark)
+          default: this.obj.innerHTML = this.mark
         }
     }
   }
@@ -141,9 +132,7 @@ class AObject {
         , top   = this.data.top
         , left  = this.data.left
 
-    const systemsData = score.data.pages[score.current_page].systems_data
-
-    const oProps = this.objetProps = this.constructor.getObjetProps()
+    const oProps = this.objetProps
     // Les propriétés d'objet sélectionnés
     // console.debug("objetProps:", this.objetProps)
 
@@ -153,44 +142,9 @@ class AObject {
     if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
     const div = DCreate('DIV', {id: div_id, text:null, class: css.join(' ')})
 
+    div.setAttribute('style', `top:${top}px;left:${left}px;`)
 
-    /**
-    * On recherche à quel système appartient l'objet
-    * On renseigne par la même occasion la propriété 'this.system' qui
-    * permettra de replace l'objet enregistré.
-    ***/
-    var iSystem = null
-    if ( undefined === this.system ) {
-      var mindist = null
-      for ( var isys in systemsData ){
-        const medline = systemsData[isys].median_line
-        const dist    = Math.abs(medline - top)
-        if ( iSystem === null || mindist > dist ) {
-          iSystem = isys; mindist = dist;
-          this.system = (score.current_first_system || 0) + isys
-        }
-      }
-    } else {
-      // Si c'est un objet enregistré précédemment
-      iSystem = this.system - (score.current_first_system || 0)
-    }
-
-    /**
-    * On calcule le top véritable en fonction du type
-    ***/
-    const sysTop = systemsData[iSystem].top
-    const sysBot = systemsData[iSystem].top + systemsData[iSystem].height
-    const real_top = this.realTopPerType(this.objetProps.type, sysTop, sysBot)
-    // console.log("real_top", real_top)
-
-    this.data.top = real_top
-
-    div.setAttribute('style', `top:${real_top}px;left:${left}px;`)
-    // On ajoute l'objet d'analyse au container d'analyse (le div qui
-    // sera imprimé)
-    Panneau.get('analyse').container.appendChild(div)
-
-    this._obj = $(div)
+    this._obj = div
 
     /**
     * En fonction du type (modulation, cadence, etc) on peut avoir à
@@ -204,7 +158,7 @@ class AObject {
       case 'harmony':
         this.buildAsWithTrait();
         break;
-      default: this.obj.html(this.mark)
+      default: $(this.obj).html(this.mark)
     }
     this.observe()
   }
@@ -214,10 +168,10 @@ class AObject {
       DCreate('DIV', {class:'ton', text: this.mark}),
       DCreate('DIV', {class:'vline'})
     ]
-    this.obj.append(elements)
+    $(this.obj).append(elements)
   }
   updateAsModulation(){
-    this.obj.find('.ton').html(this.mark)
+    $(this.obj).find('.ton').html(this.mark)
   }
 
   /**
@@ -229,10 +183,10 @@ class AObject {
       DCreate('DIV', {class:'text', text: this.mark}),
       DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`})
     ]
-    this.obj.append(elements)
+    $(this.obj).append(elements)
   }
   updateAsWithTrait(){
-    this.obj.find('.text').html(this.mark)
+    $(this.obj).find('.text').html(this.mark)
   }
 
 
@@ -264,28 +218,16 @@ class AObject {
     return mark
   }
 
-  // Retourne le top vrai, en fonction du type de l'objet
-  realTopPerType(otype, sysTop, sysBot){
-    switch(otype){
-      case 'harmony':     return sysBot + 10; // TODO <= prefs
-      case 'modulation':  return sysTop - 50; // TODO <= prefs
-      case 'chord':       return sysTop - 20; // TODO <= prefs
-      case 'cadence':     return sysBot + 50; // TODO <= prefs
-      case 'segment':
-        if (this.objetProps.segment == "up") {return sysTop - 70;/* TODO idem */}
-        else { return sysBot + 70 /* TODO idem */}
-    }
-  }
-
   observe(){
     // La rendre déplaçable sur l'axe des x
     const my = this
-    this.obj.draggable({
+    $(this.obj).draggable({
       axis:'x',
       stop: my.onChangeXByDrag.bind(my)
     })
+    this.obj.style.position = 'absolute' //draggable ajoute 'relative'
     // Le rendre sensible au click pour le sélectionner
-    this.obj.on('click', this.toggleSelect.bind(this))
+    $(this.obj).on('click', this.toggleSelect.bind(this))
   }
 
   onChangeXByDrag(ev, ui){
@@ -303,10 +245,10 @@ class AObject {
     this.constructor.selection.remove(this,ev)
   }
   setSelected(){
-    this.obj.addClass('selected')
+    $(this.obj).addClass('selected')
   }
   unsetSelected(){
-    this.obj.removeClass('selected')
+    $(this.obj).removeClass('selected')
   }
 
   get type(){

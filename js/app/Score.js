@@ -26,111 +26,111 @@ class Score {
     }
   }
 
-  constructor(data) {
-    this.scoreIniPath = null // chemin d'accès à la partition originale
-    this._data = data || {}
-  }
+/** ---------------------------------------------------------------------
+  *
+  *   INSTANCE
+  *
+*** --------------------------------------------------------------------- */
 
-  // Sauvegarde les données générales de la partition (titre, auteur,
-  // chemin d'accès, date, etc.)
-  save(callback){
-    Ajax.send('save_data.rb', {data: this.data}).then(ret => {
-      if(ret.error)erreur(ret.error)
-      else {
-        message("Données de l'analyse enregistrées.")
-        callback && callback.call()
-      }
-    })
-  }
+constructor(data) {
+  this.scoreIniPath = null // chemin d'accès à la partition originale
+  this._data = data || {}
+}
 
-  /**
-  * Procède à la sauvegarde des objets d'analyse lorsque c'est nécessaire
-  * Ces données sont enregistrées dans le fichier `objets_analyse.yaml` du
-  * dossier de l'analyse courante
-  ***/
-  saveObjetsAnalyse(callback){
-    Ajax.send('save_objets_analyse.rb', {data: AObject.getAllObjectsData()})
-    .then(ret => {
-      if ( ret.error ) return erreur(ret.error)
-      message("Les données des objets d'analyse ont été enregistrés.")
+// Sauvegarde les données générales de la partition (titre, auteur,
+// chemin d'accès, date, etc.)
+save(callback){
+  Ajax.send('save_data.rb', {data: this.data}).then(ret => {
+    if(ret.error)erreur(ret.error)
+    else {
+      message("Données de l'analyse enregistrées.")
       callback && callback.call()
-    })
-  }
-
-  /**
-  * Chargement des objets d'analyse
-  ***/
-  loadObjetsAnalyse(callback){
-    Ajax.send('get_data_objets').then(ret => {
-      if ( ret.error ) return erreur(ret.error)
-      this.dispatchObjetsAnalyse(ret.data)
-      callback && callback.call()
-    })
-  }
-
-
-  /**
-  * Préférences
-  ***/
-  get preferences(){return this._prefs || (this._prefs = new Preferences(this))}
-
-  /**
-  * Méthode qui, après le chargement des données des objets d'analyse,
-  * les dispatch dans AObject et les reconstruit
-  ***/
-  dispatchObjetsAnalyse(data){
-    // TODO Régler AObject.lastId avec la valeur du dernier ID
-    console.info("Je dois dispatcher les objets enregistrés")
-  }
-
-
-  // Méthode pour imprimer la partition analysée
-  print(){
-    Panneau.setCurrent('analyse')
-    window.print()
-  }
-  /**
-    * Méthode qui place les données dans les fenêtres/onglets
-  ***/
-  dispatchData(){
-    $('input#analyse_folder_name').val(CURRENT_ANALYSE)
-    $('input#analyse_partition_path').val(this.data.score_ini_path)
-    // TODO Ajouter titre, auteur, date, etc.
-  }
-
-  getValuesAndSave(){
-    if(this.getValuesInFields()){this.save()}
-  }
-
-  getValuesInFields(){
-    this._data.folder_name    = $('input#analyse_folder_name').val()
-    if ( this._data.folder_name == "" ) {
-      return erreur("Il faut indiquer le nom de l'analyse !")
     }
-    this._data.score_ini_path = $('input#analyse_partition_path').val()
-    if ( this._data.score_ini_path == ""){
-      return erreur("Il faut indiquer le chemin d'accès à la partition originale !")
+  })
+}
+
+/**
+* Pour démarrer la sauvegarde automatique des données d'analyse
+* Cette méthode est déclenchée quand on active le panneau d'analyse
+***/
+startAutosave(){
+  this.saveTimer = setInterval(this.autosave.bind(this), 10 * 1000)
+}
+/**
+* Pour arrêter la sauvegarde automatique des données d'analyse,
+* particulièrement des systèmes (et donc objets d'analyse)
+* Cette méthode est déclenchée quand on quitte le panneau de sauvegarde.
+***/
+stopAutosave(){
+  clearInterval(this.saveTimer)
+  delete this.saveTimer
+  this.saveTimer = null
+}
+
+/**
+* Sauvegarde automatique (quand analyse)
+*
+* Principe : on passe en revue tous les systèmes et on enregistre ceux
+* qui ont été modifiés.
+***/
+autosave(){
+  if ( ASystem.items ) {
+    Object.values(ASystem.items).forEach(system => system.modified && system.save() )
+  }
+}
+
+/**
+* Préférences (objet de type Preferences)
+***/
+get preferences(){return this._prefs || (this._prefs = new Preferences(this))}
+
+// Méthode pour imprimer la partition analysée
+print(){
+  Panneau.setCurrent('analyse')
+  window.print()
+}
+/**
+  * Méthode qui place les données dans les fenêtres/onglets
+***/
+dispatchData(){
+  $('input#analyse_folder_name').val(CURRENT_ANALYSE)
+  $('input#analyse_partition_path').val(this.data.score_ini_path)
+  // TODO Ajouter titre, auteur, date, etc.
+}
+
+getValuesAndSave(){
+  if(this.getValuesInFields()){this.save()}
+}
+
+getValuesInFields(){
+  this._data.folder_name    = $('input#analyse_folder_name').val()
+  if ( this._data.folder_name == "" ) {
+    return erreur("Il faut indiquer le nom de l'analyse !")
+  }
+  this._data.score_ini_path = $('input#analyse_partition_path').val()
+  if ( this._data.score_ini_path == ""){
+    return erreur("Il faut indiquer le chemin d'accès à la partition originale !")
+  }
+  // On récupère les valeurs de préférences
+  this.preferences.getValuesInFields()
+  this._data.preferences = this.preferences.getData()
+
+  // Pour poursuivre
+  return true
+}
+
+get data(){ return this._data }
+
+getData(){
+  Ajax.send('get_data.rb').then(ret => {
+    if (ret.error){
+      erreur(ret.error)
+      ret.data = {}
     }
-    // On récupère les valeurs de préférences
-    this.preferences.getValuesInFields()
-    this._data.preferences = this.preferences.getData()
-
-    // Pour poursuivre
-    return true
-  }
-
-  get data(){ return this._data }
-
-  getData(){
-    Ajax.send('get_data.rb').then(ret => {
-      if (ret.error){
-        erreur(ret.error)
-        ret.data = {}
-      }
-      this._data = ret.data
-      this.preferences.setData(ret.data.preferences)
-    })
-  }
+    this._data = ret.data
+    this.preferences.setData(ret.data.preferences)
+  })
+}
 
   /**
     * Méthode qui lance la découpe de la page de partition originale d'après

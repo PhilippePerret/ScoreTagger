@@ -50,7 +50,7 @@ Pour placer les éléments (les « objets d'analyse ») sur la table d’analyse
  –––
 | G                 Modulation						ligne_modulation
 
-C     G							Accord								ligne_accord
+C     G							Accord								ligne_chord
 
 -------------|
 -------------|
@@ -58,7 +58,7 @@ C     G							Accord								ligne_accord
 -------------|
 -------------|
 
-I    V							Harmonie							ligne_harmonie
+I    V							Harmonie							ligne_harmony
 
 ___|CP							Cadence								ligne_cadence
 

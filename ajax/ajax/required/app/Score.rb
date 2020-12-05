@@ -101,6 +101,16 @@ def data
   end
 end #/ data
 
+def save_system(data)
+  File.open(system_data_path(data[:minid]),'wb') do |f|
+    f.write YAML.dump(data)
+  end
+end #/ save_system
+
+# Retourne les données du système de minid +minid+
+def load_system(minid)
+  YAML.load_file(system_data_path(dimid))
+end
 
 # *** Fichiers ***
 def data_file_path
@@ -108,6 +118,11 @@ def data_file_path
 end
 def prefs_file_path
   @prefs_file_path ||= File.join(score_folder,'prefs.yml')
+end
+# Retourne le chemin d'accès au fichier qui contient les données du
+# système de minid +minid+
+def system_data_path(minid)
+  File.join(data_systems_folder, "system-#{minid}.yml")
 end
 # *** dossiers ***
 def images_systems_folder

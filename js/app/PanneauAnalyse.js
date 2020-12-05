@@ -13,45 +13,23 @@ class PanneauAnalyse extends Panneau {
       this.propsAObjectToolbox.observe()
       this.observe()
     }
-    // // DEBUG POUR ESSAYER DE TROUVER LE MILIEU
-    // const topLine = DCreate('DIV', {id: 'topline', class:"absolute bgred",
-    //   style: 'top:0px;height:1px;width:100%;'
-    // })
-    // 
-    // // Les Tops absolus des pages
-    // document.querySelector('#systems-container').appendChild(topLine)
-    // const bottomPage = DCreate('DIV',{id:'toplinenp', class:"absolute bggreen",
-    //   style: `top:${TOP_PAGE - 1}px;height:1px;width:100%;`
-    // })
-    // document.querySelector('#systems-container').appendChild(bottomPage)
-    //
-    // for(var i = 0; i < 5 ; ++ i){
-    //   var lpage = DCreate('DIV',{id:`pageline-${i}`, class:"absolute bgblue",
-    //     style: `top:${TOP_PAGE * i}px;height:1px;width:100%;`
-    //   })
-    //   document.querySelector('#systems-container').appendChild(lpage)
-    //   var lpagebas = DCreate('DIV',{id:`pagelinebas-${i}`, class:"absolute bggreen",
-    //     style: `top:${(TOP_PAGE * (i+1)) - 1}px;height:1px;width:100%;`
-    //   })
-    //   document.querySelector('#systems-container').appendChild(lpagebas)
-    // }
-    // document.querySelector('#systems-container').style.height = '200cm'
-    // return
-    // // /DEBUG
 
     if (!this.isDrawn){
       // On affiche la partition (ses systèmes)
       this.loadSystems().then(this.drawSystems.bind(this))
     }
+
+    Score.current.startAutosave()
+
   }
 
-  onUnactivate(){
-    // TODO Surveiller que ce soit bien enregistré
+  onDesactivate(){
+    Score.current.autosave() // une dernière fois
+    Score.current.stopAutosave()
   }
 
   observe(){
     super.observe()
-    $('img#expanded-score-current-page').bind('click', this.onClickScore.bind(this))
     // On construit le bouton d'incrément de page
     this.buttonIncrementPage = new IncButton({container:'#analyse-container-page-number', min: 0, value: 1})
     this.buttonIncrementPage.build()
@@ -98,16 +76,7 @@ class PanneauAnalyse extends Panneau {
     message("Je dois afficher la page #"+num)
   }
 
-  onClickScore(ev){
-    console.info("Click sur le score à", ev.offsetY, ev.offsetX)
-    if ( ev.target.id == "expanded-score-current-page") {
-      AObject.create(ev)
-    } else {
-      message("Ce n'est pas vraiment un clic sur la partition")
-    }
-  }
-
   get container(){
-    return this._cont || (this._cont = document.querySelector('#score-analyse-container'))
+    return this._cont || (this._cont = document.querySelector('#systems-container'))
   }
 }

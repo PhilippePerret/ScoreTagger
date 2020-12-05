@@ -28,7 +28,7 @@ class AObjectToolbox {
     this.obj.find('.aobj-id').html(o.id)
     this.buttonPosX.set(o.data.left)
     this.buttonPosY.set(o.data.top)
-    this.buttonWidth.set( o.data.width || parseInt(o.obj.width(),10) )
+    this.buttonWidth.set( o.data.width || parseInt($(o.obj).width(),10) )
     this.selectNote.val(o.objetProps.note)
     this.selectAlteration.val(o.objetProps.alteration)
   }
