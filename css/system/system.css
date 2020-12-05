@@ -38,7 +38,6 @@ div#messages-container {
 div.message {
   color:white;
   padding:0.2em 1em;
-  border-radius:0.3em;
   z-index:2000;
 }
 .message:not(.error) {

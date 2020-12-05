@@ -1,14 +1,9 @@
 'use strict';
-const ENG_NOTE_TO_ITA_NOTE = {
-    'c':'do', 'd':'ré', 'e':'mi', 'f':'fa', 'g':'sol', 'a':'la', 'b':'si'
-  }
-
 /**
 * Pour les accords (chord) et les marques harmoniques (harmony), la
 * largeur minimale que doit avoir le div de l'objet pour que le trait
 * apparaisse (en pixel). Par exemple pour faire "C ------"
 ***/
-
 const MIN_WIDTH_OBJET_WITH_TRAIT = 40
 
 class AObject {
@@ -55,14 +50,7 @@ class AObject {
     * Retourne les propriétés de l'objet
   ***/
   static getObjetProps(){
-    const note = $('button[data-type-aobject="note"].obb.selected')[0].getAttribute('data-value')
-    const alteration = $('button[data-type-aobject="alteration"].obb.selected')[0].getAttribute('data-value')
-    const type = $('button[data-type-aobject="otype"].obb.selected')[0].getAttribute('data-value')
-    const harmony = $('button[data-type-aobject="harmony"].obb.selected')[0].getAttribute('data-value')
-    const nature = $('button[data-type-aobject="nature"].obb.selected')[0].getAttribute('data-value')
-    const cadence = $('button[data-type-aobject="cadence"].obb.selected')[0].getAttribute('data-value')
-    const segment = $('button[data-type-aobject="segment"].obb.selected')[0].getAttribute('data-value')
-    return { note:note, type:type, harmony:harmony, nature:nature, alteration:alteration, segment:segment }
+    return Panneau.get('analyse').propsAObjectToolbox.getValues()
   }
 
 
@@ -203,9 +191,7 @@ class AObject {
     const otype = objProps.type
     switch(otype){
       case 'harmony': mark = objProps.harmony; break;
-      case 'modulation': mark = ENG_NOTE_TO_ITA_NOTE[objProps.note].toUpperCase(); break;
-      case 'segment': return '';
-      default: mark = objProps.note.toUpperCase()
+      default: mark = objProps.note
     }
     mark = `<span class="nom">${mark}</span>`
     if ( objProps.alteration != '♮' ) { mark += `<span class="alte">${objProps.alteration}</span>` }

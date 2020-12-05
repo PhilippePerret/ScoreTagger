@@ -10,6 +10,7 @@ class PanneauAnalyse extends Panneau {
     document.body.style.width = null
     if(!this.observed){
       this.propsAObjectToolbox = new PropsAObjectToolbox()
+      this.propsAObjectToolbox.setInterfaceForType('chord')
       this.propsAObjectToolbox.observe()
       this.observe()
     }

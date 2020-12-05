@@ -3,6 +3,7 @@
 * Class AObjectToolbox
 * --------------------
 * Boite pour éditer un objet d'analyse quelconque (quand on clique dessus)
+*
 ***/
 class AObjectToolbox {
   static show(aobject){

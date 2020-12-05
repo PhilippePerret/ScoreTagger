@@ -48,10 +48,23 @@ div.marge-tools.analyse
     top: 100px
     right: 0
     text-align: left
-
+    *
+      font-size: 12.7pt
+    div.objets-prop
+      margin-top: 8px
     button
       &.obb
         // Un bouton outil sélection
         &.selected
           background-color: darkgreen
           color: white
+      &[data-type-aobject="note"]
+        height: 30px
+        width: 30px
+        vertical-align: middle
+      &[data-type-aobject="alteration"]
+        width: 30px
+        height: 26px
+        vertical-align: middle
+      &[data-type-aobject="nature"]
+        height: 30px

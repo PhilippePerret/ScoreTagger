@@ -33,15 +33,17 @@
     </div>
   </div>
   <!-- Toolbox des propriétés à choisir de l'objet d'analyse -->
+  <div id="aobject_apercu" style="font-size:1.5em;font-weight:bold;padding:4px 1em;"></div>
   <div id="objets">
-    <div id="objets-type">
+    <div id="objets-type" class="objets-prop">
       <button type="button" id="otype-chord" data-value="chord" data-type-aobject="otype" class="obb selected">Accord</button>
       <button type="button" id="otype-harmony" data-value="harmony" data-type-aobject="otype" class="obb">Harmonie</button>
       <button type="button" id="otype-modulation" data-value="modulation" data-type-aobject="otype" class="obb">Modulation</button>
       <button type="button" id="otype-cadence" data-value="cadence" data-type-aobject="otype" class="obb">Cadence</button>
       <button type="button" id="otype-segment" data-value="segment" data-type-aobject="otype" class="obb">Segment</button>
     </div>
-    <div id="objets-notes">
+    <div id="objets-notes" class="objets-prop">
+      <button type="button" id="note-0" data-type-aobject="note" data-value="" class="obb">-</button>
       <button type="button" id="note-c" data-type-aobject="note" data-value="c" class="obb selected">do</button>
       <button type="button" id="note-d" data-type-aobject="note" data-value="d" class="obb">ré</button>
       <button type="button" id="note-e" data-type-aobject="note" data-value="e" class="obb">mi</button>
@@ -50,12 +52,12 @@
       <button type="button" id="note-a" data-type-aobject="note" data-value="a" class="obb">la</button>
       <button type="button" id="note-b" data-type-aobject="note" data-value="b" class="obb">si</button>
     </div>
-    <div id="objets-alterations">
-      <button type="button" id="alteration-becarre" data-value="♮" data-type-aobject="alteration" class="obb selected">♮</button>
-      <button type="button" id="alteration-diese" data-value="♯" data-type-aobject="alteration" class="obb">♯</button>
-      <button type="button" id="alteration-bemol" data-value="♭" data-type-aobject="alteration" class="obb">♭</button>
+    <div id="objets-alterations" class="objets-prop">
+      <button type="button" id="alteration-n" data-value="n" data-type-aobject="alteration" class="obb selected">♮</button>
+      <button type="button" id="alteration-d" data-value="d" data-type-aobject="alteration" class="obb">♯</button>
+      <button type="button" id="alteration-b" data-value="b" data-type-aobject="alteration" class="obb">♭</button>
     </div>
-    <div id="objets-harmonies" class="hidden">
+    <div id="objets-harmonies" class="hidden objets-prop">
       <button type="button" id="harmony-none" data-value="none" data-type-aobject="harmony" class="obb">---</button>
       <button type="button" id="harmony-I" data-value="I" data-type-aobject="harmony" class="obb selected">I</button>
       <button type="button" id="harmony-V" data-value="V" data-type-aobject="harmony" class="obb">V</button>
@@ -68,24 +70,17 @@
       <button type="button" id="harmony-VdV" data-value="VdV" data-type-aobject="harmony" class="obb">V de V</button>
       <button type="button" id="harmony-VIIdV" data-value="VIIdV" data-type-aobject="harmony" class="obb">VII de V</button>
     </div>
-    <div id="objets-natures">
+    <div id="objets-natures" class="objets-prop">
       <button type="button" id="nature-Maj" data-value="Maj" data-type-aobject="nature" class="obb selected">Maj</button>
       <button type="button" id="nature-m" data-value="m" data-type-aobject="nature" class="obb">min</button>
-      <button type="button" id="nature-m7" data-value="min7" data-type-aobject="nature" class="obb">min7</button>
+      <button type="button" id="nature-m7" data-value="m7" data-type-aobject="nature" class="obb">m7</button>
       <button type="button" id="nature-7" data-value="7" data-type-aobject="nature" class="obb">7</button>
       <button type="button" id="nature-7dim" data-value="7dim" data-type-aobject="nature" class="obb">7dim</button>
       <button type="button" id="nature-5dm" data-value="5dim" data-type-aobject="nature" class="obb">5dim</button>
       <button type="button" id="nature-6aug" data-value="6aug" data-type-aobject="nature" class="obb">6aug</button>
       <button type="button" id="nature-6Nap" data-value="6Nap" data-type-aobject="nature" class="obb">6nap</button>
     </div>
-    <div id="objets-cadences" class="hidden">
-      <button type="button" data-type-aobject="cadence" id="cadence-P" data-value="C.P." class="obb selected">C.P.</button>
-      <button type="button" data-type-aobject="cadence" id="cadence-I" data-value="C.Imp." class="obb">C.Imp.</button>
-      <button type="button" data-type-aobject="cadence" id="cadence-I" data-value="C.Ital." class="obb">C.Ital.</button>
-      <button type="button" data-type-aobject="cadence" id="cadence-D" data-value="½ C." class="obb">½ Cad.</button>
-      <button type="button" data-type-aobject="cadence" id="cadence-R" data-value="C.R" class="obb">C.R.</button>
-    </div>
-    <div id="objets-segments" class="hidden">
+    <div id="objets-segments" class="hidden objets-prop">
       <button type="button" data-type-aobject="segment" id="segment-crochets-top" data-value="up" class="obb selected">⎴</button>
       <button type="button" data-type-aobject="segment" id="segment-crochets-bot" data-value="down" class="obb">⎵</button>
     </div>
