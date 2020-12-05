@@ -102,6 +102,7 @@ class PropsAObjectToolbox {
     * Si c'est le type modulation, il faut :
     *   - sélection "sans degré harmonique"
     *   - masquer les boutons de nature autre que "Maj" et "min"
+    *   - sélectionner la nature "Maj"
     */
     let butNoHarm;
     if ( POAButton.items ) {
@@ -109,7 +110,10 @@ class PropsAObjectToolbox {
       butNoHarm.hideIf(ot=='harmony')
     }
     if ( ot == 'modulation' ) {
-      if (POAButton.items) butNoHarm.select()
+      if (POAButton.items){
+        butNoHarm.select()
+        POAButton.select('nature-Maj')
+      }
     } else if ( ot == 'harmony' ) {
       POAButton.select('harmony-I')
     }
