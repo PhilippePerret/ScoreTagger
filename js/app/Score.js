@@ -1,6 +1,6 @@
 'use strict';
 
-const TOP_PAGE = 1065
+const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 
 class Score {
 
@@ -24,48 +24,6 @@ class Score {
     } else {
       return new Promise((ok,ko) => {ok()})
     }
-  }
-
-  /**
-  * Méthode qui calcule les dimensions
-  *
-  * On part du principe qu'un système se présente sous cette forme : cf.
-  * le manuel.
-  * +data_systems+ Les données des systèmes de l'analyse
-  ***/
-  static calculateDim(data_systems){
-    /**
-    * D'abord, on a besoin de connaitre la hauteur moyenne des systèmes de
-    * cette analyse. On prend tous les systèmes et on en calcule la hauteur
-    * moyenne
-    ***/
-    if (undefined == data_systems){
-      return Ajax.send('get_data_pages.rb').then(ret => {
-        if (ret.error) return erreur(ret.error)
-        Score.calculateDim(ret.data_pages)
-      })
-    }
-
-    console.log("On va calculer la hauteur moyenne avec ", data_systems)
-
-    var allheights = 0
-    var nbrheights = 0
-    for ( var ipage in data_systems ) {
-      for ( var isys in data_systems[ipage] ) {
-        allheights += data_systems[ipage][isys].height
-        ++ nbrheights
-      }
-    }
-    this.hauteur_system_moyenne = parseInt(allheight / nbrheights, 10)
-    console.info("this.hauteur_system_moyenne = %i", this.hauteur_system_moyenne)
-
-    /**
-    * La première page étant particulière, on la traite à part : on considère
-    * que trois systèmes seulement seront posés dessus et on les compte à
-    * l'envers, en partant du dessous.
-    ***/
-
-
   }
 
   constructor(data) {
@@ -110,6 +68,12 @@ class Score {
     })
   }
 
+
+  /**
+  * Préférences
+  ***/
+  get preferences(){return this._prefs || (this._prefs = new Preferences(this))}
+
   /**
   * Méthode qui, après le chargement des données des objets d'analyse,
   * les dispatch dans AObject et les reconstruit
@@ -118,7 +82,6 @@ class Score {
     // TODO Régler AObject.lastId avec la valeur du dernier ID
     console.info("Je dois dispatcher les objets enregistrés")
   }
-
 
 
   // Méthode pour imprimer la partition analysée
@@ -148,6 +111,11 @@ class Score {
     if ( this._data.score_ini_path == ""){
       return erreur("Il faut indiquer le chemin d'accès à la partition originale !")
     }
+    // On récupère les valeurs de préférences
+    this.preferences.getValuesInFields()
+    this._data.preferences = this.preferences.getData()
+
+    // Pour poursuivre
     return true
   }
 
@@ -160,11 +128,12 @@ class Score {
         ret.data = {}
       }
       this._data = ret.data
+      this.preferences.setData(ret.data.preferences)
     })
   }
 
   /**
-    * Méthode qui lance la découpe de la partition originale d'après
+    * Méthode qui lance la découpe de la page de partition originale d'après
     * les lignes de découpe définies dans +cropLinesData+
   ***/
   cutPage(numPage, cropLinesData, callback){

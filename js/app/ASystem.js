@@ -18,7 +18,6 @@ class ASystem {
     return this.items[index]
   }
   static add(system){
-    console.log("add: ", system)
     if ( undefined == this.items ) this.items = {}
     Object.assign(this.items, { [system.index]: system})
   }
@@ -29,6 +28,7 @@ class ASystem {
     this.isystem  = data.isystem
     this.ipage    = data.ipage
     this.height   = data.height
+    this.score    = Score.current
     this.constructor.add(this)
   }
 
@@ -47,53 +47,62 @@ class ASystem {
     const img = DCreate('IMG', {id: this.id, class:'system'})
     img.src = this.imageSrc
     img.setAttribute('data-id', this.minid)
-    $('#systems-container').append(img)
+    this.container.appendChild(img)
     this.obj = img
     this.positionne()
     this.observe()
   }
 
+  /**
+  * Positionnement du système
+  *
+  * Ce positionnement doit être fait de telle sorte qu'un système (avec
+  * ses objets) ne chevauche jamais une page.
+  ***/
   positionne(){
     var fromY
-    if ( this.index > 0 ) {
-      var prev_system = ASystem.get(this.index - 1)
-      fromY = prev_system.top + prev_system.height
+    if ( this.index == 0 ) {
+      // Tout premier système
+
+      this.top = this.score.preferences.first_page.first_system_top
+
     } else {
-      fromY = 0
-    }
 
-    /**
-    * J'essaie de placer les systèmes en fonction d'un nombre de systèmes
-    * qui pourra être défini sur la page d'accueil
-    ***/
-    const NombreSystemsPerPage = Score.current.nombre_systems_per_page || 4
-    if ( undefined == Score.current.isystem_of_page){
-      Score.current.isystem_of_page = -1
-      const portionsHeight = parseInt(PAGE_HEIGHT_PX / NombreSystemsPerPage, 10)
-      console.log("Hauteur de portion :", portionsHeight)
-      ASystem.TopsPortions = []
-      for(var i = 0; i < NombreSystemsPerPage; ++ i){
-        ASystem.TopsPortions.push( i * portionsHeight )
+      var prev_system = ASystem.get(this.index - 1)
+      fromY = prev_system.bottom_limit
+
+      // La distance entre système (Space Between Systems)
+      const SBS = this.score.preferences.space_between_systems
+
+      // La page sur laquelle on se trouve
+      let current_page = Math.floor(fromY / HEIGHT_PAGE) + 1
+
+      // La ligne basse de cette page, la ligne à ne pas franchir
+      const bottom_limit = current_page * HEIGHT_PAGE
+
+      // Si le système et ses objets inférieurs dépassent le bord bas, on
+      // doit passer le système sur la page suivante
+      if ( fromY + SBS + this.hauteur_totale < bottom_limit ) {
+        // <= La limite n'est pas franchie (on a la place)
+        // => On pose le système dans le flux normal, à distance définie
+        // Note : on parle ici du top de l'image du système, donc il faut
+        // ajouter la distance avec la ligne supérieure maximale, la ligne
+        // de segment
+        this.top = fromY + SBS + this.lprefs.ligne_segment
+      } else {
+        // <= La limite est franchie
+        // => Il faut mettre le système sur la page suivante
+        this.top = bottom_limit + this.lprefs.ligne_segment
       }
+
     }
-    ++ Score.current.isystem_of_page
-    if ( Score.current.isystem_of_page > NombreSystemsPerPage - 1 ){
-      Score.current.isystem_of_page = 0
-    }
-    console.log("Score.current.isystem_of_page = %i", Score.current.isystem_of_page)
-    const topRelThisSystem = ASystem.TopsPortions[Score.current.isystem_of_page]
-    console.log("Top relatif de ce système : %i", topRelThisSystem)
 
-    const SpaceBetweenSystems = Score.current.space_between_systems || 80
-    this.top = fromY + SpaceBetweenSystems
-
-    const pageNumber = Math.floor(this.top / PAGE_HEIGHT_PX) + 1
-    console.log("pageNumber = ", pageNumber)
-    const bordTopPage = (pageNumber - 1) * PAGE_HEIGHT_PX
-    this.top = bordTopPage + topRelThisSystem
-    console.log("Top absolu de ce système : %i", this.top)
-
+    // On position le système
     this.obj.style.top = `${this.top}px`
+
+    // On met toujours le container à cette hauteur + une marge
+    this.container.style.height = `${this.top + 500}px`
+
   }
 
   observe(){
@@ -104,7 +113,35 @@ class ASystem {
     $(this.obj).on('click', this.onClick.bind(this))
   }
 
+  /**
+  * Position des lignes du système
+  * Chaque propriété retourne la position en pixel
+  ***/
 
+  get ligne_segment(){return this._lseg || (this._lseg = this.top - this.lprefs.ligne_segment)}
+  get ligne_modulation(){return this._lmod || (this._lmod = this.top - this.lprefs.ligne_modulation)}
+  get ligne_accord(){return this._lacc || (this._lacc = this.top - this.lprefs.ligne_accord)}
+  get ligne_harmonie(){return this._lhar || (this._lhar = this.bottom + this.lprefs.ligne_harmonie)}
+  get ligne_cadence(){return this._lcad || (this._lcad = this.bottom + this.lprefs.ligne_cadence)}
+
+  // La hauteur totale du système courant
+  // Cette propriété n'a pas besoin de connaitre this.top
+  get hauteur_totale(){return this._htot || (this._htot = this.lprefs.ligne_segment + this.height + this.lprefs.ligne_cadence + 20)}
+
+  // La limite vraiment inférieure du système, tout compris
+  // Cette propriété a besoin de connaitre this.top
+  get bottom_limit(){return this._bottom_limit || (this._bottom_limit = this.ligne_cadence + 20)}
+
+  // Raccourci
+  get lprefs(){return this.score.preferences.lignes}
+
+  /**
+  * Données générales
+  ***/
+
+  get bottom(){
+    return this._bottom || (this._bottom = this.top + this.height)
+  }
 
   get imageSrc(){
     return this._imgsrc || (this._imgsrc = `_score_/${CURRENT_ANALYSE}/systems/images/${this.imageName}`)
@@ -117,5 +154,8 @@ class ASystem {
   }
   get minid(){
     return this._minid || (this._minid = `${this.ipage}-${this.isystem}`)
+  }
+  get container(){
+    return this._cont || (this._cont = $('#systems-container')[0])
   }
 }

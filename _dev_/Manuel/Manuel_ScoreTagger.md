@@ -41,9 +41,16 @@ La difficulté consiste à les positionner correctement sur la page pour qu’il
 
 #### Éléments d’un système
 
+Pour placer les éléments (les « objets d'analyse ») sur la table d’analyse, on se sert de trois lignes supérieures et trois lignes inférieures.
+
 ~~~bash
 
+–––––––––––––
+						|				Segment supérieur			ligne_segment
+ –––
+| G                 Modulation						ligne_modulation
 
+C     G							Accord								ligne_accord
 
 -------------|
 -------------|
@@ -51,10 +58,25 @@ La difficulté consiste à les positionner correctement sur la page pour qu’il
 -------------|
 -------------|
 
-I    V							Harmonie
+I    V							Harmonie							ligne_harmonie
 
-________| CP				Cadence
+___|CP							Cadence								ligne_cadence
+
+	|_________|				Pédale / Seg. inf.		ligne_pedale
+						
 ~~~
+
+
+
+Les lignes supérieures (au-dessus de portée) se comptent à partir du `top` de la portée (i.e. du système), les lignes inférieures se comptent à partir du `bottom` du système.
+
+Ces valeurs sont définies dans `Score.current.preferences.lignes.<nom ligne>` et sont toujours positives, par rapport au bord relatif. Par exemple, pour obtenir la position d’un objet sur la ligne de modulation, on fait :
+
+~~~ruby
+h = <system>.top - Score.current.preferences.lignes.ligne_modulation
+~~~
+
+
 
 
 

@@ -32,7 +32,6 @@ class App {
     console.log("On peut commencer !")
 
     // Pour lancer des procédures directement au cours de l'implémentation
-    Score.calculateDim()
 
     // Pour essai du code ruby (_scripts_/_essai_.rb)
     // UI.run_script_essai()
