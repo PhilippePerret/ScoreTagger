@@ -1,5 +1,6 @@
 'use strict';
 
+const SCORE_ANALYZE_PROPS = ['title', 'composer','composing-year','analyze-year', 'analyst', 'incipit']
 const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 
 class Score {
@@ -34,16 +35,6 @@ class Score {
 
 constructor(data) {
   this._data = data || {}
-}
-
-/**
-* Méthode qui place les données dans les fenêtres/onglets
-***/
-dispatchData(){
-  this.score_is_prepared = this.data.score_is_prepared
-  $('input#analyse_folder_name').val(CURRENT_ANALYSE)
-  $('input#analyse_partition_path').val(this.data.score_ini_path)
-  // TODO Ajouter titre, auteur, date, etc.
 }
 
 // Sauvegarde les données générales de la partition (titre, auteur,
@@ -120,7 +111,7 @@ getValuesAndSave(){
 * (normalement : en vue de leur enregistrement)
 ***/
 getValuesInFields(){
-  this._data.folder_name    = $('input#analyse_folder_name').val()
+  this._data.folder_name = $('input#analyse_folder_name').val()
   if ( this._data.folder_name == "" ) {
     return erreur("Il faut indiquer le nom de l'analyse !")
   }
@@ -128,6 +119,10 @@ getValuesInFields(){
   if ( this._data.score_ini_path == ""){
     return erreur("Il faut indiquer le chemin d'accès à la partition originale !")
   }
+  // Les valeurs options des titre, compositeur, etc.
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    Object.assign(this._data, {[prop]: $(`#score-${prop}`).val().trim()})
+  })
   // On récupère les valeurs de préférences
   this.preferences.getValuesInFields()
   this._data.preferences = this.preferences.getData()
@@ -135,6 +130,19 @@ getValuesInFields(){
   // Pour poursuivre
   return true
 }
+
+/**
+* Méthode qui place les données dans les fenêtres/onglets
+***/
+dispatchData(){
+  this.score_is_prepared = this.data.score_is_prepared
+  $('input#analyse_folder_name').val(CURRENT_ANALYSE)
+  $('input#analyse_partition_path').val(this.data.score_ini_path)
+  // Les valeurs options des titre, compositeur, etc.
+  SCORE_ANALYZE_PROPS.forEach(prop => $(`#score-${prop}`).val(this.data[prop]))
+  // Préférences
+}
+
 
 get data(){ return this._data }
 

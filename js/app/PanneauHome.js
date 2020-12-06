@@ -13,7 +13,7 @@ class PanneauHome extends Panneau {
 
   observe(){
     super.observe()
-    $('#btn-save-analyse-data').on('click', this.onClickSaveButton.bind(this))
+    $('.btn-save-analyse-data').on('click', this.onClickSaveButton.bind(this))
     $('#btn-load-analyse-data').on('click', this.onClickLoadButton.bind(this))
     $('#btn-prepare-score').on('click', this.onClickPrepareButton.bind(this))
     this.observed = true
