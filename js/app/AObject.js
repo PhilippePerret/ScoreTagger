@@ -62,7 +62,6 @@ class AObject {
     *   objetProps: Les propriétés d'objet, telles que définie dans la toolbox
     *
   ***/
-
   constructor(data) {
     this.data = data
     this.id = this.data.id
@@ -91,9 +90,9 @@ class AObject {
   update(what){
     switch(what){
       case 'width':
-        if(['chord','harmony'].includes(this.objetProps.type)){
-          const method = this.data.width > MIN_WIDTH_OBJET_WITH_TRAIT ? 'remove' : 'add'
-          $(this.obj).find('.trait')[`${method}Class`]('hidden')
+        if(['chord','harmony','pedale'].includes(this.objetProps.type)){
+          const condition = this.data.width < MIN_WIDTH_OBJET_WITH_TRAIT
+          UI.addClassIf($(this.obj).find('.trait'), condition, 'hidden')
         }
         // On laisse filer pour la suite
       case 'left':
@@ -124,7 +123,7 @@ class AObject {
     // Les propriétés d'objet sélectionnés
     // console.debug("objetProps:", this.objetProps)
 
-    // Le DIV PRINCIPAL qui sera ajouté au document (appelé aussi TAG)
+    // Le DIV PRINCIPAL qui sera ajouté au document
     const div_id = `ao-${this.data.id}`
     var css = ['aobjet', oProps.type]
     if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
@@ -144,6 +143,7 @@ class AObject {
         break;
       case 'chord':
       case 'harmony':
+      case 'pedale':
         this.buildAsWithTrait();
         break;
       default: $(this.obj).html(this.mark)
@@ -194,7 +194,7 @@ class AObject {
       default: mark = objProps.note
     }
     mark = `<span class="nom">${mark}</span>`
-    if ( objProps.alteration != '♮' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
+    if ( objProps.alteration != '' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
     if (objProps.nature != 'Maj') {
       mark += `<span class="nat">${objProps.nature}</span>`
     }

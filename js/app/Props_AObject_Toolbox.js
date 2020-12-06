@@ -64,7 +64,10 @@ class PropsAObjectToolbox {
   setInterfaceForType(ot){
     // console.debug(`-> setInterfaceForType(ot = ${ot})`)
     this.currentOType = ot
-    const deflistCad = ['harmony','segment']
+
+    /**
+    * Visibilité des groupes de boutons en fonction du type courant
+    ***/
     new DOM(this.noteButtons).showIf(!['harmony'].includes(ot))
     new DOM(this.alterButtons).showIf(!['cadence'].includes(ot))
     new DOM(this.segmentButtons).showIf(ot == 'segment')
@@ -90,14 +93,18 @@ class PropsAObjectToolbox {
     for(var k in alterValues){
       const button = $(`button#alteration-${k}`)
       const value  = alterValues[k]
-      if ( value === null ) {
-        button.addClass('invisible')
-      } else {
-        button.removeClass('invisible')
+      UI.addClassIf(button, value === null, 'invisible')
+      if ( ! (value === null) ) {
         button.html(value)
         button.attr('data-value', value)
       }
     }
+    /**
+    * Si c'est le type 'cadence', il faut l'indiquer dans le div contenant
+    * les boutons pour changer leur taille
+    ***/
+    UI.addClassIf(this.noteButtons, ot=='cadence', 'cadence')
+
     /**
     * Si c'est le type modulation, il faut :
     *   - sélection "sans degré harmonique"
@@ -120,10 +127,10 @@ class PropsAObjectToolbox {
     // Pour le type 'modulation', on doit désactiver toutes les natures
     // sauf 'Maj' et 'min'
     $('*[data-type-aobject="nature"]').each((i, button) => {
-      console.debug("button", button)
-      const visu = (ot != 'modulation') || ['nature-Maj','nature-m'].includes(button.id)
-      $(button)[(visu?'remove':'add') + 'Class']('invisible')
+      const isInvi = (ot != 'modulation') || ['nature-Maj','nature-m'].includes(button.id)
+      UI.addClassIf(button, !isInvi, 'invisible')
     })
+
     this.updateOverview()
   }
 
@@ -291,7 +298,12 @@ const REALVALS_PER_TYPE = {
   }
   , cadence: {
       note: {
-        '0': null, 'c':'C. Parf', 'd':'C. Imp', 'e':'½ C.', 'f':'C. Plag', 'g':'C. Romp', 'a':'C. Faur', 'b':'C. Bar'
+        '0': null, 'c':'Cad. Parf', 'd':'Cad. Imp', 'e':'½ Cad.', 'f':'Cad. Plag', 'g':'Cad. Romp', 'a':'Cad. Faur', 'b':'Cad. Bar'
+      }
+  }
+  , pedale: {
+      note: {
+        '0': null, 'c':'1', 'd':'5', 'e':'4', 'f':'2', 'g':'3', 'a':'6', 'b':'7'
       }
   }
   , segment: {

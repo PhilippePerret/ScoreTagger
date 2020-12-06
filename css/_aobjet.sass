@@ -7,6 +7,13 @@ div.aobjet
   font-family: Georgia
   line-height: 1
 
+  div.trait
+    display: inline-block
+    width: -webkit-fill-available
+    height: 6px
+    border-top: 2px solid
+    margin-left: 10px
+
   &.selected
     border-color: blue!important
 
@@ -37,11 +44,26 @@ div.aobjet
       display: inline-block
       width: auto
     div.trait
-      display: inline-block
-      width: -webkit-fill-available
-      height: 6px
-      border-top: 2px solid
-      margin-left: 10px
+      // cf. plus haut
+
+  /* Tag complexe pédale */
+  &.pedale
+    white-space: nowrap
+    div.text
+      float: left
+      border: 1px solid
+      border-radius: 8px
+      width: 14px
+      height: 14px
+      text-align: center
+      line-height: 0.8
+      span.nom
+        font-size: 10.7pt
+    div.trait
+      // cf. plus haut
+      margin-left: 4px
+      height: 4px
+      width: calc(100% - 16px)
 
   /* Tag complexe modulation */
   &.modulation

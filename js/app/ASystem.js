@@ -98,6 +98,10 @@ static add(system){
     this.aobjets.push(aobj)
   }
 
+  /**
+  * Construction du système sur la partition
+  ***/
+
   build(){
     // const img = DCreate('IMG', {class:'system', 'data-id': this.minid, src: this.imageSrc})
     const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': this.minid, inner:[
@@ -117,36 +121,38 @@ static add(system){
   * ses objets) ne chevauche jamais une page.
   ***/
   positionne(){
+    const debug = true
+    debug && console.debug("\n=== POSITIONNEMENT SYSTÈME %s ===", this.minid)
     var fromY
     if ( this.index == 0 ) {
       // Tout premier système
 
       this.top = this.score.preferences.first_page.first_system_top
-      // console.debug("Première page, this.top = %i", this.top)
+      debug && console.debug("Première page, this.top = %i", this.top)
 
     } else {
 
-      var prev_system = ASystem.get(this.index - 1)
+      const prev_system = ASystem.get(this.index - 1)
       fromY = prev_system.bottom_limit
-      // console.debug("fromY (prev_system.bottom_limit) = %i", prev_system.bottom_limit)
+      debug && console.debug("fromY (prev_system.bottom_limit) = %i", prev_system.bottom_limit)
 
       // La distance entre système (Space Between Systems)
       const SBS = this.score.preferences.space_between_systems
-      // console.debug("space_between_systems = %i", SBS)
+      debug && console.debug("space_between_systems = %i", SBS)
 
       // La page sur laquelle on se trouve
       let current_page = Math.floor(fromY / HEIGHT_PAGE) + 1
-      // console.debug("Page courante : %i", current_page)
+      debug && console.debug("Page courante : %i", current_page)
 
       // La ligne basse de cette page, la ligne à ne pas franchir
       const bottom_limit = current_page * HEIGHT_PAGE
-      // console.debug("bottom_limit = %i", bottom_limit)
+      debug && console.debug("bottom_limit de page %i = %i", current_page, bottom_limit)
 
       // Si le système et ses objets inférieurs dépassent le bord bas, on
       // doit passer le système sur la page suivante
-      // console.debug("this.hauteur_totale = %i", this.hauteur_totale)
-      // console.debug("fromY + SBS + this.hauteur_totale / bottom_limit", fromY + SBS + this.hauteur_totale, bottom_limit)
-      if ( fromY + SBS + this.hauteur_totale < bottom_limit ) {
+      debug && console.debug("Hauteur totale (fullHeight) = %i", this.fullHeight)
+      debug && console.debug("fromY + SBS + fullHeight / bottom_limit", fromY + SBS + this.fullHeight, bottom_limit)
+      if ( fromY + SBS + this.fullHeight < bottom_limit ) {
         // <= La limite n'est pas franchie (on a la place)
         // => On pose le système dans le flux normal, à distance définie
         // Note : on parle ici du top de l'image du système, donc il faut
@@ -160,7 +166,7 @@ static add(system){
         fromY = bottom_limit
       }
       this.top = fromY + SBS - this.topPerTypeObjet('segment')
-      // console.debug("this.top final = %i", this.top)
+      debug && console.debug("this.top final = %i", this.top)
     }
 
     // On position le système
@@ -169,6 +175,15 @@ static add(system){
     // On met toujours le container à cette hauteur + une marge
     this.container.style.height = `${this.top + 500}px`
 
+  }
+
+  /**
+  * Retourne la hauteur totale du système, depuis sa ligne de segment
+  * supérieure jusqu'à sa ligne de pédale, en tenant compte de sa hauteur
+  * de système propre et des valeurs de préférences.
+  ***/
+  get fullHeight(){
+    return this._fullheight || (this._fullheight = this.calcFullHeight())
   }
 
   observe(){
@@ -184,18 +199,19 @@ static add(system){
   * Chaque propriété retourne la position en pixel
   ***/
 
-  // Méthode principale qui retourne le top de l'objet en fonction de son
-  // type
+  /**
+  * Retourne le top de l'objet d'analyse dans le conteneur du système en
+  * fonction de son type +otype+.
+  * Quand la valeur est négative, on doit placer l'objet au-dessus du système
+  * le top est donc la valeur enregistrée en préférences. En revanche, lorsque
+  * la hauteur de la ligne du type est positive ou nulle, c'est que l'objet se
+  * trouve SOUS le système. Pour obtenir son top exact, il faut donc ajouter
+  * à la valeur de préférence la hauteur réelle (rHeight) du système
+  ***/
   topPerTypeObjet(otype){
     let tpto = Score.current.preferences.lignes[otype]
     if ( tpto >= 0 ) tpto += this.rHeight
     return tpto
-  }
-
-  // La hauteur totale du système courant
-  // Cette propriété n'a pas besoin de connaitre this.top
-  get hauteur_totale(){
-    return this._htot || (this._htot = this.calcHauteurTotale())
   }
 
   // La limite vraiment inférieure du système, tout compris
@@ -243,11 +259,12 @@ static add(system){
 * Méthodes de calcul
 * ------------------
 ***/
-calcHauteurTotale(){
-  return (-this.topPerTypeObjet('segment')) + this.rHeight + this.topPerTypeObjet('pedale') + 20
+calcFullHeight() {
+  const lprefs = Score.current.preferences.lignes
+  return (0 - lprefs.segment + this.rHeight + lprefs.pedale + 17)
 }
 calcBottomLimit(){
-  return this.bottom + this.topPerTypeObjet('pedale') + 20
+  return this.top + this.fullHeight
 }
 
 

@@ -27,6 +27,14 @@ class UI {
       !!! NE RIEN TOUCHER CI-DESSOUS !!!
   --------------------------------------------------------------------- **/
 
+  /**
+  * Quand on doit ajouter/retirer la class CSS +css+ de l'objet +obj+
+  * suivant que +condition+ est vrai ou fausse
+  ***/
+  static addClassIf(obj, condition, css){
+    $(obj)[condition?'addClass':'removeClass'](css)
+  }
+
   // Observer le clic sur l'élément DOM +button+ en actionnant la méthode
   // +method+
   static listenClick(button, method){
