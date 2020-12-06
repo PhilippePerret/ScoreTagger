@@ -16,16 +16,24 @@ class ASystem {
 static get(index){
   return this.items[index]
 }
+static getByMinId(minid){
+  return this.itemsByMinId[minid]
+}
+
 static add(system){
-  if (undefined == this.items) this.items = {}
+  if (undefined == this.items){
+    this.items = {}
+    this.itemsByMinId = {}
+  }
   Object.assign(this.items, { [system.index]: system})
+  Object.assign(this.itemsByMinId, { [system.minid]: system})
 }
 
   constructor(data) {
     this.data = data
-    this.minid    = data.minid    // p.e. "2-6" ("<page>-<index+1>")
-    this.index    = data.index    // l'index absolu du system (0-start)
-    this.indexInPage = data.indexInPage
+    this.minid        = data.minid    // p.e. "2-6" ("<page>-<index+1>")
+    this.index        = data.index    // l'index absolu du system (0-start)
+    this.indexInPage  = data.indexInPage
     this.top      = data.top  // pas forcément défini à l'instanciation
     this.page     = data.page // numéro de page (1-start)
     this.fullHeight = data.fullHeight
@@ -72,9 +80,18 @@ onClick(ev){
 * Dessine tous les objets d'analyse du système
 ***/
 draw(){
+  console.debug("Dessin du système %s, avec les données objets :", this.minid, this.data.aobjects)
   if ( !this.data.aobjects || this.data.aobjects.length == 0) return ;
-  this.data.aobjects.forEach(data_aobjet => {
-    new AObject(data_aobjet).build()
+  this.data.aobjects.forEach(dobjet => {
+    // Object.assign(dobjet, {})
+    const aobjet = new AObject(dobjet)
+    aobjet.build()
+    // On colle l'objet sur la table d'analyse, accroché au système
+    this.obj.appendChild(aobjet.obj)
+    // On règle le lastId au cas où
+    if ( undefined === AObject.lastId || dobjet.id > AObject.lastId ) {
+      AObject.lastId = dobjet.id
+    }
   })
 }
 
@@ -86,31 +103,29 @@ createNewAObjet(ev){
   const odata = {
       id: AObject.newId()
     , left: ev.offsetX - 10
-    , top: this.topPerTypeObjet(objProps.type)
     , objetProps: objProps
-    , system: this
+    , system: this.minid
   }
   AObject.create(odata)
   this.modified = true
 }
 
-  /**
-  * Pour ajouter l'objet au système.
-  * Ça consiste à :
-  *   - ajouter l'élément DOM de l'objet
-  *   - ajouter l'instance à la liste des objets
-  * +aobj+  Instance de l'objet
-  ***/
-  append(aobj){
-    if ( undefined == this.aobjets ) this.aobjets = []
-    this.obj.appendChild(aobj.obj)
-    this.aobjets.push(aobj)
-  }
+/**
+* Pour ajouter l'objet au système.
+* Ça consiste à :
+*   - ajouter l'élément DOM de l'objet
+*   - ajouter l'instance à la liste des objets
+* +aobj+  Instance de l'objet
+***/
+append(aobj){
+  if ( undefined == this.aobjets ) this.aobjets = []
+  this.obj.appendChild(aobj.obj)
+  this.aobjets.push(aobj)
+}
 
   /**
   * Construction du système sur la partition
   ***/
-
   build(){
     const my = this
     my.imageLoaded = false

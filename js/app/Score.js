@@ -231,7 +231,7 @@ checkImagesLoading(ok){
 
 positionneAndDrawSystems(){
   if ( ! this.score_is_prepared ) {
-    console.log("Calcul de la position de chaque système…")
+    console.debug("Calcul de la position de chaque système…")
     for(var isys in this.systems){
       const system = this.systems[isys]
       if ( isys > 0 ) system.prevSystem = this.systems[isys - 1]

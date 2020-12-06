@@ -8,81 +8,81 @@ const MIN_WIDTH_OBJET_WITH_TRAIT = 40
 
 class AObject {
 
-  static newId(){
-    if (undefined === this.lastId) this.lastId = 0 ;
-    return ++ this.lastId;
-  }
+static newId(){
+  if (undefined === this.lastId) this.lastId = 0 ;
+  return ++ this.lastId;
+}
 
-  static add(item){
-    if (undefined == this.items) this.items = {};
-    Object.assign(this.items, {[item.id]: item})
-  }
-  /**
-  * Création d'un nouvel objet d'analyse
-  *
-  ***/
-  static create(odata){
-    const aobj = new AObject(odata)
-    aobj.build()
-    odata.system.append(aobj)
-  }
+static add(item){
+  if (undefined == this.items) this.items = {};
+  Object.assign(this.items, {[item.id]: item})
+}
 
-  /**
-  * Pour détruire un objet
-  ***/
-  static remove(item){
-    this.selection.remove(item)
-    if (undefined != this.items) {
-      delete this.items[item.id]
-    }
-    item.obj.remove()
-  }
+/**
+* Création d'un nouvel objet d'analyse
+*
+***/
+static create(odata){
+  const aobj = new AObject(odata)
+  aobj.build()
+  aobj.system.append(aobj)
+}
 
-  // On peut utiliser AObject.selection.add ou AObject.selection.remove pour
-  // ajouter ou supprimer des éléments à la sélection
-  static get selection(){return this._selection||(this._selection = new Selection(this))}
-  static onSelect(item) { item.edit() }
-  static onDeselect(item){
-    AObjectToolbox.reset()
+/**
+* Pour détruire un objet
+***/
+static remove(item){
+  this.selection.remove(item)
+  if (undefined != this.items) {
+    delete this.items[item.id]
   }
+  item.obj.remove()
+}
 
-  /**
-    * Retourne les propriétés de l'objet
-  ***/
-  static getObjetProps(){
-    return Panneau.get('analyse').propsAObjectToolbox.getValues()
+// On peut utiliser AObject.selection.add ou AObject.selection.remove pour
+// ajouter ou supprimer des éléments à la sélection
+static get selection(){return this._selection||(this._selection = new Selection(this))}
+static onSelect(item) { item.edit() }
+static onDeselect(item){
+  AObjectToolbox.reset()
+}
+
+/**
+  * Retourne les propriétés de l'objet
+***/
+static getObjetProps(){
+  return Panneau.get('analyse').propsAObjectToolbox.getValues()
+}
+
+/**
+* Data:
+*   id:     Identifiant (nombre)
+*   top:    Hauteur de départ
+*   left:   Décalage x
+*   objetProps: Les propriétés d'objet, telles que définie dans la toolbox
+*
+***/
+constructor(data) {
+  this.data = data
+  this.id = this.data.id
+  this.system = ASystem.getByMinId(this.data.system)
+  this.objetProps = data.objetProps
+  this.constructor.add(this)
+}
+
+/**
+* Les données de l'objet qu'il faut sauvegarder
+***/
+get data2save(){
+  return {
+      id:         this.id
+    , system:     this.system.minid
+    , top:        this.top
+    , left:       this.data.left
+    , width:      this.data.width
+    , objetProps: this.objetProps
   }
-
-
-  /**
-    * data:
-    *   id:     Identifiant (nombre)
-    *   top:    Hauteur de départ
-    *   left:   Décalage x
-    *   objetProps: Les propriétés d'objet, telles que définie dans la toolbox
-    *
-  ***/
-  constructor(data) {
-    this.data = data
-    this.id = this.data.id
-    this.system = this.data.system
-    this.objetProps = data.objetProps
-    this.constructor.add(this)
-  }
-
-  /**
-  * Les données de l'objet qu'il faut sauvegarder
-  ***/
-  get data2save(){
-    return {
-        id:         this.id
-      , system:     this.system.minid
-      , top:        this.top
-      , left:       this.data.left
-      , width:      this.data.width
-      , objetProps: this.objetProps
-    }
-  }
+}
 
   /**
   * Actualisation (après modification dans la boite d'édition)
@@ -109,80 +109,84 @@ class AObject {
         }
     }
   }
-  /**
-    * Construction de l'objet d'analyse
-    *
-  ***/
-  build(){
-    // On a besoin du score courant
-    const score = Score.current
-        , top   = this.data.top
-        , left  = this.data.left
 
-    const oProps = this.objetProps
-    // Les propriétés d'objet sélectionnés
-    // console.debug("objetProps:", this.objetProps)
+/**
+* Construction de l'objet d'analyse
+* @note : il n'est pas écrit dans cette méthode
+***/
+build(){
+  console.debug("Construction de l'objet : ", this.data)
+  // On a besoin du score courant
+  const oProps = this.objetProps
+  const score = Score.current
+      , top   = this.data.top || this.system.topPerTypeObjet(oProps.type)
+      , left  = this.data.left
 
-    // Le DIV PRINCIPAL qui sera ajouté au document
-    const div_id = `ao-${this.data.id}`
-    var css = ['aobjet', oProps.type]
-    if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
-    const div = DCreate('DIV', {id: div_id, text:null, class: css.join(' ')})
+  // Les propriétés d'objet sélectionnés
+  // console.debug("objetProps:", this.objetProps)
 
-    div.setAttribute('style', `top:${top}px;left:${left}px;`)
+  console.debug("Top de l'objet #%i : %i", this.id, top)
 
-    this._obj = div
+  // Le DIV PRINCIPAL qui sera ajouté au document
+  const div_id = `ao-${this.data.id}`
+  var css = ['aobjet', oProps.type]
+  if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
+  const div = DCreate('DIV', {id: div_id, text:null, class: css.join(' ')})
 
-    /**
-    * En fonction du type (modulation, cadence, etc) on peut avoir à
-    * ajouter des éléments
-    ***/
-    switch(this.objetProps.type){
-      case 'modulation':
-        this.buildAsModulation();
-        break;
-      case 'chord':
-      case 'harmony':
-      case 'pedale':
-        this.buildAsWithTrait();
-        break;
-      default: $(this.obj).html(this.mark)
-    }
-    this.observe()
-  }
+  div.setAttribute('style', `top:${top}px;left:${left}px;`)
 
-  buildAsModulation(){
-    const elements = [
-      DCreate('DIV', {class:'ton', text: this.mark}),
-      DCreate('DIV', {class:'vline'})
-    ]
-    $(this.obj).append(elements)
-  }
-  updateAsModulation(){
-    $(this.obj).find('.ton').html(this.mark)
-  }
+  this._obj = div
 
   /**
-  * Pour les accords et les harmonies, on ajoute un tiret possible à partir
-  * d'une certaine longueur
+  * En fonction du type (modulation, cadence, etc) on peut avoir à
+  * ajouter des éléments
   ***/
-  buildAsWithTrait(){
-    const elements = [
-      DCreate('DIV', {class:'text', text: this.mark}),
-      DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`})
-    ]
-    $(this.obj).append(elements)
+  switch(this.objetProps.type){
+    case 'modulation':
+      this.buildAsModulation();
+      break;
+    case 'chord':
+    case 'harmony':
+    case 'pedale':
+      this.buildAsWithTrait();
+      break;
+    default: $(this.obj).html(this.mark)
   }
-  updateAsWithTrait(){
-    $(this.obj).find('.text').html(this.mark)
-  }
+  this.observe()
+}
 
+buildAsModulation(){
+  const elements = [
+    DCreate('DIV', {class:'ton', text: this.mark}),
+    DCreate('DIV', {class:'vline'})
+  ]
+  $(this.obj).append(elements)
+}
 
-  edit(){
-    this.isEdited = true
-    AObjectToolbox.show(this)
-  }
-  unedit(){ this.isEdited = false }
+updateAsModulation(){
+  $(this.obj).find('.ton').html(this.mark)
+}
+
+/**
+* Pour les accords et les harmonies, on ajoute un tiret possible à partir
+* d'une certaine longueur
+***/
+buildAsWithTrait(){
+  const elements = [
+    DCreate('DIV', {class:'text', text: this.mark}),
+    DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`})
+  ]
+  $(this.obj).append(elements)
+}
+updateAsWithTrait(){
+  $(this.obj).find('.text').html(this.mark)
+}
+
+edit(){
+  this.isEdited = true
+  AObjectToolbox.show(this)
+}
+unedit(){ this.isEdited = false }
 
   // Return la marque à écrire sur la partition en fonction du type
   get mark(){
@@ -204,17 +208,17 @@ class AObject {
     return mark
   }
 
-  observe(){
-    // La rendre déplaçable sur l'axe des x
-    const my = this
-    $(this.obj).draggable({
-      axis:'x',
-      stop: my.onChangeXByDrag.bind(my)
-    })
-    this.obj.style.position = 'absolute' //draggable ajoute 'relative'
-    // Le rendre sensible au click pour le sélectionner
-    $(this.obj).on('click', this.toggleSelect.bind(this))
-  }
+observe(){
+  // La rendre déplaçable sur l'axe des x
+  const my = this
+  $(this.obj).draggable({
+    axis:'x',
+    stop: my.onChangeXByDrag.bind(my)
+  })
+  this.obj.style.position = 'absolute' //draggable ajoute 'relative'
+  // Le rendre sensible au click pour le sélectionner
+  $(this.obj).on('click', this.toggleSelect.bind(this))
+}
 
   onChangeXByDrag(ev, ui){
     this.data.left = parseInt(ui.position.left, 10)
