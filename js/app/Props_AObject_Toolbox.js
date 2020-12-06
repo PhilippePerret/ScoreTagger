@@ -136,32 +136,44 @@ class PropsAObjectToolbox {
     const segment = $('button[data-type-aobject="segment"].obb.selected')[0].getAttribute('data-value')
     return { note:note, type:type, harmony:harmony, nature:nature, alteration:alteration, segment:segment }
   }
+
   /**
-  * Actualiser l'aperçu qui permet de voir à quoi ressemblera l'objet au
-  * niveau de son contenu textuel
+  * Actualiser l'aperçu dans l'interface qui permet de voir à quoi ressemblera
+  * le texte de l'objet sur la partition quand on change les valeurs de
+  * l'interface.
   ***/
   updateOverview(){
     const vals = this.getValues()
-    var aper = ""
-    if (vals.type == 'harmony'){
-      aper = vals.harmony
+    $('#aobject_apercu').html(this.buildFinalText(vals))
+  }
+
+  /**
+  * Méthode qui construit le texte final en fonction des données choisies
+  * ou enregistrées.
+  ***/
+  buildFinalText(data){
+    var ft = ""
+    if (data.type == 'harmony'){
+      ft = data.harmony
     } else {
-      aper = vals.note
+      ft = data.note
     }
-    if ( !['cadence'].includes(vals.type)){
-      aper += vals.alteration
+    if ( !['cadence'].includes(data.type)){
+      ft += data.alteration
     }
 
-    if (!['segment'].includes(vals.type)) {
-      if ( vals.nature!='Maj') {
-        aper += vals.nature
+    if (!['segment'].includes(data.type)) {
+      if ( data.nature!='Maj') {
+        ft += data.nature
       }
     }
-    if ( vals.type == 'modulation') {
-      if (vals.harmony != 'none') aper += ` <span class="small">(${vals.harmony})</span>`
+    if ( data.type == 'modulation') {
+      if (data.harmony != 'none') ft += ` <span class="small">(${data.harmony})</span>`
     }
-    $('#aobject_apercu').html(`<span class="small">${vals.type} : </span>${aper}`)
+    ft = `<span class="small">${data.type} : </span>${ft}`
+    return ft
   }
+
 
 
   /**
