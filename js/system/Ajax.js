@@ -1,4 +1,28 @@
 'use strict';
+/** ---------------------------------------------------------------------
+  Class Ajax
+  ----------
+  Envoi des requêtes ajax
+  Version 0.3.1
+
+  @usage
+
+      Ajax.send("<script.rb>", {data}).then( ret => {
+        Traitement du retour si aucune erreur
+      })
+
+  @rappel
+
+      Dans le script ruby appelé, on récupère les données transmises par
+      {data} à l'aide de Ajax.param(<key>)
+
+  * 0.3.1
+      Dans cette version, le retour avec la propriété :error définie
+      est traitée ici, inutile d'utiliser tout le temp 'if (ret.error) ...'
+      En revanche, il n'y a aucune méthode de traitement particulière lors
+      de cette erreur (on pourrait imaginer passer une méthode onError aux
+      données transmises)
+*** --------------------------------------------------------------------- */
 class Ajax {
   /**
     @asyn
@@ -11,6 +35,10 @@ class Ajax {
     })
     hdata = this.prepareData(hdata)
     // console.log("Data ajax : ", data)
+    return this.proceedSending(hdata).then(this.traiteErrorInRetour.bind(this))
+  }
+
+  static proceedSending(hdata){
     return new Promise((ok,ko)=>{
       var data = {
           url: 'ajax/ajax.rb'
@@ -18,10 +46,21 @@ class Ajax {
         , success: ok
         , error: this.onError.bind(this,ko)
       }
-      // console.log("Data ajax :", data)
       $.ajax(data)
     })
   }
+
+  static traiteErrorInRetour(retour){
+    return new Promise((ok,ko) => {
+      if ( retour.error ) {
+        erreur(retour.error)
+      } else {
+        ok(retour)
+      }
+    })
+  }
+
+
   // On transforme toutes les données pour qu'elles respectent leur
   // type
   //    Par exemple, 12 deviendra [12,'number']

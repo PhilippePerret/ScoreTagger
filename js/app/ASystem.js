@@ -41,7 +41,6 @@ static add(system){
   save(){
     const my = this
     Ajax.send('save_system.rb', {data: this.data2save}).then(ret => {
-      if (ret.error) return erreur(ret.error)
       console.info("Système %s sauvé avec succès.", this.minid)
       my.modified = false
     })

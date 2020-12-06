@@ -123,7 +123,6 @@ Une requête ajax fonctionne avec un script ruby.
 ~~~javascript
 Ajax.send('mon-script.rb', {ma:donnee, autres:donnees})
 .then(ret => {
-  if ( ret.error ) return erreur(ret.error)
   if ( ret.message) message(ret.message)
   //... sinon traitement ici ...
 })

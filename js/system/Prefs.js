@@ -9,7 +9,6 @@ class Prefs {
   // Charger les préférences
   static load(){
     Ajax.send('system/prefs/load.rb').then(ret => {
-      if (ret.error) return erreur(ret.error)
       this.data = ret.prefs_data
     }).catch(onError)
   }
@@ -18,8 +17,7 @@ class Prefs {
   static save(quiet = true){
     Ajax.send('system/prefs/save.rb',{prefs_data: this.data})
     .then(ret => {
-      if (ret.error) return erreur(ret.error)
-      if (!quiet) onAjaxSuccess(ret)
+      if (! quiet ) onAjaxSuccess(ret)
     })
   }
 

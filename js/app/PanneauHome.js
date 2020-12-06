@@ -31,12 +31,11 @@ class PanneauHome extends Panneau {
     if ( score_path == "" ) return erreur("Il faut définir le chemin d'accès à la partition ou au dossier contenant les pages classées de la partition.")
     message("Préparation de la partition…")
     Ajax.send('prepare_score.rb', {score_path: score_path})
-    .then(ret => {
-      if (ret.error) return erreur(ret.error)
-      // On peut passer à la découpe
-      message(`Partition préparée (nombre de pages : ${ret.page_count}). Tu peux passer à la découpe.`)
-      Panneau.get('crop').open()
-    })
+    .then(this.confirmationPartitionPrepared.bind(this))
+  }
+  confirmationPartitionPrepared(ret){
+    message(`Partition préparée (nombre de pages : ${ret.page_count}). Tu peux passer à la coupe.`)
+    Panneau.get('crop').open()
   }
 
   onClickSaveButton(ev){

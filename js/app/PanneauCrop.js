@@ -93,15 +93,23 @@ class PanneauCrop extends Panneau {
       this.showPage(this.current_page - 1)
     }
   }
+
+  /**
+  * Demande d'affichage de la page +ipage+ sur la table de coupe
+  ***/
   showPage(ipage){
     this.current_page = Number(ipage)
     Ajax.send('get_data_page.rb', {num: this.current_page})
-    .then(ret => {
-      if ( ret.error ) return erreur(ret.error)
-      this.removeAllCutLines()
-      $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
-      if ( ret.data_page ) this.drawCutLines(ret.data_page.cutlines)
-    })
+    .then(this.drawPage.bind(this, ipage))
+  }
+  /**
+  * Pour "dessiner" vraiment la page sur la table de coupe
+  ***/
+
+  drawPage(ipage, ret){
+    this.removeAllCutLines()
+    $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
+    if ( ret.data_page ) this.drawCutLines(ret.data_page.cutlines)
   }
 
   /**

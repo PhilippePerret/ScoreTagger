@@ -14,16 +14,16 @@ class Score {
     const my = this
     if (CURRENT_ANALYSE){
       $('#analyse_folder_name').val(CURRENT_ANALYSE)
-      return Ajax.send('get_data.rb').then(ret => {
-        if (ret.error) erreur(ret.error)
-        else {
-          my.current = new Score(ret.data)
-          my.current.dispatchData()
-        }
-      })
+      return Ajax.send('get_data.rb')
+      .then(this.initializeWithData.bind(this))
     } else {
       return new Promise((ok,ko) => {ok()})
     }
+  }
+
+  static initializeWithData(ret){
+    this.current = new Score(ret.data)
+    this.current.dispatchData()
   }
 
 /** ---------------------------------------------------------------------
@@ -41,11 +41,8 @@ constructor(data) {
 // chemin d'accès, date, etc.)
 save(callback){
   Ajax.send('save_data.rb', {data: this.data}).then(ret => {
-    if(ret.error)erreur(ret.error)
-    else {
-      message("Données de l'analyse enregistrées.")
-      callback && callback.call()
-    }
+    message("Données de l'analyse enregistrées.")
+    callback && callback.call()
   })
 }
 
@@ -123,18 +120,15 @@ get data(){ return this._data }
 
 getData(){
   Ajax.send('get_data.rb').then(ret => {
-    if (ret.error){
-      erreur(ret.error)
-      ret.data = {}
-    }
+    if ( ret.error ) { ret.data = {} }
     this._data = ret.data
     this.preferences.setData(ret.data.preferences)
   })
 }
 
   /**
-    * Méthode qui lance la découpe de la page de partition originale d'après
-    * les lignes de découpe définies dans +cropLinesData+
+  * Méthode qui lance la découpe de la page de partition originale d'après
+  * les lignes de découpe définies dans +cropLinesData+
   ***/
   cutPage(numPage, cropLinesData, callback){
     Ajax.send('cut_page.rb', {data: cropLinesData, page: numPage})

@@ -42,7 +42,6 @@ class PanneauAnalyse extends Panneau {
     return Ajax.send('get_data_pages.rb')
   }
   drawSystems(ret){
-    if (ret.error) return erreur(ret.error)
     if (ret.data_pages){
       // console.debug("ret.data_pages:", ret.data_pages)
       var index = 0
