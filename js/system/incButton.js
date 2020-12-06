@@ -32,14 +32,6 @@ class IncButton {
   // Méthode publique
   set(val){ this.setValue(val) }
 
-  onPlus(ev){
-    var val = 1
-    return this.incValue(ev, val)
-  }
-  onMoins(ev){
-    var val = -1
-    return this.incValue(ev, val)
-  }
   incValue(ev, upto){
     if ( ev.shiftKey ){ upto = upto * 10 }
     if ( ev.metaKey ) { upto = upto * 2  }
@@ -83,8 +75,71 @@ class IncButton {
   }
 
   observe(){
-    $(this.obj).find('.arrow.top').on('click', this.onPlus.bind(this))
-    $(this.obj).find('.arrow.bottom').on('click', this.onMoins.bind(this))
+    // $(this.obj).find('.arrow.top').on('click', this.onPlus.bind(this))
+    // $(this.obj).find('.arrow.bottom').on('click', this.onMoins.bind(this))
+    // Pour pouvoir agir sur le bouton en maintenant la souris
+    $(this.obj).find('.arrow.top').on('mousedown', this.onMouseDownOnPlus.bind(this))
+    $(this.obj).find('.arrow.bottom').on('mousedown', this.onMouseDownOnMoins.bind(this))
+    $(this.obj).find('.arrow.top').on('mouseup', this.onMouseUpOnPlus.bind(this))
+    $(this.obj).find('.arrow.bottom').on('mouseup', this.onMouseUpOnMoins.bind(this))
+  }
+  onMouseDownOnPlus(ev){
+    this.onPlus(ev)
+    this.addTimeoutTimer(setTimeout(this.runLoopOnPlus.bind(this,ev),900))
+  }
+  onMouseDownOnMoins(ev){
+    this.onMoins(ev)
+    this.addTimeoutTimer(setTimeout(this.runLoopOnMoins.bind(this,ev),900))
+  }
+  runLoopOnPlus(ev){
+    this.addIntervalTimer(setInterval(this.onPlus.bind(this, ev), 100))
+    this.clearAllTimeoutTimers()
+  }
+  runLoopOnMoins(ev){
+    this.addIntervalTimer(setInterval(this.onMoins.bind(this, ev), 100))
+    this.clearAllTimeoutTimers()
+  }
+  onMouseUpOnPlus(ev){
+    this.clearAllTimers()
+  }
+  onMouseUpOnMoins(ev){
+    this.clearAllTimers()
+  }
+  addTimeoutTimer(timer){
+    if (undefined == this.timeoutTimers) this.timeoutTimers = []
+    this.timeoutTimers.push(timer)
+  }
+  addIntervalTimer(timer){
+    if (undefined == this.intervalTimers) this.intervalTimers = []
+    this.intervalTimers.push(timer)
+  }
+  clearAllTimers(){
+    this.clearAllIntervalTimers()
+    this.clearAllTimeoutTimers()
+  }
+  clearAllIntervalTimers(){
+    if (undefined == this.intervalTimers) return
+    this.intervalTimers.forEach(timer => {
+      clearInterval(timer)
+      timer = null
+    })
+    this.intervalTimers = []
+  }
+  clearAllTimeoutTimers(){
+    if ( undefined == this.timeoutTimers ) return
+    this.timeoutTimers.forEach(timer => {
+      clearTimeout(timer)
+      timer = null
+    })
+    this.timeoutTimers = []
+  }
+  onPlus(ev){
+    var val = 1
+    return this.incValue(ev, val)
+  }
+  onMoins(ev){
+    var val = -1
+    return this.incValue(ev, val)
   }
 
   get spanValue(){return this._spanvalue || (this._spanvalue = $(this.obj).find('.incbutton-value')[0])}
