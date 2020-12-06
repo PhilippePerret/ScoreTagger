@@ -1,6 +1,22 @@
-<div class="row">
-  <span class="libelle">Data</span>
-  <span class="value">
-    [[valeur]]
-  </span>
+<!--
+  Contrairement aux autres "formulaires" (qui n'en sont pas, en vrai), pour
+  les préférences on fonctionne essentiellement de manière graphique, avec la
+  possibilité de placer les éléments à la souris
+-->
+<div id="page-temoin">
+  <div id="pref-title">Le Titre de l'œuvre</div>
+  <div id="pref-composer">Le compositeur</div>
+  <div id="pref-composing-year">1756</div>
+  <div id="pref-analyst"><span class="libelle">Analyste</span><span class="value">Nom, prénom</span></div>
+  <div id="pref-analyze-year"><span class="libelle">Année analyse</span><span id="value">2020</span></div>
+
+  <!-- Pour définir les distances des lignes de pose des objets -->
+  <div id="temoin-system">
+    <div id="pref-line-segment" class="aobjet segment" style="width:500px;"></div>
+    <div id="pref-line-modulation" class="aobjet modulation"><span class="text">SOL 7</span></div>
+    <div id="pref-line-chord" class="aobjet chord">C♯7M</div>
+    <div id="pref-line-harmony" class="aobjet harmony">IIm7</div>
+    <div id="pref-line-cadence" class="aobjet cadence" style="width:300px;">Cad. Parf.</div>
+    <div id="pref-line-pedale" class="aobjet pedale" style="width:400px;"><span class="text">5</span><span class="trait"></span></div>
+  </div>
 </div>
