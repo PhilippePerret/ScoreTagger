@@ -97,9 +97,15 @@ def data
       YAML.load_file(data_file_path)
     else
       {}
-    end
+    end.merge(score_is_prepared: is_prepared?)
   end
 end #/ data
+
+# Retourne TRUE si la partition est préparée, c'est-à-dire, simplement, si
+# les données des systèmes sont enregistrés.
+def is_prepared?
+  Dir["#{data_systems_folder}/*.yml"].count > 0
+end #/ scorePrepared?
 
 def save_system(data)
   File.open(system_data_path(data[:minid]),'wb') do |f|
@@ -110,6 +116,14 @@ end #/ save_system
 # Retourne les données du système de minid +minid+
 def load_system(minid)
   YAML.load_file(system_data_path(dimid))
+end
+
+# Retourne les données de tous les systèmes
+# Noter que c'est une liste
+def load_all_system
+  Dir["#{data_systems_folder}/*.yml"].sort.collect do |psys|
+    YAML.load_file(psys)
+  end
 end
 
 # *** Fichiers ***

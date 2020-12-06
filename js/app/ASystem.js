@@ -23,67 +23,76 @@ static add(system){
 
   constructor(data) {
     this.data = data
-    this.index    = data.index // l'index absolu du system
-    this.isystem  = data.isystem
-    this.top      = data.top
-    this.ipage    = data.ipage
-    this.score    = Score.current
+    this.minid    = data.minid    // p.e. "2-6" ("<page>-<index+1>")
+    this.index    = data.index    // l'index absolu du system (0-start)
+    this.indexInPage = data.indexInPage
+    this.top      = data.top  // pas forcément défini à l'instanciation
+    this.page     = data.page // numéro de page (1-start)
+    this.fullHeight = data.fullHeight
+    this.rHeight  = data.rHeight
     this.modified = false
+    this.score    = Score.current
     this.constructor.add(this)
   }
 
-  /**
-  * Méthode de sauvegarde du system
-  *
-  * Un système est sauvé avec ses données générales et ses objets dans
-  * un fichier séparé, dans le dossier <analyse>/systems/data/
-  ***/
-  save(){
-    const my = this
-    Ajax.send('save_system.rb', {data: this.data2save}).then(ret => {
-      console.info("Système %s sauvé avec succès.", this.minid)
-      my.modified = false
-    })
-  }
+/**
+* Méthode de sauvegarde du system
+*
+* Un système est sauvé avec ses données générales et ses objets dans
+* un fichier séparé, dans le dossier <analyse>/systems/data/
+***/
+save(){
+  const my = this
+  console.info("Sauvegarde du système %s…", this.minid)
+  Ajax.send('save_system.rb', {data: this.data2save}).then(ret => {
+    console.info("Système %s sauvé avec succès.", this.minid)
+    my.modified = false
+  })
+}
 
-  get data2save(){
-    var data_aobjects = []
-    if ( this.aobjets ) {
-      this.aobjets.forEach(aobj => data_aobjects.push(aobj.data2save))
-    }
-    return {
-        minid: this.minid
-      , index: this.index
-      , top: this.top
-      , rheight: this.rHeight
-      , aobjects: data_aobjects
-    }
+get data2save(){
+  var data_aobjects = []
+  if ( this.aobjets ) {
+    this.aobjets.forEach(aobj => data_aobjects.push(aobj.data2save))
   }
+  this.data.aobjects = data_aobjects
+  return this.data
+}
 
-  /**
-  * Méthode qui reçoit le clic sur le système
-  ***/
-  onClick(ev){
-    if ( ev.target.className == 'system' ) {
-      this.createNewAObjet(ev)
-    }
+/**
+* Méthode qui reçoit le clic sur le système
+***/
+onClick(ev){
+  if ( ev.target.className == 'system' ) {
+    this.createNewAObjet(ev)
   }
+}
 
-  /**
-  * Pour créer un nouvel objet d'analyse (AObject)
-  ***/
-  createNewAObjet(ev){
-    const objProps = AObject.getObjetProps()
-    const odata = {
-        id: AObject.newId()
-      , left: ev.offsetX - 10
-      , top: this.topPerTypeObjet(objProps.type)
-      , objetProps: objProps
-      , system: this
-    }
-    AObject.create(odata)
-    this.modified = true
+/**
+* Dessine tous les objets d'analyse du système
+***/
+draw(){
+  if ( !this.data.aobjects || this.data.aobjects.length == 0) return ;
+  this.data.aobjects.forEach(data_aobjet => {
+    new AObject(data_aobjet).build()
+  })
+}
+
+/**
+* Pour créer un nouvel objet d'analyse (AObject)
+***/
+createNewAObjet(ev){
+  const objProps = AObject.getObjetProps()
+  const odata = {
+      id: AObject.newId()
+    , left: ev.offsetX - 10
+    , top: this.topPerTypeObjet(objProps.type)
+    , objetProps: objProps
+    , system: this
   }
+  AObject.create(odata)
+  this.modified = true
+}
 
   /**
   * Pour ajouter l'objet au système.
@@ -103,14 +112,19 @@ static add(system){
   ***/
 
   build(){
-    // const img = DCreate('IMG', {class:'system', 'data-id': this.minid, src: this.imageSrc})
-    const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': this.minid, inner:[
-      DCreate('IMG', {class:'system', 'data-id': this.minid, src: this.imageSrc})
-    ]})
+    const my = this
+    my.imageLoaded = false
+    const img = DCreate('IMG', {id: `image-system-${this.minid}`, class:'system', 'data-id': this.minid, src: this.imageSrc})
+    const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': this.minid, inner:[img]})
     // div.appendChild(img)
     this.container.appendChild(div)
+    // On place un observer sur l'image pour savoir si elle est chargée
+    $(img).on('load', ev => {
+      if ( img.complete && img.naturalHeight != 0) {
+        my.imageLoaded = true
+      }
+    })
     this.obj = div
-    this.positionne()
     this.observe()
   }
 
@@ -118,82 +132,13 @@ static add(system){
   * Positionnement du système
   * -------------------------
   *
-  * Si this.top est déjà défini, c'est que le système a déjà été enregistré
-  * On le positionne à la hauteur définie. Sinon, on calcule sa position
-  * en fonction de la page et de la position du système précédent (if any)
-  *
-  * Note :  on règle aussi toujours la hauteur du conteneur des systèmes
+  * @note   Le top doit avoir déjà été calculé.
+  * @note   On règle aussi toujours la hauteur du conteneur des systèmes
   *         afin de pouvoir exporter en page unique
   ***/
   positionne(){
-    if ( undefined === this.top ) this.calcTopSystem()
     this.obj.style.top = `${this.top}px`
     this.container.style.height = `${this.top + 500}px`
-  }
-
-  /**
-  * Calcul du top du système (à son premier placement)
-  * Ce positionnement doit être fait de telle sorte qu'un système (avec
-  * ses objets) ne chevauche jamais une page.
-  ***/
-  calcTopSystem(){
-    const debug = false
-    debug && console.debug("\n=== CALCUL TOP DU SYSTÈME %s ===", this.minid)
-    var fromY
-    if ( this.index == 0 ) {
-      // Tout premier système
-
-      this.top = this.score.preferences.first_page.first_system_top
-      debug && console.debug("Première page, this.top = %i", this.top)
-
-    } else {
-
-      const prev_system = ASystem.get(this.index - 1)
-      fromY = prev_system.bottom_limit
-      debug && console.debug("fromY (prev_system.bottom_limit) = %i", prev_system.bottom_limit)
-
-      // La distance entre système (Space Between Systems)
-      const SBS = this.score.preferences.space_between_systems
-      debug && console.debug("space_between_systems = %i", SBS)
-
-      // La page sur laquelle on se trouve
-      let current_page = Math.floor(fromY / HEIGHT_PAGE) + 1
-      debug && console.debug("Page courante : %i", current_page)
-
-      // La ligne basse de cette page, la ligne à ne pas franchir
-      const bottom_limit = current_page * HEIGHT_PAGE
-      debug && console.debug("bottom_limit de page %i = %i", current_page, bottom_limit)
-
-      // Si le système et ses objets inférieurs dépassent le bord bas, on
-      // doit passer le système sur la page suivante
-      debug && console.debug("Hauteur totale (fullHeight) = %i", this.fullHeight)
-      debug && console.debug("fromY + SBS + fullHeight / bottom_limit", fromY + SBS + this.fullHeight, bottom_limit)
-      if ( fromY + SBS + this.fullHeight < bottom_limit ) {
-        // <= La limite n'est pas franchie (on a la place)
-        // => On pose le système dans le flux normal, à distance définie
-        // Note : on parle ici du top de l'image du système, donc il faut
-        // ajouter la distance avec la ligne supérieure maximale, la ligne
-        // de segment
-        // => On ne modifie pas le fromY
-      } else {
-        // <= La limite est franchie
-        // => Il faut mettre le système sur la page suivante
-        // => On modifie le formY
-        fromY = bottom_limit
-      }
-      this.top = fromY + SBS - this.topPerTypeObjet('segment')
-      debug && console.debug("this.top final = %i", this.top)
-    }
-  }
-
-
-  /**
-  * Retourne la hauteur totale du système, depuis sa ligne de segment
-  * supérieure jusqu'à sa ligne de pédale, en tenant compte de sa hauteur
-  * de système propre et des valeurs de préférences.
-  ***/
-  get fullHeight(){
-    return this._fullheight || (this._fullheight = this.calcFullHeight())
   }
 
   observe(){
@@ -233,18 +178,6 @@ static add(system){
   * Données générales
   ***/
 
-  /**
-  * La hauteur du système
-  * ---------------------
-  * Il faut tenir compte du fait que l'image est diminuée dans l'affichage
-  * pour tenir dans un div de 19cm. La hauteur dont il faut tenir compte — pour
-  * le placement et la position des éléments) est donc la hauteur réelle,
-  * affichée.
-  ***/
-  get rHeight(){
-    return this._hreal || (this._hreal = $(this.obj).height())
-  }
-
   get bottom(){
     return this._bottom || (this._bottom = this.top + this.rHeight)
   }
@@ -256,13 +189,11 @@ static add(system){
     return this._imgname || (this._imgname = `${this.id}.jpg`)
   }
   get id(){
-    return this._id || (this._id = `system-p${this.ipage}-s${String(this.isystem).padStart(2,'0')}` )
+    return this._id || (this._id = `system-${this.minid}` )
   }
-  get minid(){
-    return this._minid || (this._minid = `${this.ipage}-${this.isystem}`)
-  }
+  // Raccourci vers le conteneur des systèmes de la table d'analyse
   get container(){
-    return this._cont || (this._cont = $('#systems-container')[0])
+    return this._cont || (this._cont = TableAnalyse.systemsContainer)
   }
 
 /**

@@ -37,6 +37,8 @@ Chaque système est enregistré dans un fichier image unique dans le dossier `im
 
 La difficulté consiste à les positionner correctement sur la page pour qu’ils ne se retrouvent pas entre deux pages lors de l’impression/sortie PDF de la partition complète.
 
+Quelle que soit la longueur de la partition, son analyse est présentée intégralement sur la table d’analyse et produira un unique fichier sans assemblage nécessaire.
+
 
 
 #### Éléments d’un système
@@ -124,4 +126,38 @@ La classe javascript et ruby `System`   permet de gérer les systèmes.
 
 ### Requête Ajax
 
-À toute requête ajax on ajoute automatiquement (dans `ajax.js`) la propriété `current_analyse` qui définit le dossier de l’analyse dans `_score_`.
+À toute requête ajax on ajoute automatiquement (dans `ajax.js`) la propriété `current_analyse` qui définit le dossier de l’analyse dans `_score_`. 
+
+Noter que dans la nouvelle version de la classe `Ajax` les retours avec erreur sont traités, inutile de faire `if (ret.error) ...`.
+
+
+
+## Analyse de la partition
+
+La [partition préparée][]  est affichée de façon intégrale sur la table d’analyse.
+
+
+
+## Annexe
+
+### Lexique
+
+
+
+<a id="objetanalyse"></a>
+
+#### Objet d'analyse
+
+C’est un terme générique qui désigne tous les « objets » qu’on place sur la table d’analyse pour analyser la partition, à savoir les accords, les harmonies, cadences et autres délimitations de segment.
+
+<a id="preparedscore"></a>
+
+#### Partition préparée
+
+Ce qu’on appelle « partition préparée » ici, c’est la partition où les systèmes ont été découpés et répartis (écartés) de telle sorte qu’on puisse placer facilement les [objets d'analyses][].
+
+
+
+[partition préparée]: #preparedscore
+[objets d’analyses]: #objetsanalyse
+[objet d’analyse]: #objetsanalyse

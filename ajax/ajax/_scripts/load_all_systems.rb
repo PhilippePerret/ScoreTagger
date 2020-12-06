@@ -11,9 +11,10 @@ begin
     score = Score.new(CURRENT_ANALYSE)
     if score.nil? || not(score.exists?)
       Ajax << {error: "Cette analyse n'existe pas… Impossible d'enregistrer le système."}
+    elsif not score.is_prepared?
+      Ajax << {error: "Cette partition n'est pas encore analysée, impossible d'obtenir les données systèmes."}
     else
-      score.mkdir_p_folders # au cas où
-      data_path = score.save_system(Ajax.param(:data).to_sym)
+      Ajax << {data: score.load_all_system}
     end
   end
 rescue Exception => e
