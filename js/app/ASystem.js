@@ -25,6 +25,7 @@ static add(system){
     this.data = data
     this.index    = data.index // l'index absolu du system
     this.isystem  = data.isystem
+    this.top      = data.top
     this.ipage    = data.ipage
     this.score    = Score.current
     this.modified = false
@@ -70,7 +71,7 @@ static add(system){
   }
 
   /**
-  * Pour créer un nouvel objet
+  * Pour créer un nouvel objet d'analyse (AObject)
   ***/
   createNewAObjet(ev){
     const objProps = AObject.getObjetProps()
@@ -116,13 +117,29 @@ static add(system){
 
   /**
   * Positionnement du système
+  * -------------------------
   *
+  * Si this.top est déjà défini, c'est que le système a déjà été enregistré
+  * On le positionne à la hauteur définie. Sinon, on calcule sa position
+  * en fonction de la page et de la position du système précédent (if any)
+  *
+  * Note :  on règle aussi toujours la hauteur du conteneur des systèmes
+  *         afin de pouvoir exporter en page unique
+  ***/
+  positionne(){
+    if ( undefined === this.top ) this.calcTopSystem()
+    this.obj.style.top = `${this.top}px`
+    this.container.style.height = `${this.top + 500}px`
+  }
+
+  /**
+  * Calcul du top du système (à son premier placement)
   * Ce positionnement doit être fait de telle sorte qu'un système (avec
   * ses objets) ne chevauche jamais une page.
   ***/
-  positionne(){
-    const debug = true
-    debug && console.debug("\n=== POSITIONNEMENT SYSTÈME %s ===", this.minid)
+  calcTopSystem(){
+    const debug = false
+    debug && console.debug("\n=== CALCUL TOP DU SYSTÈME %s ===", this.minid)
     var fromY
     if ( this.index == 0 ) {
       // Tout premier système
@@ -168,14 +185,8 @@ static add(system){
       this.top = fromY + SBS - this.topPerTypeObjet('segment')
       debug && console.debug("this.top final = %i", this.top)
     }
-
-    // On position le système
-    this.obj.style.top = `${this.top}px`
-
-    // On met toujours le container à cette hauteur + une marge
-    this.container.style.height = `${this.top + 500}px`
-
   }
+
 
   /**
   * Retourne la hauteur totale du système, depuis sa ligne de segment
