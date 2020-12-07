@@ -122,6 +122,26 @@ Principe : on garde tous les systèmes séparés dans un dossier. Une page mémo
 
 La classe javascript et ruby `System`   permet de gérer les systèmes.
 
+### Enregistrement des objets d'analyse
+
+Les objet d’analyse sont enregistrés par système. Un fichier par système, enregistré dans le dossier `systems/data` de la partition.
+
+L’enregistrement est automatique.
+
+Mais pour ne pas tourner en boucle indéfiniment lorsque rien ne se passe, on peut imaginer ce processus :
+
+~~~text
+MODIFICATION (création d'objet, modification, déplacement)
+	=>  
+	=> 	Appel du lancement de la sauvegarde (pour 5 secondes plus tard)
+			Si la sauvegarde est déjà en route, on ne fait rien
+			Sinon, on la met en route.
+			C'est un setTimeout
+	- Après l'enregistrement, on relance une sauvegarde pour plus tard
+~~~
+
+
+
 
 
 ### Requête Ajax

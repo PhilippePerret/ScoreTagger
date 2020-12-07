@@ -6,16 +6,20 @@ class PanneauCrop extends Panneau {
   }
 
   onActivate(){
+    console.debug("-> PanneauCrop#onActivate")
     this.isObserved || this.observe()
     document.body.style.width = null ;
     const score = Score.current
     this.show_score_ini()
     this.observeBody()
+    console.debug("<- PanneauCrop#onActivate")
   }
 
   onDesactivate(){
+    console.debug("-> PanneauCrop#onDesactivate")
     this.removeAllCutLines()
     this.unobserveBody()
+    console.debug("<- PanneauCrop#onDesactivate")
   }
 
   /**
@@ -43,8 +47,13 @@ class PanneauCrop extends Panneau {
       if ( h < 150 ) continue ;
       codes.push({top: top_cur, height: h})
     }
-    // Pour procéder à la découpe
-    Score.current.cutPage(this.current_page, codes, this.confirmCrop.bind(this))
+    if ( codes.length > 0 ) {
+      // <= Des lignes de coupe ont été définies
+      // => Procéder à la découpe
+      Score.current.cutPage(this.current_page, codes, this.confirmCrop.bind(this))
+    } else {
+      erreur("Aucune ligne de coupe n'est définie.")
+    }
   }
 
   confirmCrop(retour){
@@ -107,6 +116,7 @@ class PanneauCrop extends Panneau {
   ***/
 
   drawPage(ipage, ret){
+    console.debug("-> drawPage. Retour d'ajax pour la page %i : ", ipage, ret)
     this.removeAllCutLines()
     $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
     if ( ret.data_page ) this.drawCutLines(ret.data_page.cutlines)

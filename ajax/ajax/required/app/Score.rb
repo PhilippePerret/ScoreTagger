@@ -102,6 +102,11 @@ def data
   end
 end #/ data
 
+def data_file_path
+  @data_file_path ||= File.join(score_folder,'data.yml')
+end
+
+
 # Retourne TRUE si la partition est préparée, c'est-à-dire, simplement, si
 # les données des systèmes sont enregistrés.
 def is_prepared?
@@ -129,10 +134,6 @@ def load_all_system
   end
 end
 
-# *** Fichiers ***
-def data_file_path
-  @data_file_path ||= File.join(score_folder,'data.yml')
-end
 def prefs_file_path
   @prefs_file_path ||= File.join(score_folder,'prefs.yml')
 end
