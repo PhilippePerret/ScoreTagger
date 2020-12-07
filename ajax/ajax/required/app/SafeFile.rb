@@ -24,8 +24,9 @@ class << self
 end # /<< self
 
 attr_reader :path
-def initialize path
+def initialize path, analyse
   @path = path
+  @analyse = analyse
 end #/ initialize
 
 def backup
@@ -64,7 +65,7 @@ def last_backup
 end #/ last_backup
 
 def backup_folder
-  @backup_folder ||= File.join(self.class.backup_folder, affixe)
+  @backup_folder ||= File.join(self.class.backup_folder, @analyse, affixe)
 end
 
 def backup_path
