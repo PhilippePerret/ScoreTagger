@@ -38,6 +38,15 @@ constructor(data) {
   this._data = data || {}
 }
 
+get modified(){return this._modified}
+set modified(v){
+  this._modified = v
+  this.voyantSave.css('background-color', v?'red':'green')
+}
+get voyantSave(){
+  return this._voyantsave || (this._voyantsave = $('span#voyant_save'))
+}
+
 // Sauvegarde les données générales de la partition (titre, auteur,
 // chemin d'accès, date, etc.)
 save(callback){
@@ -74,8 +83,10 @@ stopAutosave(){
 * qui ont été modifiés.
 ***/
 autosave(){
+  const my = this
   if ( ASystem.items ) {
     Object.values(ASystem.items).forEach(system => system.modified && system.save() )
+    my.modified = false
   }
 }
 

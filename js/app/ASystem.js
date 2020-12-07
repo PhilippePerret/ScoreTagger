@@ -67,6 +67,12 @@ get data2save(){
   return this.data
 }
 
+
+get modified(){return this._modified || false}
+set modified(v){
+  this._modified = v
+  if ( v == true ) Score.current.modified = v ;
+}
 /**
 * Méthode qui reçoit le clic sur le système
 ***/
