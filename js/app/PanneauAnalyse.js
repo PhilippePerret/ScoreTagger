@@ -78,7 +78,18 @@ drawFirstPage(){
 
 observe(){
   super.observe()
+  // Pour appeler la méthode onClickOnTableAnalyse, notamment pour désélection-
+  // ner tous les objets sélectionnés
+  $(this.systemsContainer).on('click', this.onClickOnTableAnalyse.bind(this))
   this.observed = true
+}
+
+/**
+* Quand on clique sur la table d'analyse (conteneur de systèmes)
+***/
+onClickOnTableAnalyse(ev){
+  if ( ev.target.id != 'systems-container' ) return stopEvent(ev);
+  AObject.selection.deselectAll()
 }
 
 /**

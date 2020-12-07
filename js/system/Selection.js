@@ -59,4 +59,8 @@ class Selection {
     item.unsetSelected()
     this.owner.onDeselect && this.owner.onDeselect(item)
   }
+  deselectAll(){
+    this.items.forEach(item => this.deselect(item))
+    this.items = []
+  }
 }
