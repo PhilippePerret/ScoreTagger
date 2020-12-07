@@ -4,6 +4,9 @@
   Script qui retourne les données du score courant
 =end
 begin
+
+  ne doit plus servir
+  
   CURRENT_ANALYSE = Ajax.param(:current_analyse)
   data = Ajax.param(:data)
   if CURRENT_ANALYSE == nil || CURRENT_ANALYSE.empty?

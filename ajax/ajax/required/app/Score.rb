@@ -34,6 +34,7 @@ end #/ set
 
 def save
   File.open(data_file_path,'wb'){|f| f.write(YAML.dump(data))}
+  SafeFile.new(data_file_path).backup
 end
 
 # Méthode qui prépare les pages (ou la page) de score à partir du chemin
@@ -108,9 +109,11 @@ def is_prepared?
 end #/ scorePrepared?
 
 def save_system(data)
-  File.open(system_data_path(data[:minid]),'wb') do |f|
+  system_path = system_data_path(data[:minid])
+  File.open(system_path,'wb') do |f|
     f.write YAML.dump(data)
   end
+  SafeFile.new(system_path).backup
 end #/ save_system
 
 # Retourne les données du système de minid +minid+
