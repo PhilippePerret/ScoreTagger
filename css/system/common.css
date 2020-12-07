@@ -24,16 +24,3 @@
 /* "mt" pour "margin-top" */
 .mt1 {margin-top:1em}
 .mt2 {margin-top:2em}
-
-/*
-LES BOUTONS
-*/
-button.main, a.main, input[type="button"].main {
-  all:unset;
-  font-size:1.32em;
-  font-family: Futura,Geneva,Helvetica,Arial;
-  padding:9px 31px;
-  background-color:green;
-  color:white;
-  border-radius:5px;
-}
