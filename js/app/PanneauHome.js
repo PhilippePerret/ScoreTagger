@@ -24,8 +24,18 @@ class PanneauHome extends Panneau {
 * et des éléments comme les titres, etc.
 ***/
 prepare(){
-  const cPrefs = Score.current.preferences
+  const score   = Score.current
+  const cPrefs  = score.preferences
   // Les titres, auteurs, etc.
+  /**
+  * Les titre, compositeurs, etc.
+  *   1. On place les valeurs qui sont peut-être déjà connues
+  *   2. On positionne les éléments suivant les dimensions données ou par
+  *      défaut.
+  ***/
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    score.data[prop] && $(`.oeuvre-${prop} span.value`).html(score.data[prop])
+  })
   Object.keys(PREFS_DEFAULT_VALUES.first_page).forEach(prop => {
     const dprop = cPrefs.first_page(prop)
     let dcss = {}

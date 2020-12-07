@@ -18,6 +18,7 @@ resetAll(){
 }
 
 onActivate(){
+  const score = Score.current
   console.debug("-> PanneauAnalyse#onActivate")
   document.body.style.width = null
   if(!this.observed){
@@ -27,16 +28,18 @@ onActivate(){
     this.observe()
   }
 
-  if ( !Score.current.isDrawn){
+  if ( !score.isDrawn){
     /**
     * Si la partition n'est pas encore dessinée, il faut le faire
     * @rappel : la partition est présentée en un seul tenant maintenant,
     * quelle que soit sa longueur.
     ***/
-    Score.current.draw()
+    this.resetAll()
+    this.drawFirstPage()
+    score.draw()
   }
 
-  Score.current.startAutosave()
+  score.startAutosave()
 
   console.debug("<- PanneauAnalyse#onActivate")
 }
@@ -45,6 +48,33 @@ onDesactivate(){
   Score.current.autosave() // une dernière fois
   Score.current.stopAutosave()
 }
+
+
+/**
+* Construction des titre, compositeur, etc. en fonction des données et
+* des préférences
+***/
+drawFirstPage(){
+  console.log("-> PanneauAnalyse#drawFirstPage")
+  const score = Score.current
+  let divHeight = 0
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    if ( ! score.data[prop] ) return ;
+    else {
+      var elements = []
+      if (['analyst','analyze_year'].includes(prop)){
+        const libelle = prop == 'analyst' ? 'analyste' : 'année'
+        elements.push(DCreate('SPAN', {class:'libelle', text:libelle}))
+      }
+      elements.push(DCreate('SPAN', {class:'value', text:score.data[prop]}))
+      const dome = DCreate('DIV', {id: `score-${prop}`, class:`oeuvre-${prop}`,
+        inner:elements})
+      this.systemsContainer.append(dome)
+      $(dome).css(with_pixels(score.preferences.first_page(prop)))
+    }
+  })
+}
+
 
 observe(){
   super.observe()

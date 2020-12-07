@@ -183,7 +183,6 @@ sur la table d'analyse
 draw(){
   console.debug("-> Score#draw / isDrawn est %s", this.isDrawn?'true':'false')
   console.debug("   Score#score_is_prepared ? %s", this.score_is_prepared?'oui':'non')
-  TableAnalyse.resetAll()
   const loadingMethod = this.score_is_prepared
                     ? this.loadSystemsPrepared.bind(this)
                     : this.loadSystemsNonPrepared.bind(this) ;

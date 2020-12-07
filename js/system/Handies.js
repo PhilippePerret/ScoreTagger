@@ -1,9 +1,36 @@
 'use strict';
+/** ---------------------------------------------------------------------
+
+  MÉTHODES PRATIQUES
+  Version 1.0.2
+
+# 1.0.2
+  Ajout de la méthode 'with_pixels'
+*** --------------------------------------------------------------------- */
 
 // Méthode à utiliser en catch des promesses
 function onError(err){
   console.error(err)
   erreur("Une erreur est survenue, consulter la console.")
+}
+
+/**
+* Pour ajouter les pixels :
+*
+* (String)  "12" => "12px"
+* (Number)  12 => "12px"
+* (Object)  {top: 24, left: 34} => {top: "24px", left: "34px"}
+***/
+function with_pixels(val){
+  if ('string' == typeof(val) || 'number' == typeof(val)) {
+    return `${val}px`
+  } else {
+    var newh = {}
+    for(var k in val){
+      Object.assign(newh, {[k]: `${val[k]}px`})
+    }
+    return newh
+  }
 }
 
 /**

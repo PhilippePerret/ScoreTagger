@@ -1,12 +1,26 @@
-// Aspect des éléments de la première page
+div#systems-container
+  > div
+    position: absolute
+
+// Aspect des éléments de la première page (pour le réglage des préférences
+// aussi)
 // (titre, compositeur, etc.)
 div.oeuvre-title
   font-size: 30pt
 div.oeuvre-composer
   font-size: 18pt
-div.oeuvre-date
+div.oeuvre-composing_year
   font-style: italic
   font-size: 14pt
+
+div.oeuvre-analyst, div.oeuvre-analyze_year
+  span.value
+    font-size: 13pt
+  span.libelle
+    display: inline-block
+    width: 44px
+    vertical-align: baseline
+    font-size: 11pt
 
 // Le conteneur des systèmes
 div#systems-container
