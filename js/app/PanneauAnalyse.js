@@ -110,7 +110,7 @@ calcSystemPos(system){
       fromY = page_bottom_limit
     }
 
-    system.top = system.data.top = fromY + SBS - score.preferences.lignes.segment
+    system.top = system.data.top = fromY + SBS - score.preferences.ligne('segment')
     debug && console.debug("this.top final = %i", system.top)
 
   }

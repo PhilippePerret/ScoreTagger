@@ -1,6 +1,7 @@
 'use strict';
 
-const SCORE_ANALYZE_PROPS = ['title', 'composer','composing-year','analyze-year', 'analyst', 'incipit']
+const SCORE_ANALYZE_PROPS = ['title', 'composer','composing_year','analyze_year', 'analyst', 'incipit']
+// Hauteur exacte d'une page
 const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 
 class Score {
@@ -123,9 +124,8 @@ getValuesInFields(){
   SCORE_ANALYZE_PROPS.forEach(prop => {
     Object.assign(this._data, {[prop]: $(`#score-${prop}`).val().trim()})
   })
-  // On récupère les valeurs de préférences
-  this.preferences.getValuesInFields()
-  this._data.preferences = this.preferences.getData()
+  // On ajoute les préférences actuelles
+  this._data.preferences = this.preferences.data
 
   // Pour poursuivre
   return true
@@ -138,9 +138,11 @@ dispatchData(){
   this.score_is_prepared = this.data.score_is_prepared
   $('input#analyse_folder_name').val(CURRENT_ANALYSE)
   $('input#analyse_partition_path').val(this.data.score_ini_path)
-  // Les valeurs options des titre, compositeur, etc.
+  // Les valeurs optionnelles des titre, compositeur, etc.
   SCORE_ANALYZE_PROPS.forEach(prop => $(`#score-${prop}`).val(this.data[prop]))
   // Préférences
+  this.preferences.data = this.data.preferences
+  console.log("this.preferences.data mis à ", this.preferences.data)
 }
 
 
@@ -150,7 +152,8 @@ getData(){
   Ajax.send('get_data.rb').then(ret => {
     if ( ret.error ) { ret.data = {} }
     this._data = ret.data
-    this.preferences.setData(ret.data.preferences)
+    this.preferences.data = ret.data.preferences
+    console.log("this.preferences.data:", this.preferences.data)
   })
 }
 

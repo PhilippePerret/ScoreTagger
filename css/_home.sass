@@ -1,3 +1,26 @@
+div#page-temoin, div#temoin-first-system
+  > div:not(#temoin-first-system),
+    position: absolute
+    &:hover
+      background-color: #EEEEFF !important
 
-div#temoin-system
+div#page-temoin
   position: relative
+  width: 20cm
+  height: 28.7cm
+  background-color: #FFFFFF
+
+  div#temoin-first-system
+    position: absolute
+    width: 19cm
+    height: 10cm
+    clear: both
+    div.system
+      > div
+        background-color: transparent
+      position: absolute
+      *
+        font-size: 11.1pt
+      img
+        width: 100%
+        opacity: 0.5

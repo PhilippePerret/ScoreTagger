@@ -5,13 +5,18 @@ body *:not(input[type="text"]):not(textarea):not(input[type="password"]) {
   -webkit-user-select: none;
 }
 
+span.libelle {
+  vertical-align: top;
+  margin-right: 0.5em;
+}
+
 fieldset legend, span.libelle {
   font-family:'Arial Narrow',Helvetica,Geneva;
   font-style: italic;
   color:#777777;
+  margin-left: 0;
 }
 
-span.libelle {vertical-align: top}
 .tools {
   text-align: right;
   margin-top:1em;

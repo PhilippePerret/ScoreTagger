@@ -4,19 +4,28 @@
   possibilité de placer les éléments à la souris
 -->
 <div id="page-temoin">
-  <div id="pref-title">Le Titre de l'œuvre</div>
-  <div id="pref-composer">Le compositeur</div>
-  <div id="pref-composing-year">1756</div>
+  <div id="pref-title" class="oeuvre-title">Le Titre de l'œuvre</div>
+  <div id="pref-composer" class="oeuvre-composer">Le compositeur</div>
+  <div id="pref-composing_year" class="oeuvre-date">1756</div>
   <div id="pref-analyst"><span class="libelle">Analyste</span><span class="value">Nom, prénom</span></div>
-  <div id="pref-analyze-year"><span class="libelle">Année analyse</span><span id="value">2020</span></div>
-
+  <div id="pref-analyze_year"><span class="libelle">Année analyse</span><span id="value">2020</span></div>
+  <div id="pref-incipit">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
   <!-- Pour définir les distances des lignes de pose des objets -->
-  <div id="temoin-system">
-    <div id="pref-line-segment" class="aobjet segment" style="width:500px;"></div>
-    <div id="pref-line-modulation" class="aobjet modulation"><span class="text">SOL 7</span></div>
-    <div id="pref-line-chord" class="aobjet chord">C♯7M</div>
-    <div id="pref-line-harmony" class="aobjet harmony">IIm7</div>
-    <div id="pref-line-cadence" class="aobjet cadence" style="width:300px;">Cad. Parf.</div>
-    <div id="pref-line-pedale" class="aobjet pedale" style="width:400px;"><span class="text">5</span><span class="trait"></span></div>
+  <div id="temoin-first-system">
+    <div class="system">
+      <img id="img-system-temoin" src="" alt="Système exemple pour régler les préférences" />
+      <div id="pref-line-segment" class="aobjet segment up" style="width:350px;left:50px;"></div>
+      <div id="pref-line-modulation" class="aobjet modulation" style="left:442px;"><div class="ton"><span class="text">SOL<span class="alte">♯</span>7</span><span class="rel">(V)</span></div><div class="vline"></div></div>
+      <div id="pref-line-chord" class="aobjet chord" style="left:460px;">C<span class="alte">♯</span>7M</div>
+      <div id="pref-line-harmony" class="aobjet harmony" style="left:134px;">IIm7</div>
+      <div id="pref-line-cadence" class="aobjet cadence" style="width:140px;left:50px;">Cad. Parf.</div>
+      <div id="pref-line-pedale" class="aobjet pedale" style="width:200px;left:10px;"><div class="text"><span class="nom">5</span></div><div class="trait"></div></div>
+    </div>
   </div>
+
+  <div class="clear"></div>
+</div>
+<div class="buttons">
+  <button type="button" id="btn-revenir-prefs-default" class="small">Revenir aux préférences par défaut</button>
+  <button type="button" id="btn-save-preferences" class="small">Enregistrer</button>
 </div>

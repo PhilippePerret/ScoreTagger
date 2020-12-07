@@ -179,7 +179,7 @@ append(aobj){
   * à la valeur de préférence la hauteur réelle (rHeight) du système
   ***/
   topPerTypeObjet(otype){
-    let tpto = Score.current.preferences.lignes[otype]
+    let tpto = Score.current.preferences.ligne(otype)
     if ( tpto >= 0 ) tpto += this.rHeight
     return tpto
   }
@@ -216,8 +216,8 @@ append(aobj){
 * ------------------
 ***/
 calcFullHeight() {
-  const lprefs = Score.current.preferences.lignes
-  return (0 - lprefs.segment + this.rHeight + lprefs.pedale + 17)
+  const cPrefs = Score.current.preferences
+  return (0 - cPrefs.ligne('segment') + this.rHeight + cPrefs.ligne('pedale') + 17)
 }
 calcBottomLimit(){
   return this.top + this.fullHeight
