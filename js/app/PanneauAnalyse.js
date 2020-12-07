@@ -37,6 +37,7 @@ onActivate(){
     this.resetAll()
     this.drawFirstPage()
     score.draw()
+    this.drawPageDelimitors()
   }
 
   score.startAutosave()
@@ -74,6 +75,25 @@ drawFirstPage(){
     }
   })
 }
+
+/**
+* Méthode qui dessine les délimiteurs de pages en fonction de la hauteur
+* complète de l'analyse
+***/
+drawPageDelimitors(){
+  const heightContainer = $(this.systemsContainer).height()
+  var top = 0
+  var ipage = 0
+  while (top < heightContainer ) {
+    top += HEIGHT_PAGE
+    ++ ipage ;
+    const line = DCreate('DIV', {class:'page-separator', style:`top:${top}px`, inner:[
+      DCreate('SPAN', {text: String(ipage)})
+    ]})
+    this.systemsContainer.appendChild(line)
+  }
+}
+
 
 
 observe(){

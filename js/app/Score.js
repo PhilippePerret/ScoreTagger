@@ -283,7 +283,7 @@ calculateDataSystems(data){
       for ( var ipage in data_pages ){
         const dpage = data_pages[ipage]
         const data_cutlines = dpage.cutlines
-        console.log("data_cutlines:", data_cutlines)
+        // console.log("data_cutlines:", data_cutlines)
         for ( var isys = 0, len = data_cutlines.length - 1; isys < len ; ++ isys  ) {
           const dcut = data_cutlines[isys]
           const prevSystemData = isys > 0 ? dataSystems[isys - 1] : null
