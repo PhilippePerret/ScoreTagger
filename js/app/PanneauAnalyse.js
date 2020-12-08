@@ -100,14 +100,15 @@ drawPageDelimitors(){
   }
 }
 
-
-
 observe(){
+  const score = Score.current
   super.observe()
   // Pour appeler la méthode onClickOnTableAnalyse, notamment pour désélection-
   // ner tous les objets sélectionnés
   $(this.systemsContainer).on('click', this.onClickOnTableAnalyse.bind(this))
   this.observed = true
+
+  this.voyantSave.on('click', score.autosave.bind(score))
 }
 
 /**
@@ -198,6 +199,10 @@ get pref_no_ligne_segment(){
 
 get systemsContainer(){
   return this._cont || (this._cont = document.querySelector('#systems-container'))
+}
+
+get voyantSave(){
+  return this._voyantsave || (this._voyantsave = $('span#voyant_save'))
 }
 
 }

@@ -41,10 +41,7 @@ constructor(data) {
 get modified(){return this._modified}
 set modified(v){
   this._modified = v
-  this.voyantSave.css('background-color', v?'red':'green')
-}
-get voyantSave(){
-  return this._voyantsave || (this._voyantsave = $('span#voyant_save'))
+  TableAnalyse.voyantSave.css('background-color', v?'red':'green')
 }
 
 // Sauvegarde les données générales de la partition (titre, auteur,
