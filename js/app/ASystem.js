@@ -31,13 +31,15 @@ static add(system){
 
   constructor(data) {
     this.data = data
-    this.minid        = data.minid    // p.e. "2-6" ("<page>-<index+1>")
-    this.index        = data.index    // l'index absolu du system (0-start)
-    this.indexInPage  = data.indexInPage
-    this.top      = data.top  // pas forcément défini à l'instanciation
-    this.page     = data.page // numéro de page (1-start)
-    this.fullHeight = data.fullHeight
-    this.rHeight  = data.rHeight
+    this.minid          = data.minid    // p.e. "2-6" ("<page>-<index+1>")
+    this.index          = data.index    // l'index absolu du system (0-start)
+    this.indexInPage    = data.indexInPage
+    this.top            = data.top  // pas forcément défini à l'instanciation
+    this.page           = data.page // numéro de page (1-start)
+    this.fullHeight     = data.fullHeight
+    this.rHeight        = data.rHeight
+    this.nombre_mesures = data.nombre_mesures
+    // Propriété volatiles
     this.modified = false
     this.score    = Score.current
     this.constructor.add(this)
@@ -79,6 +81,20 @@ set modified(v){
 onClick(ev){
   if ( ev.target.className == 'system' ) {
     this.createNewAObjet(ev)
+  }
+}
+
+/**
+* Méthode appelée quand on clique sur le numéro de la première mesure
+***/
+onClickNumeroMesure(ev){
+  var num = this.nombre_mesures || 3
+  num = prompt("Nombre de mesures de ce système :", num)
+  if ( num || NaN(num) ) {
+    this.nombre_mesures = this.data.nombre_mesures = Number(num)
+    this.modified = true
+    Score.current.setNumerosFirstMesures()
+    message("Le nombre de mesure a été actualisé, ainsi que les numéros de premières mesures.")
   }
 }
 
@@ -134,11 +150,21 @@ append(aobj){
   ***/
   build(){
     const my = this
+    const score = Score.current
+    const Prefs = score.preferences
     my.imageLoaded = false
-    const img = DCreate('IMG', {id: `image-system-${this.minid}`, class:'system', 'data-id': this.minid, src: this.imageSrc})
-    const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': this.minid, inner:[img]})
-    // div.appendChild(img)
-    this.container.appendChild(div)
+    const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid, src: this.imageSrc})
+    const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': my.minid, inner:[img]})
+    my.container.appendChild(div)
+
+    /**
+    * Pour le numéro de mesure
+    * Il sera masqué par Score.draw si les préférences le demandent
+    ***/
+    const numMes = DCreate('SPAN', {class:'numero-mesure', text:my.numero_first_mesure||'-'})
+    div.appendChild(numMes)
+    $(numMes).on('click', this.onClickNumeroMesure.bind(this))
+
     // On place un observer sur l'image pour savoir si elle est chargée
     $(img).on('load', ev => {
       if ( img.complete && img.naturalHeight != 0) {
@@ -228,6 +254,5 @@ calcFullHeight() {
 calcBottomLimit(){
   return this.top + this.fullHeight
 }
-
 
 }

@@ -28,11 +28,16 @@ const PREFS_DEFAULT_VALUES = {
           , select_just_created: {name: "Sélectionner l'objet nouvellement créé", value: true}
         }
       }
+    , score: {
+        titre: "La partition"
+      , items: {
+          numero_mesure: {name: "Numéroter la première mesure des systèmes", value: true}
+        }
+      }
     , export: {
         titre: "Finalisation de la partition analysée"
       , items: {
             user_segment_line: {name: "Utiliser la ligne de segment", value: true}
-
         }
       }
   }

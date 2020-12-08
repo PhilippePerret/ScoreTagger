@@ -208,22 +208,55 @@ draw(){
 }
 
 /**
+* Méthode qui calcule le numéro de première mesure de chaque système
+* et le marque (le span se trouve déjà dans le système)
+*
+* Note : ce numéro est affiché si les préférences le demandent (affiché
+* par défaut)
+***/
+setNumerosFirstMesures(){
+  if ( this.preferences.binary('score.numero_mesure')) {
+    var num = 1
+    let showAlert = false
+    this.systems.forEach(system => {
+      system.numero_first_mesure = num
+      $(system.obj).find('.numero-mesure')
+        .removeClass('hidden')
+        .html(num)
+      if ( undefined == system.nombre_mesures ) showAlert = true
+      num += system.nombre_mesures || 3
+    })
+    if ( showAlert && !this.alertLakeNombreMesureShown ) {
+      message("Pour avoir un numérotage de mesure juste, il faut définir<br>le nombre de mesures par système en cliquant sur le numéro<br>de la première mesure.")
+      this.alertLakeNombreMesureShown = true
+    }
+  } else {
+    // Si les préférences déterminent qu'il ne faut pas de numéro,
+    // on les masques
+    this.systems.forEach(system => {
+      $(system.obj).find('.numero-mesure').addClass('hidden')
+    })
+  }
+}
+
+/**
 * Méthode procédant à l'instanciation de tous les systèmes de la partition
 * et leur affichage dans la page, pour le moment, sans les positionner et sans
 * créer leurs objets (s'ils en ont)
 * @note   Dans tous les cas (partition préparée ou non), il faut le faire
 ***/
 instanciateAndPoseAllSystems(ret){
+  const my = this
   const dataSystems = ret.data
   return new Promise((ok,ko) => {
     // console.log("dataSystems: ", dataSystems)
-    this.systems = []
+    my.systems = []
     dataSystems.forEach(dsys => {
       const system = new ASystem(dsys)
       system.build()
-      this.systems.push(system)
+      my.systems.push(system)
     })
-    this.checkImagesLoading(ok)
+    my.checkImagesLoading(ok)
   })
 }
 
@@ -297,6 +330,7 @@ calculateDataSystems(data){
 }
 
 finDrawing(ret){
+  this.setNumerosFirstMesures()
   console.debug("=== Fin du dessin des systèmes ===")
   this.isDrawn = true
 }
