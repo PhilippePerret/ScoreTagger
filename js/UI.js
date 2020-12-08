@@ -35,6 +35,13 @@ class UI {
     $(obj)[condition?'addClass':'removeClass'](css)
   }
 
+  /**
+  * Affiche ou masque l'objet +obj+ suivant la condition +condition+
+  ***/
+  static showIf(obj, condition){
+    return this.addClassIf(obj, !condition, 'hidden')
+  }
+
   // Observer le clic sur l'élément DOM +button+ en actionnant la méthode
   // +method+
   static listenClick(button, method){

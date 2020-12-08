@@ -160,7 +160,12 @@ onClickSavePreferences(ev){
 
   /**
   * Enregistrement des valeurs checkbox (binaires)
+  *
+  * Avant de changer quoi que ce soit, on prend la valeur de
+  * export.use_segment_line pour updater l'interface (espaces entre systèmes,
+  * visibilité du bouton "Segment", etc.) en cas de changement
   ***/
+  const oldUseSegmentLine = Prefs.binary('export.use_segment_line')
   for (var k in cPrefs.binary) {
     const dsection = cPrefs.binary[k]
     for (var kp in dsection.items) {
@@ -168,7 +173,7 @@ onClickSavePreferences(ev){
       scorePrefs.binary[`${k}.${kp}`] = cb.checked
     }
   }
-
+  const newUseSegmentLine = Prefs.binary('export.use_segment_line')
 
   SCORE_ANALYZE_PROPS.forEach(prop => {
     const valPref = Prefs.first_page(prop)
@@ -183,7 +188,7 @@ onClickSavePreferences(ev){
   })
 
   for ( var otype in cPrefs.lignes) {
-    const valPref = cPrefs[otype] ;
+    const valPref = Prefs.ligne(otype)
     let valCur  = $(`div#pref-line-${otype}`).position().top
     if ( valCur >= 0 ) valCur -= imgHeight ;
     console.debug("Comparaison de %i (ancienne) et %i (nouvelle)", valPref, valCur)
@@ -196,6 +201,16 @@ onClickSavePreferences(ev){
   // On enregistre ces nouvelles valeurs
   Prefs.data = scorePrefs
   Score.current.save()
+
+  /**
+  * Modifications immédiates à faire en cas de changement de préférences
+  ***/
+  if ( oldUseSegmentLine != newUseSegmentLine ) {
+    PropsAObjectToolbox.setBoutonSegment()
+    Score.current.repositionneAllSystems()
+  }
+
+
 }
 
 /**

@@ -63,6 +63,7 @@ save(callback){
 startAutosave(){
   console.log("-> Score#startAutosave")
   this.saveTimer = setInterval(this.autosave.bind(this), 10 * 1000)
+  message("Sauvegarde automatique enclenchée.")
 }
 /**
 * Pour arrêter la sauvegarde automatique des données d'analyse,
@@ -74,6 +75,7 @@ stopAutosave(){
   clearInterval(this.saveTimer)
   delete this.saveTimer
   this.saveTimer = null
+  message("Sauvegarde automatique arrêtée.")
 }
 
 /**
@@ -285,18 +287,34 @@ checkImagesLoading(ok){
 
 positionneAndDrawSystems(){
   if ( ! this.score_is_prepared ) {
-    console.debug("Calcul de la position de chaque système…")
-    for(var isys in this.systems){
-      const system = this.systems[isys]
-      if ( isys > 0 ) system.prevSystem = this.systems[isys - 1]
-      TableAnalyse.calcSystemPos(system)
-      system.modified = true
-    }
+    this.calcPositionAllSystems()
   }
   this.systems.forEach(system => {
     system.positionne()
     system.draw()
   })
+}
+
+/**
+* Pour repositionner les systèmes quand ils ont déjà été dessinés sur la
+* table d'analyse.
+* Cette méthode est appelée par exemple lorsque l'on change les préférences
+* au niveau des lignes à prendre en compte
+***/
+repositionneAllSystems(){
+  console.debug("Repositionnement de tous les systèmes.")
+  this.calcPositionAllSystems()
+  this.systems.forEach(system => system.repositionne())
+}
+
+calcPositionAllSystems(){
+  console.debug("Calcul de la position de chaque système…")
+  for(var isys in this.systems){
+    const system = this.systems[isys]
+    if ( isys > 0 ) system.prevSystem = this.systems[isys - 1]
+    TableAnalyse.calcSystemPos(system)
+    system.modified = true
+  }
 }
 
 /**

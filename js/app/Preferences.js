@@ -37,7 +37,7 @@ const PREFS_DEFAULT_VALUES = {
     , export: {
         titre: "Finalisation de la partition analysée"
       , items: {
-            user_segment_line: {name: "Utiliser la ligne de segment", value: true}
+            use_segment_line: {name: "Utiliser la ligne de segment", value: true}
         }
       }
   }

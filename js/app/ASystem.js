@@ -128,10 +128,14 @@ createNewAObjet(ev){
     , objetProps: objProps
     , system: this.minid
   }
-  AObject.create(odata)
+  const aobj = AObject.create(odata)
+  this.pref_select_new_objet && aobj.select({})
   this.modified = true
 }
 
+get pref_select_new_objet(){
+  return Score.current.preferences.binary('analyse.select_just_created')
+}
 /**
 * Pour ajouter l'objet au système.
 * Ça consiste à :
@@ -145,56 +149,59 @@ append(aobj){
   this.aobjets.push(aobj)
 }
 
+/**
+* Construction du système sur la partition
+***/
+build(){
+const my = this
+const score = Score.current
+const Prefs = score.preferences
+my.imageLoaded = false
+const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid, src: this.imageSrc})
+const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': my.minid, inner:[img]})
+my.container.appendChild(div)
+
+/**
+* Pour le numéro de mesure
+* Il sera masqué par Score.draw si les préférences le demandent
+***/
+const numMes = DCreate('SPAN', {class:'numero-mesure', text:my.numero_first_mesure||'-'})
+div.appendChild(numMes)
+$(numMes).on('click', this.onClickNumeroMesure.bind(this))
+
+// On place un observer sur l'image pour savoir si elle est chargée
+$(img).on('load', ev => {
+  if ( img.complete && img.naturalHeight != 0) {
+    my.imageLoaded = true
+  }
+})
+this.obj = div
+this.observe()
+}
+
+/**
+* Positionnement du système
+* -------------------------
+*
+* @note   Le top doit avoir déjà été calculé.
+* @note   On règle aussi toujours la hauteur du conteneur des systèmes
+*         afin de pouvoir exporter en page unique
+***/
+positionne(){
+  this.obj.style.top = `${this.top}px`
+  this.container.style.height = `${this.top + 500}px`
+}
+repositionne(){
+  this.obj.style.top = `${this.top}px`
+}
+
+observe(){
   /**
-  * Construction du système sur la partition
+  * L'observation, principalement, permet de créer les objets d'analyse
+  * en cliquant sur le système concerné
   ***/
-  build(){
-    const my = this
-    const score = Score.current
-    const Prefs = score.preferences
-    my.imageLoaded = false
-    const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid, src: this.imageSrc})
-    const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': my.minid, inner:[img]})
-    my.container.appendChild(div)
-
-    /**
-    * Pour le numéro de mesure
-    * Il sera masqué par Score.draw si les préférences le demandent
-    ***/
-    const numMes = DCreate('SPAN', {class:'numero-mesure', text:my.numero_first_mesure||'-'})
-    div.appendChild(numMes)
-    $(numMes).on('click', this.onClickNumeroMesure.bind(this))
-
-    // On place un observer sur l'image pour savoir si elle est chargée
-    $(img).on('load', ev => {
-      if ( img.complete && img.naturalHeight != 0) {
-        my.imageLoaded = true
-      }
-    })
-    this.obj = div
-    this.observe()
-  }
-
-  /**
-  * Positionnement du système
-  * -------------------------
-  *
-  * @note   Le top doit avoir déjà été calculé.
-  * @note   On règle aussi toujours la hauteur du conteneur des systèmes
-  *         afin de pouvoir exporter en page unique
-  ***/
-  positionne(){
-    this.obj.style.top = `${this.top}px`
-    this.container.style.height = `${this.top + 500}px`
-  }
-
-  observe(){
-    /**
-    * L'observation, principalement, permet de créer les objets d'analyse
-    * en cliquant sur le système concerné
-    ***/
-    $(this.obj).on('click', this.onClick.bind(this))
-  }
+  $(this.obj).on('click', this.onClick.bind(this))
+}
 
   /**
   * Position des lignes du système
@@ -247,9 +254,9 @@ append(aobj){
 * Méthodes de calcul
 * ------------------
 ***/
-calcFullHeight() {
+calcFullHeight(firstTopLineType) {
   const cPrefs = Score.current.preferences
-  return (0 - cPrefs.ligne('segment') + this.rHeight + cPrefs.ligne('pedale') + 17)
+  return (0 - cPrefs.ligne(firstTopLineType) + this.rHeight + cPrefs.ligne('pedale') + 17)
 }
 calcBottomLimit(){
   return this.top + this.fullHeight

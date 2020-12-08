@@ -39,16 +39,19 @@ onActivate(){
     score.draw().then(this.drawPageDelimitors.bind(this))
   }
 
-  score.startAutosave()
+  this.pref_auto_save && score.startAutosave()
 
   console.debug("<- PanneauAnalyse#onActivate")
 }
 
 onDesactivate(){
-  Score.current.autosave() // une dernière fois
-  Score.current.stopAutosave()
+  if ( this.pref_auto_save ) {
+    Score.current.autosave() // une dernière fois
+    Score.current.stopAutosave()
+  }
 }
 
+get pref_auto_save(){return Score.current.preferences.binary('analyse.autosave') }
 
 /**
 * Construction des titre, compositeur, etc. en fonction des données et
@@ -130,9 +133,9 @@ calcSystemPos(system){
   system.data.rHeight = system.rHeight = $(`img#image-system-${system.minid}`).height()
 
   /**
-  * Calcul de la taille complète du système
+  * Calcul de la hauteur totale complète du système
   ***/
-  system.data.fullHeight = system.fullHeight = system.calcFullHeight()
+  system.data.fullHeight = system.fullHeight = system.calcFullHeight(this.firstTopLineType)
 
   if ( system.index == 0 ) {
     // Tout premier système
@@ -174,10 +177,23 @@ calcSystemPos(system){
       fromY = page_bottom_limit
     }
 
-    system.top = system.data.top = fromY + SBS - score.preferences.ligne('segment')
+    system.top
+      = system.data.top
+      = fromY + SBS - score.preferences.ligne(this.firstTopLineType)
     debug && console.debug("this.top final = %i", system.top)
 
   }
+}
+
+/**
+* La première ligne à prendre en compte
+***/
+get firstTopLineType(){
+  return this.pref_no_ligne_segment ? 'modulation' : 'segment'
+}
+
+get pref_no_ligne_segment(){
+  return false === Score.current.preferences.binary('export.user_segment_line')
 }
 
 get systemsContainer(){

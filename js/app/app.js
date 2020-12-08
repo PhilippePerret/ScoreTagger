@@ -23,8 +23,10 @@ class App {
     })
   }
   static setPanneauCourant(){
-    return new Promise((ok,ko)=>{
-      Panneau.current = Panneau.get('home')
+    return new Promise((ok,ko) => {
+      const Prefs = Score.current.preferences
+      const panneau = Prefs.binary('startup.analyse_on_startup') ? 'analyse' : 'home'
+      Panneau.current = Panneau.get(panneau)
       Panneau.current.open()
       ok()
     })

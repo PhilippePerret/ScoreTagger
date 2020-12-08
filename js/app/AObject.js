@@ -20,12 +20,13 @@ static add(item){
 
 /**
 * Création d'un nouvel objet d'analyse
-*
+* Retourne l'instance du nouvel objet créé.
 ***/
 static create(odata){
   const aobj = new AObject(odata)
   aobj.build()
   aobj.system.append(aobj)
+  return aobj
 }
 
 /**
@@ -220,30 +221,28 @@ observe(){
   $(this.obj).on('click', this.toggleSelect.bind(this))
 }
 
-  onChangeXByDrag(ev, ui){
-    this.data.left = parseInt(ui.position.left, 10)
-    if ( this.isEdited ) AObjectToolbox.buttonPosX.set(this.data.left)
-  }
+onChangeXByDrag(ev, ui){
+  this.data.left = parseInt(ui.position.left, 10)
+  if ( this.isEdited ) AObjectToolbox.buttonPosX.set(this.data.left)
+}
 
-  toggleSelect(ev){
-    this.isSelected ? this.deselect(ev) : this.select(ev)
-  }
-  select(ev){
-    this.constructor.selection.add(this,ev)
-  }
-  deselect(ev){
-    this.constructor.selection.remove(this,ev)
-  }
-  setSelected(){
-    $(this.obj).addClass('selected')
-  }
-  unsetSelected(){
-    $(this.obj).removeClass('selected')
-  }
+toggleSelect(ev){
+  this.isSelected ? this.deselect(ev) : this.select(ev)
+}
+select(ev){
+  this.constructor.selection.add(this,ev)
+}
+deselect(ev){
+  this.constructor.selection.remove(this,ev)
+}
+setSelected(){
+  $(this.obj).addClass('selected')
+}
+unsetSelected(){
+  $(this.obj).removeClass('selected')
+}
 
-  get type(){
-    return this._type || (this._type = this.data.type)
-  }
-  get obj(){return this._obj}
+get type(){ return this._type || (this._type = this.data.type) }
+get obj(){return this._obj}
 
 }
