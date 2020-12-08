@@ -153,30 +153,30 @@ append(aobj){
 * Construction du système sur la partition
 ***/
 build(){
-const my = this
-const score = Score.current
-const Prefs = score.preferences
-my.imageLoaded = false
-const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid, src: this.imageSrc})
-const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': my.minid, inner:[img]})
-my.container.appendChild(div)
+  const my = this
+  const score = Score.current
+  const Prefs = score.preferences
+  my.imageLoaded = false
+  const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid, src: this.imageSrc})
+  const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': my.minid, inner:[img]})
+  my.container.appendChild(div)
 
-/**
-* Pour le numéro de mesure
-* Il sera masqué par Score.draw si les préférences le demandent
-***/
-const numMes = DCreate('SPAN', {class:'numero-mesure', text:my.numero_first_mesure||'-'})
-div.appendChild(numMes)
-$(numMes).on('click', this.onClickNumeroMesure.bind(this))
+  /**
+  * Pour le numéro de mesure
+  * Il sera masqué par Score.draw si les préférences le demandent
+  ***/
+  const numMes = DCreate('SPAN', {class:'numero-mesure', text:my.numero_first_mesure||'-'})
+  div.appendChild(numMes)
+  $(numMes).on('click', this.onClickNumeroMesure.bind(this))
 
-// On place un observer sur l'image pour savoir si elle est chargée
-$(img).on('load', ev => {
-  if ( img.complete && img.naturalHeight != 0) {
-    my.imageLoaded = true
-  }
-})
-this.obj = div
-this.observe()
+  // On place un observer sur l'image pour savoir si elle est chargée
+  $(img).on('load', ev => {
+    if ( img.complete && img.naturalHeight != 0) {
+      my.imageLoaded = true
+    }
+  })
+  this.obj = div
+  this.observe()
 }
 
 /**
@@ -190,6 +190,7 @@ this.observe()
 positionne(){
   this.obj.style.top = `${this.top}px`
   this.container.style.height = `${this.top + 500}px`
+  ASystem.top_last_system = this.top
 }
 repositionne(){
   this.obj.style.top = `${this.top}px`
