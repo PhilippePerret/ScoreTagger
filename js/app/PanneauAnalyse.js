@@ -36,8 +36,7 @@ onActivate(){
     ***/
     this.resetAll()
     this.drawFirstPage()
-    score.draw()
-    this.drawPageDelimitors()
+    score.draw().then(this.drawPageDelimitors.bind(this))
   }
 
   score.startAutosave()
@@ -81,16 +80,20 @@ drawFirstPage(){
 * complète de l'analyse
 ***/
 drawPageDelimitors(){
+  console.debug("-> drawPageDelimitors")
   const heightContainer = $(this.systemsContainer).height()
+  console.debug("heightContainer = %i", heightContainer)
   var top = 0
   var ipage = 0
-  while (top < heightContainer ) {
+  while ( top < heightContainer ) {
     top += HEIGHT_PAGE
+    if ( top > heightContainer ) break ;
     ++ ipage ;
     const line = DCreate('DIV', {class:'page-separator', style:`top:${top}px`, inner:[
-      DCreate('SPAN', {text: String(ipage)})
+      DCreate('SPAN', {class:'page_number', text: String(ipage)})
     ]})
     this.systemsContainer.appendChild(line)
+    console.debug("Dessin d'un séparateur de page à %i", top)
   }
 }
 

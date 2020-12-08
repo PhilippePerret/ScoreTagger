@@ -199,7 +199,7 @@ draw(){
                     : this.loadSystemsNonPrepared.bind(this) ;
 
 
-  loadingMethod.call()
+  return loadingMethod.call()
     .then(this.instanciateAndPoseAllSystems.bind(this))
     .then(this.positionneAndDrawSystems.bind(this))
     .then(this.finDrawing.bind(this))
