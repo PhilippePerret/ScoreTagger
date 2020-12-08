@@ -11,6 +11,31 @@ const BASELINE_HEIGHT = 32
 // Valeurs par défaut
 const PREFS_DEFAULT_VALUES = {
   space_between_systems: 20
+  // Les checkboxs (valeurs binaires, d'où le nom)
+  , binary: {
+      startup: {
+        titre: "Démarrage"
+      , items: {
+            analyse_on_startup: {name: "Afficher l'onglet Analyse au démarrage", value: false}
+
+        }
+      }
+    , analyse: {
+        titre: "Analyse de la partition"
+      , items: {
+            autosave: {name:"Sauvegarde automatique pendant l'analyse", value: true}
+          , autochoose_values: {name: "Toujours sélectionner les valeurs par défaut", value: true}
+          , select_just_created: {name: "Sélectionner l'objet nouvellement créé", value: true}
+        }
+      }
+    , export: {
+        titre: "Finalisation de la partition analysée"
+      , items: {
+            user_segment_line: {name: "Utiliser la ligne de segment", value: true}
+
+        }
+      }
+  }
   , lignes: {
       segment:      -(40 + 17) // ou garder pour mode analyse structurelle ?
     , modulation:   -(20 + 20)
@@ -44,6 +69,7 @@ constructor(score) {
 get data(){
   return this._data || {
       lignes: {}
+    , binary: {}
     , first_page: {}
     , space_between_systems: null
   }
@@ -87,5 +113,23 @@ ligne(type){
 first_page(prop){
   return this.data.first_page[prop] || PREFS_DEFAULT_VALUES.first_page[prop]
 }
+
+/**
+* Pour obtenir une valeur binaire (checkbox)
+*
+* +key+ ressemble à "<section>.<key>", par exemple "startup.analyse_on_startup"
+***/
+binary(key){
+  if ( undefined === this.data.binary[key] ) {
+    return this.getBinaryDefault(key)
+  } else {
+    return this.data.binary[key]
+  }
+}
+getBinaryDefault(key){
+  const [mainkey, subkey] = key.split('.')
+  return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
+}
+
 
 } // class Preferences

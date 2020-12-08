@@ -46,6 +46,29 @@ prepare(){
       .css(dcss)
       .draggable({stop: this.onStopMoveScoreProp.bind(this, prop)})
   })
+
+  /**
+  * Toutes les préférences checkbox (binary)
+  ***/
+  for(var k in PREFS_DEFAULT_VALUES.binary){
+    const section = PREFS_DEFAULT_VALUES.binary[k]
+    const div = DCreate('DIV', {class:'prefs-section-checkbox'})
+    const titre = DCreate('DIV', {text:section.titre, class:"prefs-section-checkbox-titre"})
+    div.appendChild(titre)
+    for ( var kp in section.items ) {
+      const ditem = section.items[kp]
+      const dinput = {type:'checkbox', id:`cb-${kp}`}
+      const value = score.preferences.binary(`${k}.${kp}`)
+      value && Object.assign(dinput, {checked: true})
+      const cb = DCreate('DIV', {class:'prefs-checkbox-container', inner:[
+          DCreate('INPUT', dinput)
+        , DCreate('LABEL', {for:`cb-${kp}`, text:ditem.name})
+      ]})
+      div.appendChild(cb)
+    }
+    $('#preferences-binaires').append(div)
+  }
+
   // Position du premier système
   $('#temoin-first-system').css('top', `${cPrefs.first_page('first_system_top')}px`)
   $('img#img-system-temoin')[0].src = 'img/system-exemple.jpg'
@@ -64,6 +87,7 @@ prepare(){
         .draggable({axis:'y'})
     }
   })
+
 }// prepare
 
 observe(){
@@ -74,8 +98,9 @@ observe(){
 
   // Boutons pour enregistrer les préférences et revenir
   // aux préférences par défaut
-  $('#btn-save-preferences').on('click', this.onClickSavePreferences.bind(this))
-  $('#btn-revenir-prefs-default').on('click', this.onClickRevenirPrefsDefault.bind(this))
+  // Note : une class car plusieurs boutons
+  $('button.btn-save-preferences').on('click', this.onClickSavePreferences.bind(this))
+  $('button.btn-revenir-prefs-default').on('click', this.onClickRevenirPrefsDefault.bind(this))
 
   this.observed = true
 }
@@ -132,6 +157,18 @@ onClickSavePreferences(ev){
   // On aura besoin de la hauteur de l'image pour le positionnement
   // des éléments sous le système témoin
   const imgHeight = $('img#img-system-temoin').height()
+
+  /**
+  * Enregistrement des valeurs checkbox (binaires)
+  ***/
+  for (var k in cPrefs.binary) {
+    const dsection = cPrefs.binary[k]
+    for (var kp in dsection.items) {
+      const cb = $(`input#cb-${kp}`)[0]
+      scorePrefs.binary[`${k}.${kp}`] = cb.checked
+    }
+  }
+
 
   SCORE_ANALYZE_PROPS.forEach(prop => {
     const valPref = Prefs.first_page(prop)
