@@ -4,13 +4,22 @@
   Script qui découpe une page de la partition originale, selon les
   "lignes de coupe" fournies, pour produire les systèmes
 
+
+  NOTES
+  -----
+      [1] Tandis que CUTLINES_DATA ne contient que les sections de systèmes
+          à découper, ALL_CUTLINES_TOPS contient TOUTES les lignes de coupe
+          qui ont été dessinées, même celle qui permettent de supprimer du
+          "blanc" entre des systèmes.
+
 =end
 
 # Pour récupérer la valeur "code" transmise en donnée
 # Par exemple par
-CUTLINES_DATA   = Ajax.param(:data)
-CURRENT_ANALYSE = Ajax.param(:current_analyse)
-CURRENT_PAGE    = Ajax.param(:page)
+CUTLINES_DATA     = Ajax.param(:data)
+ALL_CUTLINES_TOPS = Ajax.param(:cutlines_top) # [1]
+CURRENT_ANALYSE   = Ajax.param(:current_analyse)
+CURRENT_PAGE      = Ajax.param(:page)
 
 begin
 
@@ -19,7 +28,7 @@ begin
   DATA = SCORE.data
   DATA.merge!(pages: {}) unless DATA.key?(:pages)
   DATA[:pages].merge!( CURRENT_PAGE => {}) unless DATA[:pages].key?(CURRENT_PAGE)
-  DATA[:pages][CURRENT_PAGE].merge!(cutlines: CUTLINES_DATA)
+  DATA[:pages][CURRENT_PAGE].merge!(cutlines: CUTLINES_DATA, all_cutlines: ALL_CUTLINES_TOPS)
   SCORE.set(DATA)
 
   # séparation en pixels entre les système

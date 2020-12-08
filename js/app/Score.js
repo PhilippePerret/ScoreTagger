@@ -172,8 +172,8 @@ getData(){
   * Méthode qui lance la découpe de la page de partition originale d'après
   * les lignes de découpe définies dans +cropLinesData+
   ***/
-  cutPage(numPage, cropLinesData, callback){
-    Ajax.send('cut_page.rb', {data: cropLinesData, page: numPage})
+  cutPage(numPage, cropLinesData, cutLinesTops, callback){
+    Ajax.send('cut_page.rb', {data: cropLinesData, cutlines_top:cutLinesTops, page: numPage})
     .then(callback)
   }
 

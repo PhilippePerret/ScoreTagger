@@ -34,6 +34,7 @@ class PanneauCrop extends Panneau {
     })
     tops.sort((a,b) => a - b);
     var codes = []
+    var cutLinesTops = []
     var len, i;
     for(i = 0, len = tops.length; i < len; ++ i){
       const i_plus1 = 1 + Number(i)
@@ -43,14 +44,16 @@ class PanneauCrop extends Panneau {
       const top_next = parseInt(tops[i_plus1],10)
       var h = top_next - top_cur ;
       // On ne prend pas les portions trop courts, elles correspondent à
-      // des "blancs" entre les systèmes
+      // des "blancs" entre les systèmes. En revanche, on garde toutes les
+      // lignes de coupe en mémoire.
+      cutLinesTops.push({top: top_cur, blanc: h < 150})
       if ( h < 150 ) continue ;
       codes.push({top: top_cur, height: h})
     }
     if ( codes.length > 0 ) {
       // <= Des lignes de coupe ont été définies
       // => Procéder à la découpe
-      Score.current.cutPage(this.current_page, codes, this.confirmCrop.bind(this))
+      Score.current.cutPage(this.current_page, codes, cutLinesTops, this.confirmCrop.bind(this))
     } else {
       erreur("Aucune ligne de coupe n'est définie.")
     }
@@ -119,7 +122,7 @@ class PanneauCrop extends Panneau {
     console.debug("-> drawPage. Retour d'ajax pour la page %i : ", ipage, ret)
     this.removeAllCutLines()
     $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
-    if ( ret.data_page ) this.drawCutLines(ret.data_page.cutlines)
+    ret.data_page && this.drawCutLines(ret.data_page.all_cutlines || ret.data_page.cutlines)
   }
 
   /**
