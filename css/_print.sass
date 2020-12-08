@@ -1,11 +1,12 @@
 @media print
   body
-    width: auto
-
-
+    width: 20cm
+    background-color: white !important
 
     div#systems-container
-      margin-left: 0!important
+      margin-left: 0.5cm !important
+      margin-right: 0.5cm !important
+      zoom: 147%
 
     .aobjet
       &:not(.segment)
@@ -14,6 +15,14 @@
         background-color: transparent!important
       &.selected
         border-color: transparent !important
+
+    div.page-separator
+      display: none
+      span.page_number
+        display: none
+
+    span#voyant_save
+      display: none
 
     aside#tabs-buttons
       display: none
