@@ -15,8 +15,8 @@ begin
     # On s'assure que tous les dossiers soient bien présents
     score.mkdir_p_folders
     # On enregistre le chemin d'accès fourni
-    score.set(score_ini_path: score_ini_path)
     page_count = score.prepare_score_pages
+    score.set(page_count: page_count, score_ini_path: score_ini_path)
     Ajax << {ok: true, page_count: page_count}
   end
 rescue Exception => e

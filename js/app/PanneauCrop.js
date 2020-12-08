@@ -11,7 +11,6 @@ class PanneauCrop extends Panneau {
     document.body.style.width = null ;
     const score = Score.current
     this.show_score_ini()
-    this.observeBody()
     console.debug("<- PanneauCrop#onActivate")
   }
 
@@ -78,9 +77,8 @@ class PanneauCrop extends Panneau {
 
   observe(){
     super.observe()
-    this.buttonPageNumber = new IncButton({container:'#crop-page-number', min:1, value:1, onchange: this.showPage.bind(this)})
+    this.buttonPageNumber = new IncButton({container:'#crop-page-number', min:1, max:Score.current.data.page_count, value:1, onchange: this.showPage.bind(this)})
     this.buttonPageNumber.build()
-    message("Clic and Drag pour placer les lignes de découpe de la partition, puis clique sur le bouton “Découper”.")
     this.isObserved = true
   }
 
@@ -91,6 +89,9 @@ class PanneauCrop extends Panneau {
   }
   show_score_ini(){
     this.showPage(1)
+    // On règle à chaque fois le nombre de page max, car on a pu charger
+    // une autre analyse.
+    this.buttonPageNumber.max = Score.current.data.page_count
     this.observeBody()
     this.observeButtonCrop()
   }

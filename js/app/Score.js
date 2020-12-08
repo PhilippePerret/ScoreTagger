@@ -153,7 +153,6 @@ dispatchData(){
   SCORE_ANALYZE_PROPS.forEach(prop => $(`#score-${prop}`).val(this.data[prop]))
   // Préférences
   this.preferences.data = this.data.preferences
-  console.log("this.preferences.data mis à ", this.preferences.data)
 }
 
 
@@ -163,8 +162,9 @@ getData(){
   Ajax.send('get_data.rb').then(ret => {
     if ( ret.error ) { ret.data = {} }
     this._data = ret.data
+    console.debug("Data score: ", this.data)
     this.preferences.data = ret.data.preferences
-    console.log("this.preferences.data:", this.preferences.data)
+    // console.debug("this.preferences.data:", this.preferences.data)
   })
 }
 

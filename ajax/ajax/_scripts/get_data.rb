@@ -11,6 +11,10 @@ begin
     score = Score.new(CURRENT_ANALYSE)
     if score.exists?
       if File.exists?(score.data_file_path)
+        # Ajout pour compatibilité ascendante
+        unless score.data.key?(:page_count)
+          score.set(page_count: Dir["#{score.pages_score_folder}/*.jpg"].count)
+        end
         Ajax << { data: score.data }
       else
         Ajax << {error: "Le fichier des données n'existe pas… Il faut redéfinir les éléments…"}

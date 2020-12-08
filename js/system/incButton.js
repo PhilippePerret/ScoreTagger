@@ -1,7 +1,18 @@
 'use strict'
 /** ---------------------------------------------------------------------
+  Class incButton
+  ---------------
+  version 1.0.2
 *   Pour la fabrication d'un bouton d'incrémentation, avec
 *   un champ affichant la valeur
+
+
+  # 1.0.2
+    Ajout des méthodes publiques 'min' et 'max' pour redéfinir de l'extérieur
+    les valeurs max et min.
+
+  # 1.0.0
+    Première implémentation complète de la classe.
 *
 *   Procédure
 *   ---------
@@ -29,8 +40,23 @@ class IncButton {
     if ( undefined === this.data.max ) this.data.max = null
   }
 
+  /**
+  * ---------------------------------------------------------------------
+  * *** Méthodes publiques ***
+  ***/
+
   // Méthode publique
   set(val){ this.setValue(val) }
+
+  // Pour fixer la valeur supérieure
+  set max(v){ this.data.max = v }
+  get max(){ return this.data.max}
+  // Pour fixer la valeur inférieure
+  set min(v){ this.data.min = v }
+  get min(){ return this.data.min }
+
+  // /méthodes publiques
+  // ---------------------------------------------------------------------
 
   incValue(ev, upto){
     if ( ev.shiftKey ){ upto = upto * 10 }
