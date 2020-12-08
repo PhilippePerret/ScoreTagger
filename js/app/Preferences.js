@@ -38,6 +38,7 @@ const PREFS_DEFAULT_VALUES = {
         titre: "Finalisation de la partition analysée"
       , items: {
             use_segment_line: {name: "Utiliser la ligne de segment", value: true}
+          , apercu_tonal: {name: "Produire un aperçu tonal (ton voisins, en annexe)", value: true}
         }
       }
   }

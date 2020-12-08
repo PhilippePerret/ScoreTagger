@@ -1,6 +1,6 @@
 'use strict';
 
-const SCORE_ANALYZE_PROPS = ['title', 'composer','composing_year','analyze_year', 'analyst', 'incipit']
+const SCORE_ANALYZE_PROPS = ['title', 'composer','composing_year','analyze_year', 'analyst', 'tune', 'incipit']
 // Hauteur exacte d'une page
 const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 

@@ -19,6 +19,7 @@ resetAll(){
 
 onActivate(){
   const score = Score.current
+  const my = this
   console.debug("-> PanneauAnalyse#onActivate")
   document.body.style.width = null
   if(!this.observed){
@@ -36,7 +37,10 @@ onActivate(){
     ***/
     this.resetAll()
     this.drawFirstPage()
-    score.draw().then(this.drawPageDelimitors.bind(this))
+    score.draw().then(() => {
+      my.drawPageDelimitors.call(my)
+      this.pref_apercu_tonal && my.drawApercuTonal.call(my)
+    })
   }
 
   this.pref_auto_save && score.startAutosave()
@@ -52,6 +56,7 @@ onDesactivate(){
 }
 
 get pref_auto_save(){return Score.current.preferences.binary('analyse.autosave') }
+get pref_apercu_tonal(){return Score.current.preferences.binary('export.apercu_tonal') }
 
 /**
 * Construction des titre, compositeur, etc. en fonction des données et
@@ -98,6 +103,91 @@ drawPageDelimitors(){
     this.systemsContainer.appendChild(line)
     console.debug("Dessin d'un séparateur de page à %i", top)
   }
+}
+
+/**
+* Pour dessiner, en annexe (i.e. à la fin de la partition analysée), un
+* aperçu tonal, avec les tons voisins et les accidents
+***/
+drawApercuTonal(){
+  const score = Score.current
+  let tuneStr ;
+  if ( ! score.data.tune ) {
+    message("Pour obtenir un aperçu tonal en annexe d'analyse, il faut définir la tonalité de la pièce.<br>Je considère qu'elle est en F#m.")
+    tuneStr = 'F#m'
+  } else {
+    tuneStr = score.data.tune
+  }
+
+  console.clear()
+
+  const dTune = tuneStr.split('')
+  let noteTune  = dTune.shift().toUpperCase()
+  let alterTune = dTune.shift()
+  if ( alterTune == 'd') alterTune = '#'
+  let natureTune
+  if ( ['#','b'].includes(alterTune) ) {
+    natureTune = dTune.shift()
+  } else {
+    natureTune = alterTune
+    alterTune = null
+  }
+  natureTune = natureTune || 'M'
+  console.debug({note: noteTune, alter: alterTune, nature: natureTune})
+
+  const TuneIndTon = TUNE_TO_INDICE_TON[noteTune]
+  console.debug("TuneIndTon = %i", TuneIndTon)
+  // L'indice demi-ton du ton
+  const indiceDemitonTune = TUNE_TO_INDICE[noteTune]
+  console.debug("indiceDemitonTune de %s = ", tuneStr, indiceDemitonTune)
+
+  /**
+  * Calcul du relatif (différent en majeur et en mineur)
+  ***/
+  console.debug("INDICE_TON_TO_TUNE = ", INDICE_TON_TO_TUNE)
+  const indForRel = TuneIndTon >= 3 ? TuneIndTon : TuneIndTon + 7
+  const RelatifIndTon = indForRel - 2
+  console.debug("RelatifIndTon = %i", RelatifIndTon)
+  const noteRel = INDICE_TON_TO_TUNE[RelatifIndTon]
+  console.debug("noteRel = %s", noteRel)
+  // L'indice demi-ton du relatif
+  const indiceDemitonRel = TUNE_TO_INDICE[noteRel]
+  console.debug("indiceDemitonRel = %i", indiceDemitonRel)
+
+  // Quelle distance y a-t-il entre le ton et le relatif normal ?
+  var dist
+  if ( indiceDemitonRel > indiceDemitonTune) {
+    dist = indiceDemitonRel - indiceDemitonTune
+  } else {
+    dist = indiceDemitonTune - indiceDemitonRel
+  }
+  console.debug("Distance Ton <-> relatif naturel = % i", dist)
+  if ( natureTon == 'M' ) {
+    let alterRel ;
+    if ( (dist == 3 && !alterTune) || (alterTune == '#' && dist == 4)) {
+      // Rien à faire
+      alterRel = null
+    } else if (dist == 3 && alterTune) {
+      alterRel = alterTune
+    } else if (dist == 4 && !alterTune ) {
+      alterRel = 'b'
+    }
+    console.debug("Ton relatif = %s", `${noteRel}${alterRel}`)
+  }
+
+
+
+  const indForSousDom = TuneIndTon <= 3 ? TuneIndTon : TuneIndTon - 7
+  const SousDomIndTon = indForSousDom + 3
+  const indForDom = TuneIndTon <= 4 ? TuneIndTon : TuneIndTon - 7
+  const DomIndTon = indForDom + 4
+  console.debug({
+    tune: tuneStr,
+    TuneIndTon: TuneIndTon,
+    RelatifIndTon: RelatifIndTon,
+    SousDomIndTon: SousDomIndTon,
+    DomIndTon: DomIndTon
+  })
 }
 
 observe(){
