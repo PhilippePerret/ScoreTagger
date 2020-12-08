@@ -128,19 +128,7 @@ Les objet d’analyse sont enregistrés par système. Un fichier par système, e
 
 L’enregistrement est automatique.
 
-Mais pour ne pas tourner en boucle indéfiniment lorsque rien ne se passe, on peut imaginer ce processus :
-
-~~~text
-MODIFICATION (création d'objet, modification, déplacement)
-	=>  
-	=> 	Appel du lancement de la sauvegarde (pour 5 secondes plus tard)
-			Si la sauvegarde est déjà en route, on ne fait rien
-			Sinon, on la met en route.
-			C'est un setTimeout
-	- Après l'enregistrement, on relance une sauvegarde pour plus tard
-~~~
-
-
+Mais pour ne pas tourner en boucle indéfiniment lorsque rien ne se passe, on pourrait imaginer un processus qui arrête la boucle d’enregistrement en cas d’inaction. Par exemple en enregistrant chaque fois la date de la dernière action (du dernier modified, même après sauvegarde). Si ce dernier modified est trop loin, on arrête. Et on relance à la première action.
 
 
 

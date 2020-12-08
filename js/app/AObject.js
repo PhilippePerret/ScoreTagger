@@ -115,7 +115,7 @@ get data2save(){
 * @note : il n'est pas écrit dans cette méthode
 ***/
 build(){
-  console.debug("Construction de l'objet : ", this.data)
+  // console.debug("Construction de l'objet : ", this.data)
   // On a besoin du score courant
   const oProps = this.objetProps
   const score = Score.current
@@ -125,7 +125,7 @@ build(){
   // Les propriétés d'objet sélectionnés
   // console.debug("objetProps:", this.objetProps)
 
-  console.debug("Top de l'objet #%i : %i", this.id, top)
+  // console.debug("Top de l'objet #%i : %i", this.id, top)
 
   // Le DIV PRINCIPAL qui sera ajouté au document
   const div_id = `ao-${this.data.id}`
