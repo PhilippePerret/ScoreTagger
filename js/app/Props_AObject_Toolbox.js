@@ -68,6 +68,9 @@ get cadenceButtons(){
 get natureButtons(){
   return this._naturebuttons || (this._naturebuttons = this.container.find('div#objets div#objets-natures'))
 }
+get renversementButtons(){
+  return this._renvbuttons || (this._renvbuttons = this.container.find('div#objets div#objets-renversements'))
+}
 get segmentButtons(){
   return this._segmentbuttons || (this._segmentbuttons = this.container.find('div#objets div#objets-segments'))
 }
@@ -86,6 +89,7 @@ setInterfaceForType(ot){
   new DOM(this.segmentButtons).showIf(ot == 'segment')
   new DOM(this.natureButtons).showIf(!['cadence','segment'].includes(ot))
   new DOM(this.harmonyButtons).showIf(['harmony','modulation'].includes(ot))
+  new DOM(this.renversementButtons).showIf(ot == 'harmony')
 
   const ens = REALVALS_PER_TYPE[ot] || REALVALS_PER_TYPE.default
   // Les valeurs vraies
@@ -154,7 +158,8 @@ getValues(){
   const harmony = $('button[data-type-aobject="harmony"].obb.selected')[0].getAttribute('data-value')
   const nature = $('button[data-type-aobject="nature"].obb.selected')[0].getAttribute('data-value')
   const segment = $('button[data-type-aobject="segment"].obb.selected')[0].getAttribute('data-value')
-  return { note:note, type:type, harmony:harmony, nature:nature, alteration:alteration, segment:segment }
+  const renv = Number($('button[data-type-aobject="renversement"].obb.selected')[0].getAttribute('data-value'))
+  return { note:note, type:type, harmony:harmony, renv:renv, nature:nature, alteration:alteration, segment:segment }
 }
 
 /**
@@ -164,34 +169,57 @@ getValues(){
 ***/
 updateOverview(){
   const vals = this.getValues()
-  $('#aobject_apercu').html(this.buildFinalText(vals))
+  $('#aobject_apercu').html(this.constructor.buildFinalText(vals))
 }
 
 /**
 * Méthode qui construit le texte final en fonction des données choisies
 * ou enregistrées.
 ***/
-buildFinalText(data){
-  var ft = ""
-  if (data.type == 'harmony'){
-    ft = data.harmony
-  } else {
-    ft = data.note
-  }
-  if ( !['cadence'].includes(data.type)){
-    ft += data.alteration
-  }
+static buildFinalText(data){
+  var mark ;
+  const objProps = data;
+  const otype = objProps.type
 
-  if (!['segment'].includes(data.type)) {
-    if ( data.nature!='Maj') {
-      ft += data.nature
-    }
+  switch(otype){
+    case 'harmony': mark = objProps.harmony; break;
+    default: mark = objProps.note
   }
-  if ( data.type == 'modulation') {
-    if (data.harmony != 'none') ft += ` <span class="small">(${data.harmony})</span>`
+  mark = `<span class="nom">${mark}</span>`
+  if ( objProps.alteration != '' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
+  if (objProps.nature != 'Maj') {
+    mark += `<span class="nat">${objProps.nature}</span>`
   }
-  ft = `<span class="small">${data.type} : </span>${ft}`
-  return ft
+  if (otype == 'modulation' && objProps.harmony != 'none') {
+    mark += `<span class="rel">(${objProps.harmony})</span>`
+  }
+  if ( otype == 'harmony' && data.renv != 0) {
+    mark += ` <span class="renv">${$(`button#renversement-${data.renv}`).html()}</span>`
+  }
+  return mark
+
+  // if (otype == 'harmony'){
+  //   ft = data.harmony
+  // } else {
+  //   ft = data.note
+  // }
+  // if ( !['cadence'].includes(otype)){
+  //   ft += data.alteration
+  // }
+  //
+  // if (!['segment'].includes(otype)) {
+  //   if ( data.nature!='Maj') {
+  //     ft += data.nature
+  //   }
+  // }
+  // if ( otype == 'modulation') {
+  //   if (data.harmony != 'none') ft += ` <span class="small">(${data.harmony})</span>`
+  // }
+  // ft = `<span class="small">${otype} : </span>${ft}`
+  // if ( otype == 'harmony' && data.renv != 0) {
+  //   ft += ` <span class="renv">${$(`button#renversement-${data.renv}`).html()}</span>`
+  // }
+  // return ft
 }
 
 

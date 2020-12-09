@@ -12,6 +12,7 @@ div#objets
 
   button
     &.obb
+      text-align: center
       // Un bouton outil sélection
       &.selected
         background-color: darkgreen
@@ -23,8 +24,14 @@ div#objets
       width: 30px
       height: 26px
       vertical-align: middle
+    &[data-type-aobject="harmony"]
+      min-width: 30px
     &[data-type-aobject="nature"]
       height: 30px
+    &[data-type-aobject="renversement"]
+      width: 48px
+      height: 30px
+      line-height: 1.6
 
   div#objets-notes
     &.cadence

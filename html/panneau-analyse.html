@@ -34,6 +34,7 @@
       <button type="button" id="btn-destroy-aobject">Détruire</button>
     </div>
   </div>
+
   <!-- Toolbox des propriétés à choisir de l'objet d'analyse -->
   <div id="aobject_apercu" style="font-size:1.5em;font-weight:bold;padding:4px 1em;"></div>
   <div id="objets">
@@ -46,7 +47,6 @@
       <button type="button" id="otype-pedale" data-value="pedale" data-type-aobject="otype" class="obb">Pédale</button>
     </div>
     <div id="objets-notes" class="objets-prop">
-      <button type="button" id="note-0" data-type-aobject="note" data-value="" class="obb">-</button>
       <button type="button" id="note-c" data-type-aobject="note" data-value="c" class="obb selected">do</button>
       <button type="button" id="note-d" data-type-aobject="note" data-value="d" class="obb">ré</button>
       <button type="button" id="note-e" data-type-aobject="note" data-value="e" class="obb">mi</button>
@@ -54,6 +54,7 @@
       <button type="button" id="note-g" data-type-aobject="note" data-value="g" class="obb">sol</button>
       <button type="button" id="note-a" data-type-aobject="note" data-value="a" class="obb">la</button>
       <button type="button" id="note-b" data-type-aobject="note" data-value="b" class="obb">si</button>
+      <button type="button" id="note-0" data-type-aobject="note" data-value="" class="obb">-</button>
     </div>
     <div id="objets-alterations" class="objets-prop">
       <button type="button" id="alteration-n" data-value="n" data-type-aobject="alteration" class="obb selected">♮</button>
@@ -61,7 +62,6 @@
       <button type="button" id="alteration-b" data-value="b" data-type-aobject="alteration" class="obb">♭</button>
     </div>
     <div id="objets-harmonies" class="hidden objets-prop">
-      <button type="button" id="harmony-none" data-value="none" data-type-aobject="harmony" class="obb">---</button>
       <button type="button" id="harmony-I" data-value="I" data-type-aobject="harmony" class="obb selected">I</button>
       <button type="button" id="harmony-V" data-value="V" data-type-aobject="harmony" class="obb">V</button>
       <button type="button" id="harmony-II" data-value="II" data-type-aobject="harmony" class="obb">II</button>
@@ -72,6 +72,7 @@
       <button type="button" id="harmony-Rel" data-value="Rel" data-type-aobject="harmony" class="obb">Relatif</button>
       <button type="button" id="harmony-VdV" data-value="VdV" data-type-aobject="harmony" class="obb">V de V</button>
       <button type="button" id="harmony-VIIdV" data-value="VIIdV" data-type-aobject="harmony" class="obb">VII de V</button>
+      <button type="button" id="harmony-none" data-value="none" data-type-aobject="harmony" class="obb">---</button>
     </div>
     <div id="objets-natures" class="objets-prop">
       <button type="button" id="nature-Maj" data-value="Maj" data-type-aobject="nature" class="obb selected">Maj</button>
@@ -82,6 +83,13 @@
       <button type="button" id="nature-5dm" data-value="5dim" data-type-aobject="nature" class="obb">5dim</button>
       <button type="button" id="nature-6aug" data-value="6aug" data-type-aobject="nature" class="obb">6aug</button>
       <button type="button" id="nature-6Nap" data-value="6Nap" data-type-aobject="nature" class="obb">6nap</button>
+    </div>
+    <div id="objets-renversements" class="objets-prop">
+      <button type="button" id="renversement-0" data-value="0" data-type-aobject="renversement" class="obb selected"></button>
+      <button type="button" id="renversement-1" data-value="1" data-type-aobject="renversement" class="obb">*3</button>
+      <button type="button" id="renversement-2" data-value="2" data-type-aobject="renversement" class="obb">*5</button>
+      <button type="button" id="renversement-3" data-value="3" data-type-aobject="renversement" class="obb">*7</button>
+      <button type="button" id="renversement-4" data-value="4" data-type-aobject="renversement" class="obb">*9</button>
     </div>
     <div id="objets-segments" class="hidden objets-prop">
       <button type="button" data-type-aobject="segment" id="segment-crochets-top" data-value="up" class="obb selected">⎴</button>

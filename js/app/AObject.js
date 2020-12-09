@@ -189,25 +189,10 @@ edit(){
 }
 unedit(){ this.isEdited = false }
 
-  // Return la marque à écrire sur la partition en fonction du type
-  get mark(){
-    var mark ;
-    const objProps = this.objetProps;
-    const otype = objProps.type
-    switch(otype){
-      case 'harmony': mark = objProps.harmony; break;
-      default: mark = objProps.note
-    }
-    mark = `<span class="nom">${mark}</span>`
-    if ( objProps.alteration != '' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
-    if (objProps.nature != 'Maj') {
-      mark += `<span class="nat">${objProps.nature}</span>`
-    }
-    if (otype == 'modulation' && objProps.harmony != 'none') {
-      mark += `<span class="rel">(${objProps.harmony})</span>`
-    }
-    return mark
-  }
+// Return la marque à écrire sur la partition en fonction du type
+get mark(){
+  return PropsAObjectToolbox.buildFinalText(this.objetProps)
+}
 
 observe(){
   // La rendre déplaçable sur l'axe des x
