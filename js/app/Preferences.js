@@ -10,7 +10,8 @@
 const BASELINE_HEIGHT = 32
 // Valeurs par défaut
 const PREFS_DEFAULT_VALUES = {
-  space_between_systems: 20
+    space_between_systems: 20
+  , frequence_animation: 2
   // Les checkboxs (valeurs binaires, d'où le nom)
   , binary: {
       startup: {

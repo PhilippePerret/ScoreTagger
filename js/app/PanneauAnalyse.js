@@ -145,6 +145,10 @@ observe(){
   $(this.systemsContainer).on('click', this.onClickOnTableAnalyse.bind(this))
   this.observed = true
 
+  // Pour jouer l'analyse
+  $('button#btn-play-analyse').on('click', Score.current.analyse.play.bind(Score.current.analyse))
+
+  // Pour sauver les systèmes de force (en cliquant sur le voyant)
   this.voyantSave.on('click', score.autosave.bind(score))
 }
 

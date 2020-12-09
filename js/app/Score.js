@@ -90,6 +90,12 @@ autosave(){
 }
 
 /**
+* Analyse (classe Analyse)
+* Pour le moment, ne sert que pour jouer l'analyse
+***/
+get analyse(){return this._analyse || (this._analyse = new Analyse(this))}
+
+/**
 * Préférences (objet de type Preferences)
 ***/
 get preferences(){return this._prefs || (this._prefs = new Preferences(this))}

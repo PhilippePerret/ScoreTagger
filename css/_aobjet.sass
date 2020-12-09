@@ -1,11 +1,23 @@
 // Les objets de l'analyse
 div.aobjet
   position: absolute
-  background-color: #DDDDDD
   padding: 0 6px
   border: 2px solid transparent
   font-family: Georgia
   line-height: 1.6
+  opacity: 1
+  transition: opacity 1s
+
+  &:not(.animate)
+    background-color: #DDDDDD
+  &.animate
+    background-color: white !important
+    border: 2px solid transparent
+    
+  &.hiddenO
+    display: block
+    opacity: 0
+
 
   div.trait
     display: inline-block

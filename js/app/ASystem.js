@@ -42,6 +42,7 @@ static add(system){
     // Propriété volatiles
     this.modified = false
     this.score    = Score.current
+    this.aobjets  = []
     this.constructor.add(this)
   }
 
@@ -99,7 +100,9 @@ onClickNumeroMesure(ev){
 }
 
 /**
-* Dessine tous les objets d'analyse du système
+* Dessine tous les objets d'analyse du système (tous ceux qui ont été
+* enregistrés)
+* On en profite aussi pour les ajouter à la liste this.aobjets
 ***/
 draw(){
   console.debug("Dessin du système %s, avec les données objets :", this.minid, this.data.aobjects)
@@ -110,6 +113,8 @@ draw(){
     aobjet.build()
     // On colle l'objet sur la table d'analyse, accroché au système
     this.obj.appendChild(aobjet.obj)
+    // On l'ajoute à la liste des objets du système
+    this.addObjet(aobjet)
     // On règle le lastId au cas où
     if ( undefined === AObject.lastId || dobjet.id > AObject.lastId ) {
       AObject.lastId = dobjet.id
@@ -144,9 +149,16 @@ get pref_select_new_objet(){
 * +aobj+  Instance de l'objet
 ***/
 append(aobj){
-  if ( undefined == this.aobjets ) this.aobjets = []
   this.obj.appendChild(aobj.obj)
-  this.aobjets.push(aobj)
+  this.addObjet(aobj)
+}
+
+/**
+* Méthode pour ajouter l'objet +obj+ au système (liste), à sa création ou
+* à son chargement.
+***/
+addObjet(obj){
+  this.aobjets.push(obj)
 }
 
 /**

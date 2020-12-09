@@ -72,6 +72,16 @@ constructor(data) {
 }
 
 /**
+* Pour masquer l'objet (pour le moment, pendant la lecture de l'analyse)
+***/
+hide(){
+  this.obj.classList.add('hiddenO')
+}
+showSlowly(){
+  this.obj.classList.remove('hiddenO')
+}
+
+/**
 * Les données de l'objet qu'il faut sauvegarder
 ***/
 get data2save(){
@@ -123,6 +133,9 @@ build(){
       , top   = this.data.top || this.system.topPerTypeObjet(oProps.type)
       , left  = this.data.left
 
+  // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
+  this.top = top
+  
   // Les propriétés d'objet sélectionnés
   // console.debug("objetProps:", this.objetProps)
 
@@ -227,6 +240,7 @@ unsetSelected(){
   $(this.obj).removeClass('selected')
 }
 
+get left(){return this.data.left}
 get type(){ return this._type || (this._type = this.data.type) }
 get obj(){return this._obj}
 

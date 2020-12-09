@@ -146,6 +146,20 @@ La [partition préparée][]  est affichée de façon intégrale sur la table d�
 
 
 
+---
+
+## Lecture de l'analyse
+
+L’analyse peut être lue, c’est-à-dire afficher les éléments d’analyse ([objets d’analyse][]) au fur et à mesure, à un certain rythme ou en répondant à l’appui sur une touche.
+
+Le principe de lecture est le suivant : on lit les objets de gauche à droite et de haut en bas. C’est-à-dire qu’un accord sera lu avant une harmonie s’ils sont placés sur la même « verticale ».
+
+Avant la lecture, on passe donc en revue les objets de chaque système pour les classer selon ces aspects.
+
+La classe qui s’occupe de la lecture est la classe `Analyse` et particulièrement la méthode `play`. C’est l’instance `Score.analyse` qui permet d’obtenir une instance de la classe `Analyse`. Donc le bouton qui lance la lecture de l’analyse appelle `Score.current.analyse.play()`.
+
+
+
 ## Annexe
 
 ### Lexique
@@ -162,10 +176,10 @@ C’est un terme générique qui désigne tous les « objets » qu’on place su
 
 #### Partition préparée
 
-Ce qu’on appelle « partition préparée » ici, c’est la partition où les systèmes ont été découpés et répartis (écartés) de telle sorte qu’on puisse placer facilement les [objets d'analyses][].
+Ce qu’on appelle « partition préparée » ici, c’est la partition où les systèmes ont été découpés et répartis (écartés) de telle sorte qu’on puisse placer facilement les [objets d'analyse][].
 
 
 
 [partition préparée]: #preparedscore
-[objets d’analyses]: #objetsanalyse
+[objets d’analyse]: #objetsanalyse
 [objet d’analyse]: #objetsanalyse
