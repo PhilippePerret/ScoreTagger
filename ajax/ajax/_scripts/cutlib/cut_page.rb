@@ -7,7 +7,8 @@
 # CUTLINES_DATA = [[418, 209],[627, 179],[806, 203],[1009, 198],[1207, 204],[1411, 239]]
 
 # Ligne pour extraire le système de la partition originale
-CODE_CROP_IMAGE = "/usr/local/bin/convert ./score/images/pages/page-#{CURRENT_PAGE}.jpg -crop 0x%{height}+0+%{top} ./systems/images/system-p#{CURRENT_PAGE}-s%{iimg}.jpg"
+# CODE_CROP_IMAGE = "/usr/local/bin/convert ./score/images/pages/page-#{CURRENT_PAGE}.jpg -crop 0x%{height}+0+%{top} ./systems/images/system-p#{CURRENT_PAGE}-s%{iimg}.jpg"
+CODE_CROP_IMAGE = "/usr/local/bin/convert ./score/images/pages/page-#{CURRENT_PAGE}.jpg -crop #{VLINES_DATA['right'] - VLINES_DATA['left']}x%{height}+#{VLINES_DATA['left']}+%{top} ./systems/images/system-p#{CURRENT_PAGE}-s%{iimg}.jpg"
 
 def proceed_crop_score_ini
 

@@ -11,6 +11,8 @@
           à découper, ALL_CUTLINES_TOPS contient TOUTES les lignes de coupe
           qui ont été dessinées, même celle qui permettent de supprimer du
           "blanc" entre des systèmes.
+      [2] Table qui définit :left et :right, respectivement les marges à
+          prendre en compte à gauche et à droite.
 
 =end
 
@@ -18,6 +20,7 @@
 # Par exemple par
 CUTLINES_DATA     = Ajax.param(:data)
 ALL_CUTLINES_TOPS = Ajax.param(:cutlines_top) # [1]
+VLINES_DATA       = Ajax.param(:vlines) # [2]
 CURRENT_ANALYSE   = Ajax.param(:current_analyse)
 CURRENT_PAGE      = Ajax.param(:page)
 
@@ -28,7 +31,7 @@ begin
   DATA = SCORE.data
   DATA.merge!(pages: {}) unless DATA.key?(:pages)
   DATA[:pages].merge!( CURRENT_PAGE => {}) unless DATA[:pages].key?(CURRENT_PAGE)
-  DATA[:pages][CURRENT_PAGE].merge!(cutlines: CUTLINES_DATA, all_cutlines: ALL_CUTLINES_TOPS)
+  DATA[:pages][CURRENT_PAGE].merge!(cutlines: CUTLINES_DATA, all_cutlines: ALL_CUTLINES_TOPS, vlines: VLINES_DATA)
   SCORE.set(DATA)
 
   # séparation en pixels entre les système
