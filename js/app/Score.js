@@ -203,7 +203,6 @@ draw(){
     .then(this.positionneAndDrawSystems.bind(this))
     .then(this.finDrawing.bind(this))
     .catch(window.erreur.bind(window))
-
 }
 
 /**
@@ -346,7 +345,7 @@ calculateDataSystems(data){
 
 finDrawing(ret){
   this.setNumerosFirstMesures()
-  console.debug("=== Fin du dessin des systèmes ===")
+  console.debug("<- Score.draw")
   this.isDrawn = true
 }
 

@@ -95,7 +95,6 @@ drawPageDelimitors(){
   var ipage = 0
   while ( top < heightContainer ) {
     top += HEIGHT_PAGE
-    if ( top > heightContainer ) break ;
     ++ ipage ;
     const line = DCreate('DIV', {class:'page-separator', style:`top:${top}px`, inner:[
       DCreate('SPAN', {class:'page_number', text: String(ipage)})
@@ -103,6 +102,7 @@ drawPageDelimitors(){
     this.systemsContainer.appendChild(line)
     console.debug("Dessin d'un séparateur de page à %i", top)
   }
+  this.topLastPage = top
 }
 
 /**
@@ -110,6 +110,7 @@ drawPageDelimitors(){
 * aperçu tonal, avec les tons voisins et les accidents
 ***/
 drawApercuTonal(){
+  console.debug("-> drawApercuTonal")
   const score = Score.current
   let tuneStr ;
   var vprov ; // pour mettre une valeur provisoire
@@ -129,8 +130,9 @@ drawApercuTonal(){
     DGet('img#ton-relatif-gamme').src = iTune.Relatif.imageScalePath
     DGet('img#ton-sousdom-gamme').src = iTune.SousDominante.imageScalePath
     DGet('img#ton-dominante-gamme').src = iTune.Dominante.imageScalePath
-    // TODO : calculer plutôt le top de la prochaine page
-    $('#annexe').css('top', ASystem.top_last_system + 200)
+    // Bien placer l'annexe à la fin
+    $('#annexe').css('top', this.topLastPage)
+    console.debug("<- drawApercuTonal")
   })
 }
 

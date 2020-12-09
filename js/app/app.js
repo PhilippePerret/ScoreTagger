@@ -36,7 +36,6 @@ class App {
     // console.clear()
     console.log("On peut commencer !")
 
-    TableAnalyse.drawApercuTonal()
     // Pour lancer des procédures directement au cours de l'implémentation
 
     // Pour essai du code ruby (_scripts_/_essai_.rb)
