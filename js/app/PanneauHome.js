@@ -69,6 +69,21 @@ prepare(){
     $('#preferences-binaires').append(div)
   }
 
+  /**
+  * Toutes les préférences diverses
+  ***/
+  for (var k in PREFS_DEFAULT_VALUES.divers){
+    const dpref = PREFS_DEFAULT_VALUES.divers[k]
+    const div = DCreate('DIV', {id: `div-pref-${k}`, class:'row pref-divers', inner:[
+        DCreate('SPAN', {class:'libelle', text: dpref.name})
+      , DCreate('SPAN', {class:'value', inner: [
+          DCreate('INPUT', {type:'text', id:`pref-divers-${k}`, value: cPrefs.divers(k)})
+        ]})
+      , DCreate('SPAN', {class:'unity', text: (dpref.unity || '')})
+    ]})
+    $('div#preferences-divers').append(div)
+  }
+
   // Position du premier système
   $('#temoin-first-system').css('top', `${cPrefs.first_page('first_system_top')}px`)
   $('img#img-system-temoin')[0].src = 'img/system-exemple.jpg'

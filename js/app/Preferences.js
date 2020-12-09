@@ -10,8 +10,10 @@
 const BASELINE_HEIGHT = 32
 // Valeurs par défaut
 const PREFS_DEFAULT_VALUES = {
-    space_between_systems: 20
-  , frequence_animation: 2
+  divers: {
+    space_between_systems: {name:"Espace entre les systèmes (hors ligne)", value:20, unity: 'pixels'}
+  , frequence_animation: {name:"Durée entre deux appararitions d'objets (animation)", value: 2, unity: 'seconds'}
+  }
   // Les checkboxs (valeurs binaires, d'où le nom)
   , binary: {
       startup: {
@@ -76,6 +78,7 @@ constructor(score) {
 get data(){
   return this._data || {
       lignes: {}
+    , divers: {}
     , binary: {}
     , first_page: {}
     , space_between_systems: null
@@ -103,7 +106,7 @@ set data(h){
 ***/
 
 get space_between_systems(){
-  return this.data.space_between_systems || PREFS_DEFAULT_VALUES.space_between_systems
+  return this.divers('space_between_systems') || PREFS_DEFAULT_VALUES.divers.space_between_systems.value
 }
 
 /**
@@ -133,9 +136,22 @@ binary(key){
     return this.data.binary[key]
   }
 }
+
+/**
+* Pour obtenir une des valeurs 'divers', souvent une valeur nombrale
+***/
+divers(key){
+  return this.data.divers[key] || this.getDiversDefault(key)
+}
+
+
+
 getBinaryDefault(key){
   const [mainkey, subkey] = key.split('.')
   return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
+}
+getDiversDefault(key){
+  return PREFS_DEFAULT_VALUES.divers[key].value
 }
 
 
