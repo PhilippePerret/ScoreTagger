@@ -121,143 +121,19 @@ drawApercuTonal(){
     tuneStr = score.data.tune
   }
 
-  console.clear()
-
-  const dTune = tuneStr.split('')
-  let noteTune  = dTune.shift().toUpperCase()
-  let alterTune = dTune.shift()
-  if ( alterTune == 'd') alterTune = '#'
-  let natureTune
-  if ( ['#','b'].includes(alterTune) ) {
-    natureTune = dTune.shift()
-  } else {
-    natureTune = alterTune
-    alterTune = null
-  }
-  natureTune = natureTune || 'M'
-  const isTonMajeur = natureTune == 'M'
-  console.debug({note: noteTune, alter: alterTune, nature: natureTune})
-
-  const TuneIndTon = TUNE_TO_INDICE_TON[noteTune]
-  console.debug("TuneIndTon = %i", TuneIndTon)
-  // L'indice demi-ton du ton
-  const indiceDemitonTune = TUNE_TO_INDICE[noteTune]
-  console.debug("indiceDemitonTune de %s = ", tuneStr, indiceDemitonTune)
-
-  /**
-  * Calcul du relatif (différent en majeur et en mineur)
-  ***/
-  console.debug("INDICE_TON_TO_TUNE = ", INDICE_TON_TO_TUNE)
-
-  let RelatifIndTon ;
-  if ( isTonMajeur ) {
-    vprov = TuneIndTon - 2
-    RelatifIndTon = vprov < 0 ? 7 - vprov : vprov
-  } else {
-    vprov = TuneIndTon + 2
-    RelatifIndTon = vprov > 6 ? vprov - 7 : vprov
-  }
-  console.debug("RelatifIndTon = %i", RelatifIndTon)
-  const noteRel = INDICE_TON_TO_TUNE[RelatifIndTon]
-  console.debug("noteRel = %s", noteRel)
-  // L'indice demi-ton du relatif
-  const indiceDemitonRel = TUNE_TO_INDICE[noteRel]
-  console.debug("indiceDemitonRel = %i", indiceDemitonRel)
-
-  // Quelle distance y a-t-il entre le ton et le relatif normal ?
-  var dist
-  if ( indiceDemitonRel > indiceDemitonTune) {
-    dist = indiceDemitonRel - indiceDemitonTune
-  } else {
-    dist = indiceDemitonTune - indiceDemitonRel
-  }
-  console.debug("Distance Ton <-> relatif naturel = % i", dist)
-  // Faut-il altérer le relatif ?
-  let alterRel
-    , natureRel = natureTune == 'M' ? 'm' : 'M' ;
-  if ( dist == 3 && !alterTune ) {
-    // <= Tierce mineure entre les deux notes pures et pas d'altération au ton
-    // => rien à faire
-    alterRel = null
-  } else if ( alterTune && dist == 3 ) {
-    // Par exemple LA#m et DO# ou LAbm DOb
-    alterRel = String(alterTune)
-  } else {
-    if ( isTonMajeur ) {
-      // Si la tonalité est majeure, le relatif sera une tierce en dessous
-      if ( alterTune == '#' && dist == 4 ) {
-        // Rien à faire
-        alterRel = 'x' // Par exemple LA# et FAx
-      } else if (dist == 4 && !alterTune ) {
-        alterRel = '#' // P.e. LA => FA#m
-      }
-    } else {
-      // <= Le ton est mineur
-      if ( dist == 4 && !alterTune ){
-        alterRel = 'b' // p.e. FAm => Ab
-      }
-    }
-  }
-  console.debug("Ton relatif = %s", `${noteRel}${alterRel||''}${natureRel}`)
-
-  /**
-  * Traitement de la sous-dominante
-  ***/
-  vprov = TuneIndTon + 3
-  const SDomIndTon = vprov < 7 ? vprov : 7 - vprov
-  const noteSDom = INDICE_TON_TO_TUNE[SDomIndTon]
-  const natureSDom = String(natureTune)
-  let alterSDom ;
-  if ( noteTune == 'F' ) {
-    if ( alterTune == '#' ) { alterSDom = null }
-    else if (alterTune == 'b') { alterSDom = 'bb' }
-    else { alterSDom = 'b'}
-  } else {
-    alterSDom = String(alterTune)
-  }
-  console.debug("Sous-dominante = %s", `${noteSDom}${alterSDom||''}${natureSDom}`)
-
-  /**
-  * Traitement de la dominante
-  ***/
-  vprov = TuneIndTon + 4
-  const DomIndTon = vprov < 7 ? vprov : 7 - vprov
-  const noteDom = INDICE_TON_TO_TUNE[DomIndTon]
-  const natureDom = 'M'
-  let alterDom ;
-  if ( noteTune == 'B' ) {
-    if ( alterTune == '#' ) { alterDom = 'x' }
-    else if (alterTune == 'b') { alterDom = null }
-    else { alterDom = '#'}
-  } else {
-    alterDom = String(alterTune)
-  }
-  console.debug("Dominante = %s", `${noteDom}${alterDom||''}${natureDom}`)
-
-  const filenames = {
-      'Tune': this.filenameForTune(noteTune, alterTune, natureTune)
-    , 'Rel':  this.filenameForTune(noteRel, alterRel, natureRel)
-    , 'SDom': this.filenameForTune(noteSDom, alterSDom, natureSDom)
-    , 'Dom':  this.filenameForTune(noteDom, alterDom, natureDom)
-  }
-
-  // On charge le sous-panneau des tons voisins
+  // On charge le sous-panneau de l'annexe
   UI.insert('sous_panneau_annexe.html', '#systems-container')
   .then( () => {
-    const TONS_VOISIN_NOMS = ['Tune', 'Rel', 'SDom', 'Dom']
-    TONS_VOISIN_NOMS.forEach(ton => {
-      $(`img#ton-${ton}-gamme`)[0].src = `img/tunes/${filenames[ton]}`
-    })
-
-    // TODO : calculer plutôt le top de la prochaine page 
+    const iTune = new Tune(tuneStr)
+    DGet('img#ton-main-gamme').src = iTune.imageScalePath
+    DGet('img#ton-relatif-gamme').src = iTune.Relatif.imageScalePath
+    DGet('img#ton-sousdom-gamme').src = iTune.SousDominante.imageScalePath
+    DGet('img#ton-dominante-gamme').src = iTune.Dominante.imageScalePath
+    // TODO : calculer plutôt le top de la prochaine page
     $('#annexe').css('top', ASystem.top_last_system + 200)
   })
 }
 
-filenameForTune(note, alter, nature){
-  if ( alter == '#' ) { alter = 'd' }
-  return `${note}${alter || ''}${nature == 'M' ? '' : 'm'}.jpg`
-}
 
 observe(){
   const score = Score.current
