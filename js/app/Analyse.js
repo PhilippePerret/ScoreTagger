@@ -14,9 +14,32 @@ play(){
   this.objetsIni = this.getAllObjectSorted()
   this.objets = [...this.objetsIni]
   this.objets.reverse()
-  // Pour le moment, par une boucle
-  this.timer = setInterval(this.showNextObjet.bind(this), this.score.preferences.frequence_animation * 1000)
+  this.startPlay()
+  // Pour le moment, par une boucle (ensuite, on pourra fonctionner par touche)
+  this.timer = setInterval(this.showNextObjet.bind(this), this.score.preferences.divers('frequence_animation') * 1000)
 }
+/**
+* Méthode appelée au lancement de l'animation pour préparer l'interface
+***/
+startPlay(){
+  $('body').css('background-color', 'white')
+  // On masque la marge des outils et des onglets pour ne garder que le
+  // bouton d'interruption de l'animation
+  $('div.marge-tools').addClass('hidden')
+  // On masque les boutons d'onglet
+  $('aside#tabs-buttons').addClass('hidden')
+  // On affiche le bouton d'interruption de l'animation
+  // On augmente la taille de la partition
+  $('div#systems-container').css('zoom', '150%')
+  // Pour savoir quand on change de système et pouvoir ajuster le scroll
+  // de fenêtre
+  this.current_system = null
+}
+/**
+* Méthode appelée à la fin de l'animation pour arrêter l'animation et
+* remettre l'interface dans son état normal.
+***/
+
 endPlay(){
   if (this.timer){
     // On arrête le timer s'il existe
@@ -28,12 +51,26 @@ endPlay(){
   this.objetsIni.forEach(objet => {
     objet.obj.classList.remove('animate')
   })
+  // Les éléments visibles/invisibles
+  $('body').css('background-color', '')
+  $('div.marge-tools').removeClass('hidden')
+  $('div#systems-container').css('zoom', '')
+  $('aside#tabs-buttons').removeClass('hidden')
 }
 
 showNextObjet(){
   const objet = this.objets.pop()
   if ( objet ) {
-    console.log("objet:", objet)
+    // console.log("objet:", objet)
+    if ( objet.system.index != this.current_system ){
+      this.current_system = objet.system.index
+      // console.debug("Passage au système %i", this.current_system)
+      // location.hash = `#system-${objet.system.minid}`
+      // window.scrollTo(0, window.pageYOffset - 120)
+      // const hsys = $(`#system-${objet.system.minid}`).position().top
+      const speed = 500
+      $('html, body').animate( { scrollTop: $(`#system-${objet.system.minid}`).position().top }, speed )
+    }
     objet.showSlowly()
   } else {
     this.endPlay()
