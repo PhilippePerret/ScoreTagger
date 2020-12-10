@@ -29,22 +29,27 @@ static add(system){
   Object.assign(this.itemsByMinId, { [system.minid]: system})
 }
 
-  constructor(data) {
-    this.data = data
-    this.minid          = data.minid    // p.e. "2-6" ("<page>-<index+1>")
-    this.index          = data.index    // l'index absolu du system (0-start)
-    this.indexInPage    = data.indexInPage
-    this.top            = data.top  // pas forcément défini à l'instanciation
-    this.page           = data.page // numéro de page (1-start)
-    this.fullHeight     = data.fullHeight
-    this.rHeight        = data.rHeight
-    this.nombre_mesures = data.nombre_mesures
-    // Propriété volatiles
-    this.modified = false
-    this.score    = Score.current
-    this.aobjets  = []
-    this.constructor.add(this)
-  }
+/** ---------------------------------------------------------------------
+  *
+  *   INSTANCE
+  *
+*** --------------------------------------------------------------------- */
+constructor(data) {
+  this.data = data
+  this.minid          = data.minid    // p.e. "2-6" ("<page>-<index+1>")
+  this.index          = data.index    // l'index absolu du system (0-start)
+  this.indexInPage    = data.indexInPage
+  this.top            = data.top  // pas forcément défini à l'instanciation
+  this.page           = data.page // numéro de page (1-start)
+  this.fullHeight     = data.fullHeight
+  this.rHeight        = data.rHeight
+  this.nombre_mesures = data.nombre_mesures
+  // Propriété volatiles
+  this.modified = false
+  this.score    = Score.current
+  this.aobjets  = []
+  this.constructor.add(this)
+}
 
 /**
 * Méthode de sauvegarde du system
@@ -80,6 +85,9 @@ set modified(v){
 * Méthode qui reçoit le clic sur le système
 ***/
 onClick(ev){
+  if ( ev.metaKey ) { // géré par le menu contextuel
+    return false
+  }
   if ( ev.target.className == 'system' ) {
     this.createNewAObjet(ev)
   }
@@ -213,8 +221,41 @@ observe(){
   * L'observation, principalement, permet de créer les objets d'analyse
   * en cliquant sur le système concerné
   ***/
-  $(this.obj).on('click', this.onClick.bind(this))
+  // $(this.obj).on('click', this.onClick.bind(this))
+  $(this.obj).on('mousedown', this.onMouseDown.bind(this))
+  $(this.obj).on('mouseup', this.onMouseUp.bind(this))
+
+  const dataCMenu = [
+    {name: "Repositionner le système…", method: this.onWantToMoveSystem.bind(this)}
+  ]
+  new ContextMenu(this.obj, dataCMenu)
+
 }
+
+onMouseDown(ev){
+  this.xmousedown = ev.offsetX
+}
+onMouseUp(ev){
+  // Si le clic ne se fait pas au même endroit, on ne fait rien
+  if ( this.xmousedown != ev.offsetX ) return stopEvent(ev)
+  this.onClick(ev)
+}
+
+/**
+* Méthode appelée quand on veut déplacer le système
+***/
+onWantToMoveSystem(ev){
+  const my = this
+  $(this.obj).draggable({
+    axis: 'y',
+    stop: ()=>{
+      $(my.obj).draggable({disabled: true})
+      return stopEvent(ev)
+    }
+  })
+  message("Tu peux déplacer le système.")
+}
+
 
   /**
   * Position des lignes du système

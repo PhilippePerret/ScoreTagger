@@ -38,18 +38,18 @@ static getAllValuesInHomePage(){
   return d
 }
 
-  /**
-  * Initialisation de la partition (au chargement de l'application)
-  ***/
-  static initialize(){
-    const my = this
-    if (CURRENT_ANALYSE){
-      return Ajax.send('get_data.rb')
-      .then(this.initializeWithData.bind(this))
-    } else {
-      return new Promise((ok,ko) => {ok()})
-    }
+/**
+* Initialisation de la partition (au chargement de l'application)
+***/
+static initialize(){
+  const my = this
+  if (CURRENT_ANALYSE){
+    return Ajax.send('get_data.rb')
+    .then(this.initializeWithData.bind(this))
+  } else {
+    return new Promise((ok,ko) => {ok()})
   }
+}
 
 static initializeWithData(ret){
   console.log("ret:", ret)
@@ -199,16 +199,17 @@ getData(){
   })
 }
 
-  /**
-  * Méthode qui lance la découpe de la page de partition originale d'après
-  * les lignes de découpe définies dans +cropLinesData+
-  ***/
-  cutPage(numPage, cropLinesData, cutLinesTops, vlines, callback){
-    Ajax.send('cut_page.rb', {data: cropLinesData, cutlines_top:cutLinesTops, vlines:vlines, page: numPage})
-    .then(callback)
-  }
+/**
+* Méthode qui lance la découpe de la page de partition originale d'après
+* les lignes de découpe définies dans +cropLinesData+
+***/
+cutPage(numPage, cropLinesData, cutLinesTops, vlines, callback){
+  Ajax.send('cut_page.rb', {data: cropLinesData, cutlines_top:cutLinesTops, vlines:vlines, page: numPage})
+  .then(callback)
+}
 
 /**
+
 ========== DESSIN DE LA PARTITION SUR LA TABLE D'ANALYSE ==========
 
 Les méthodes suivantes permettent de dessiner la partition et son analyse
@@ -221,6 +222,7 @@ sur la table d'analyse
 * @note : il existe deux instances possibles :
 *   1. la partition a déjà été préparée (systèmes séparés et enregistrés)
 *   2. la partition vient d'être découpée (systèmes non séparés/préparés)
+*
 ***/
 draw(){
   console.debug("-> Score#draw / isDrawn est %s", this.isDrawn?'true':'false')
@@ -276,6 +278,7 @@ setNumerosFirstMesures(){
 * @note   Dans tous les cas (partition préparée ou non), il faut le faire
 ***/
 instanciateAndPoseAllSystems(ret){
+  console.log("-> instanciateAndPoseAllSystems")
   const my = this
   const dataSystems = ret.data
   return new Promise((ok,ko) => {
@@ -291,36 +294,20 @@ instanciateAndPoseAllSystems(ret){
 }
 
 /**
-* Toutes les secondes on va checker pour voir si les images sont chargées
+* Quand on a posé les systèmes sur la table d'analyse, ensuite, on les
+* position et on les dessine, c'est-à-dire qu'on crée leurs objets
 ***/
-checkImagesLoading(ok){
-  if ( ! this.loadingTimer ) {
-    this.loadingTimer = setInterval(this.checkImagesLoading.bind(this, ok), 500)
-  } else {
-    console.log("Vérification du chargement des images…")
-    var imagesLoading = false // un a priori
-    this.systems.forEach( system => {
-      if ( imagesLoading ) return ; // pour accélérer
-      if ( false == system.imageLoaded ) imagesLoading = true
-    })
-    if ( !imagesLoading ) {
-      // Les images sont toutes chargées
-      clearInterval(this.loadingTimer)
-      this.loadingTimer = null
-      console.log("Les images sont toutes chargées.")
-      ok()
-    }
-  }
-}
-
 positionneAndDrawSystems(){
-  if ( ! this.score_is_prepared ) {
+  console.debug("-> positionneAndDrawSystems")
+  if ( true /*!this.score_is_prepared*/ ) {
+    console.log("On doit calculer la position de tous les systèmes.")
     this.calcPositionAllSystems()
   }
   this.systems.forEach(system => {
     system.positionne()
     system.draw()
   })
+  console.debug("<- positionneAndDrawSystems")
 }
 
 /**
@@ -344,6 +331,31 @@ calcPositionAllSystems(){
     system.modified = true
   }
 }
+
+/**
+* Toutes les secondes on va checker pour voir si les images sont chargées
+***/
+checkImagesLoading(ok){
+  if ( ! this.loadingTimer ) {
+    this.loadingTimer = setInterval(this.checkImagesLoading.bind(this, ok), 500)
+  } else {
+    console.log("Vérification du chargement des images…")
+    var imagesLoading = false // un a priori
+    this.systems.forEach( system => {
+      if ( imagesLoading ) return ; // pour accélérer
+      if ( false == system.imageLoaded ) imagesLoading = true
+    })
+    if ( !imagesLoading ) {
+      // Les images sont toutes chargées
+      clearInterval(this.loadingTimer)
+      this.loadingTimer = null
+      console.log("Les images sont toutes chargées.")
+      console.log("<- instanciateAndPoseAllSystems")//parce que ça met fin à ça
+      ok()
+    }
+  }
+}
+
 
 /**
 * Cette méthode calcule la position des systèmes avant de les afficher
