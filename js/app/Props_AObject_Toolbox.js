@@ -198,28 +198,6 @@ static buildFinalText(data){
   }
   return mark
 
-  // if (otype == 'harmony'){
-  //   ft = data.harmony
-  // } else {
-  //   ft = data.note
-  // }
-  // if ( !['cadence'].includes(otype)){
-  //   ft += data.alteration
-  // }
-  //
-  // if (!['segment'].includes(otype)) {
-  //   if ( data.nature!='Maj') {
-  //     ft += data.nature
-  //   }
-  // }
-  // if ( otype == 'modulation') {
-  //   if (data.harmony != 'none') ft += ` <span class="small">(${data.harmony})</span>`
-  // }
-  // ft = `<span class="small">${otype} : </span>${ft}`
-  // if ( otype == 'harmony' && data.renv != 0) {
-  //   ft += ` <span class="renv">${$(`button#renversement-${data.renv}`).html()}</span>`
-  // }
-  // return ft
 }
 
 
@@ -267,7 +245,7 @@ class POAButton {
   // Méthode appelée quand on clique sur le bouton
   onClick(ev){
     // Sélectionne le bouton (i.e. le met en exergue)
-    this.select()
+    this.select(/* keep = */ ev.shiftKey)
 
     /**
     * Pour choisir la meilleure valeur par défaut pour le type
@@ -292,6 +270,19 @@ class POAButton {
         }
       }
     }//Si les préférences le demandent
+
+    /**
+    * Si le type est 'harmony'
+    * Et que le bouton cliqué est un bouton d'harmony
+    * Et que la touche Majuscule est pressée
+    * Alors c'est un accord "Janus". Le premier accord (celui déjà choisi)
+    * concerne la tonalité précédente (courante), le second accord (celui
+    * pressé maintenant) concerne la tonalité à voir
+    ***/
+    if (this.toolbox.currentOType == 'harmony' && this.type == 'harmony'){
+      
+    }
+
 
     Panneau.get('analyse').propsAObjectToolbox.updateOverview()
 

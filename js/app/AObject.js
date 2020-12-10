@@ -95,7 +95,7 @@ get data2save(){
     // , top:        this.top
     , t: this.top
     // , line:       this.data.line // si on a changé l'objet de ligne de pose
-    , li: this.data.line // si on a changé l'objet de ligne de pose
+    , p: this.data.line // si on a changé l'objet de ligne de pose
     // , left:       this.data.left
     , l: this.data.left
     // , width:      this.data.width
@@ -118,7 +118,7 @@ fromDataSaved(data){
     , left: data.l
     , width: data.w
     , height: data.h
-    , line: data.li
+    , line: data.p
     , objetProps: data.o
   }
 }
@@ -203,7 +203,7 @@ build(){
 }
 
 repositionne(){
-  this.top = this.data.top = this.system.topPerTypeObjet(this.data.type, this.data.line)
+  this.top = this.data.top = this.system.topPerTypeObjet(this.type, this.data.line)
 }
 
 buildAsModulation(){
@@ -267,7 +267,7 @@ observe(){
 ***/
 onChangeLignePose(which, ev){
   console.debug("-> onChangeLignePose(which=%i)", which)
-  if ( !this.data.line ) this.data.line = LINES_POSE.indexOf(this.data.type)
+  if ( !this.data.line ) this.data.line = LINES_POSE.indexOf(this.type) + 1
   this.data.line += which
   console.debug("Nouvelle ligne de pose : ", this.data.line, LINES_POSE[this.data.line])
   this.repositionne()
@@ -295,7 +295,7 @@ unsetSelected(){
 }
 
 get left(){return this.data.left}
-get type(){ return this._type || (this._type = this.data.type) }
+get type(){ return this._type || (this._type = this.objetProps.type) }
 get obj(){return this._obj}
 
 }

@@ -45,7 +45,7 @@ constructor(data) {
   this.rHeight        = data.rHeight
   this.nombre_mesures = data.nombre_mesures
   // Propriété volatiles
-  this.modified = false
+  this._modified = false
   this.score    = Score.current
   this.aobjets  = []
   this.constructor.add(this)
@@ -76,10 +76,13 @@ get data2save(){
 }
 
 
-get modified(){return this._modified || false}
+get modified(){ return this._modified }
 set modified(v){
   this._modified = v
-  if ( v == true ) Score.current.modified = v ;
+  if ( v == true ) {
+    console.log("Système %s marqué modifié", this.minid)
+    Score.current.modified = v ;
+  }
 }
 /**
 * Méthode qui reçoit le clic sur le système
@@ -277,8 +280,11 @@ onWantToMoveSystem(ev){
 *           commençant à 1 (pour 'pedale')
 ***/
 topPerTypeObjet(otype, line){
+  console.debug("-> topPerTypeObjet(otype=%s, line=%s)", otype, line)
   if ( undefined != line ) { otype = LINES_POSE[line - 1] }
+  console.debug("[topPerTypeObjet] otype = %s", otype)
   let tpto = Score.current.preferences.ligne(otype)
+  console.debug("[topPerTypeObjet] tpto = %i", tpto)
   // Si c'est une valeur positive, donc en dessous du système, il faut
   // ajouter la hauteur du système pour connaitre son vrai 'top'
   if ( tpto >= 0 ) tpto += this.rHeight
