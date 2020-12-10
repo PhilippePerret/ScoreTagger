@@ -20,8 +20,12 @@ function onError(err){
 * (String)  "12" => "12px"
 * (Number)  12 => "12px"
 * (Object)  {top: 24, left: 34} => {top: "24px", left: "34px"}
+*
+* Si +asStyle+ est true, on retourne la donnée sous forme d'attribut style
+* c'est-à-dire {top:24, left:34} => "top:24px;left:34px;"
+* (ça n'est bien entendu valable que pour les Object(s))
 ***/
-function with_pixels(val){
+function with_pixels(val, asStyle = false){
   if ('string' == typeof(val) || 'number' == typeof(val)) {
     return `${val}px`
   } else {
@@ -29,7 +33,13 @@ function with_pixels(val){
     for(var k in val){
       Object.assign(newh, {[k]: `${val[k]}px`})
     }
-    return newh
+    if (asStyle){
+      var str = []
+      for(var k in newh){str.push(`${k}:${newh[k]};`)}
+      return str.join('')
+    } else {
+      return newh
+    }
   }
 }
 

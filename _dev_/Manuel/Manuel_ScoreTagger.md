@@ -4,10 +4,14 @@
 
 ## Hiérarchie des éléments de programmation
 
-~~~bash
+~~~tex
 
 Score							La partition, dans son entier
+		|__ Preferences
+		|__ Analyse
+	⇩
 ASystem						Un système, donc une portée horizontale
+	⇩
 AObject						Un objet d'analyse, par exemple un accord, une
 									modulation, un texte, un segment, etc.
 ~~~

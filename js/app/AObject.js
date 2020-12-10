@@ -91,6 +91,7 @@ get data2save(){
     , top:        this.top
     , left:       this.data.left
     , width:      this.data.width
+    , height:     this.data.height
     , objetProps: this.objetProps
   }
 }
@@ -108,7 +109,8 @@ get data2save(){
         // On laisse filer pour la suite
       case 'left':
       case 'top':
-        $(this.obj).css(what, this.data[what]);
+      case 'height':
+        $(this.obj).css( what, with_pixels(this.data[what]) );
         break;
       default:
         switch(this.objetProps.type){
@@ -135,7 +137,7 @@ build(){
 
   // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
   this.top = top
-  
+
   // Les propriétés d'objet sélectionnés
   // console.debug("objetProps:", this.objetProps)
 
@@ -147,7 +149,11 @@ build(){
   if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
   const div = DCreate('DIV', {id: div_id, text:null, class: css.join(' ')})
 
-  div.setAttribute('style', `top:${top}px;left:${left}px;`)
+  // Position et taille
+  const dobj = {top: top, left: left}
+  this.data.width   && Object.assign(dobj, {width: this.data.width})
+  this.data.height  && Object.assign(dobj, {height: this.data.height})
+  div.setAttribute('style', with_pixels(dobj, true))
 
   this._obj = div
 

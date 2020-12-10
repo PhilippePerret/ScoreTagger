@@ -5,22 +5,15 @@
 *** --------------------------------------------------------------------- */
 
 const TUNE_TO_INDICE_TON = {
-  'C': 0,
-  'D': 1,
-  'E': 2,
-  'F': 3,
-  'G': 4,
-  'A': 5,
-  'B': 6
-}
-// Pour que 4 return 'G', 2 retourne 'E', etc.
+  'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6 }
+// Pour que 4 retourne 'G', 2 retourne 'E', etc.
 const INDICE_TON_TO_TUNE = {}
 for(var t in TUNE_TO_INDICE_TON){
   Object.assign(INDICE_TON_TO_TUNE, {[TUNE_TO_INDICE_TON[t]]: t})
 }
 const INDICE_TO_TUNE = {
-  0:'C', 1:'C#', 2:'D', 3:'D#', 4:'E', 5:'F', 6:'F#', 7:'G', 8:'G#', 9:'A', 10:'A#', 11:'B'
-}
+  0:'C', 1:'C#', 2:'D', 3:'D#', 4:'E', 5:'F', 6:'F#', 7:'G', 8:'G#', 9:'A',
+  10:'A#', 11:'B' }
 const TUNE_TO_INDICE = {}
 for (var k in INDICE_TO_TUNE) {
   Object.assign(TUNE_TO_INDICE, {[INDICE_TO_TUNE[k]]: k})
@@ -35,6 +28,7 @@ class Tune {
 ***/
 constructor(mark) {
   this.mark = mark
+  console.debug("Instanciation d'un Tune à l'aide de l'empreinte '%s'", mark)
   this.parseEmpreinte(this.mark)
 }
 
@@ -85,10 +79,11 @@ parseEmpreinte(mark){
         this._alter = 'b'
         break
       default:
-        throw(`Impossible d'analyse le deuxième signe de l'empreinte de tonalité ${this.mark}…`)
+        throw(`Impossible d'analyser le deuxième signe de l'empreinte de tonalité ${this.mark}…`)
     }
     if (!this._mode) this._mode  = dtune[1] == 'm' ? 'm' : 'M'
   }
+  console.debug("Résultat parsing : note='%s', alter=%s, mode='%s', isTonMajeur ? %s", this.note, this.alter, this.mode, this.isTonMajeur ? 'oui' : 'non')
 }
 
 /**
@@ -100,7 +95,7 @@ calcRelative(){
   var vprov
   if ( this.isTonMajeur ) {
     vprov = this.indiceTon - 2
-    IndTonRel = vprov < 0 ? 7 - vprov : vprov
+    IndTonRel = vprov < 0 ? 7 + vprov : vprov
   } else { // ton mineur
     vprov = this.indiceTon + 2
     IndTonRel = vprov > 6 ? vprov - 7 : vprov
@@ -144,7 +139,9 @@ calcRelative(){
       }
     }
   }
-  return new Tune(`${noteRel}${alterRel||''}${modeRel}`)
+  const empRel = `${noteRel}${alterRel||''}${modeRel}`
+  console.debug("Relatif trouvé : %s", empRel)
+  return new Tune(empRel)
 } //calcRelative
 
 /**
@@ -156,16 +153,17 @@ calcSousDominante(){
   var vprov = this.indiceTon + 3
   const noteSDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : 7 - vprov]
   const modeSDom = String(this.mode)
-  let alterSDom ;
-  if ( this.note == 'F' ) {
-    if ( this.alter == 'd' ) { alterSDom = null }
-    else if (this.alter == 'b') { alterSDom = 'bb' }
-    else { alterSDom = 'b'}
-  } else {
-    alterSDom = String(this.alter)
-  }
-  console.debug("Sous-dominante = %s", `${noteSDom}${alterSDom||''}${modeSDom}`)
-  return new Tune(`${noteSDom}${alterSDom||''}${modeSDom}`)
+  const alterSDom = (my => {
+    if ( my.note == 'F' ) {
+      if ( my.alter == 'd' ) { return null }
+      else if (my.alter == 'b') { return 'bb' }
+      else { return 'b' }
+    } else { return my.alter }
+  })(this)
+
+  const empSDom = `${noteSDom}${alterSDom||''}${modeSDom}`
+  console.debug("Sous-dominante = %s", empSDom)
+  return new Tune(empSDom)
 } //calcSousDominante
 
 /**
@@ -175,16 +173,17 @@ calcDominante(){
   var vprov = this.indiceTon + 4
   const noteDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : 7 - vprov]
   const modeDom = 'M'
-  let alterDom ;
-  if ( this.note == 'B' ) {
-    if ( this.alter == 'd' ) { alterDom = 'x' }
-    else if (this.alter == 'b') { alterDom = null }
-    else { alterDom = 'd'}
-  } else {
-    alterDom = String(this.alter)
-  }
-  console.debug("Dominante = %s", `${noteDom}${alterDom||''}${modeDom}`)
-  return new Tune(`${noteDom}${alterDom||''}${modeDom}`)
+  const alterDom = (my => {
+    if ( my.note == 'B' ) {
+      if ( my.alter == 'd' ) { return 'x' }
+      else if (my.alter == 'b') { return null }
+      else { return 'd'}
+    } else { return my.alter }
+  })(this)
+  
+  const empDom = `${noteDom}${alterDom||''}${modeDom}`
+  console.debug("Dominante = %s", empDom)
+  return new Tune(empDom)
 } //calcDominante
 
 
