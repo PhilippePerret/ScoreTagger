@@ -23,13 +23,20 @@ Un menu apparait alors près de la souris, avec des choix.
         , {name: "nom du menu", method: methode_reaction }
         etc.
       ]
+
+  OPTION
+      {
+        byPressure:   Si true, le menu apparait quand on reste appuyé sur l'objet
+        onclick:      Méthode à appeler si c'est un click "normal", sans meta key
+      }
 *** --------------------------------------------------------------------- */
 class ContextMenu {
 
-constructor(domElement, data_menu, byPressure = false) {
+constructor(domElement, data_menu, options = {}) {
   this.obj = $(domElement)
   this.data = data_menu
-  this.byPressure = byPressure
+  this.byPressure = options.byPressure
+  this.onClick = options.onclick||options.onClick
   this.observe()
 }
 
@@ -39,9 +46,11 @@ observe(){
     .on('mouseup', this.onMouseUp.bind(this))
 }
 
-remove(){
-  this.menu.remove()
-  this.item = null
+show(){
+  this.menu.removeClass('hidden')
+}
+hide(){
+  this.menu.addClass('hidden')
 }
 
 /**
@@ -49,25 +58,31 @@ remove(){
 * assez longtemps, un menu apparait
 ***/
 onMouseDown(ev){
+  this.forClick = false
   if (this.byPressure) {
     this.timerPression = setTimeout(this.showMenu.bind(this, ev), 500)
-  } else {
-    ev.metaKey && this.showMenu.call(this, ev)
+  } else if (ev.metaKey) {
+    this.showMenu.call(this, ev)
+  } else if ( this.onClick ) {
+    this.forClick = true
   }
+  return stopEvent(ev)
 }
 onMouseUp(ev){
   if (this.timerPression){
     clearTimeout(this.timerPression)
     this.timerPression = null
   }
-  this.menu && this.remove()
+  if ( this.forClick ) this.onClick.call(null, ev)
+  this.menu && this.hide()
+  return stopEvent(ev)
 }
 
 /**
 * Menu qui apparait quand on a tenu la souris assez longtemps
 ***/
 showMenu(ev){
-  this.menu || this.build()
+  this.menu ? this.show() : this.build()
   this.menu.css(with_pixels({top:ev.clientY - 40, left: ev.clientX - 40}))
 }
 
@@ -88,14 +103,14 @@ buildItem(ditem){
   // const idItem = this.constructor.newId()
   // const i = DCreate('BUTTON', {type:'button', id:idItem, class:'context-item', text:ditem.name})
   const i = DCreate('BUTTON', {type:'button', class:'context-item', text:ditem.name})
-  $(i).on('click', ev => {my.remove(); ditem.method.call()})
+  $(i).on('click', ev => {my.hide.call(my); ditem.method.call()})
   return i
 }
 closeButton(){
   const my = this
   const c = DCreate('DIV', {class:'close-button-container'})
   const b = DCreate('SPAN', {class:'close-button', text: '✖︎'})
-  $(b).on('click', my.remove.bind(my))
+  $(b).on('click', my.hide.bind(my))
   c.appendChild(b)
   return c
 }

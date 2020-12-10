@@ -262,20 +262,28 @@ onWantToMoveSystem(ev){
   * Chaque propriété retourne la position en pixel
   ***/
 
-  /**
-  * Retourne le top de l'objet d'analyse dans le conteneur du système en
-  * fonction de son type +otype+.
-  * Quand la valeur est négative, on doit placer l'objet au-dessus du système
-  * le top est donc la valeur enregistrée en préférences. En revanche, lorsque
-  * la hauteur de la ligne du type est positive ou nulle, c'est que l'objet se
-  * trouve SOUS le système. Pour obtenir son top exact, il faut donc ajouter
-  * à la valeur de préférence la hauteur réelle (rHeight) du système
-  ***/
-  topPerTypeObjet(otype){
-    let tpto = Score.current.preferences.ligne(otype)
-    if ( tpto >= 0 ) tpto += this.rHeight
-    return tpto
-  }
+/**
+* Retourne le top de l'objet d'analyse dans le conteneur du système en
+* fonction de son type +otype+.
+* Quand la valeur est négative, on doit placer l'objet au-dessus du système
+* le top est donc la valeur enregistrée en préférences. En revanche, lorsque
+* la hauteur de la ligne du type est positive ou nulle, c'est que l'objet se
+* trouve SOUS le système. Pour obtenir son top exact, il faut donc ajouter
+* à la valeur de préférence la hauteur réelle (rHeight) du système
+*
+* +line+    Si cette valeur est définie (elle est en général undefined), elle
+*           détermine l'indice de la ligne de pose (segment, modulation, chord,
+*           etc.) sur laquelle doit être pausée l'objet, de bas en haut, en
+*           commençant à 1 (pour 'pedale')
+***/
+topPerTypeObjet(otype, line){
+  if ( undefined != line ) { otype = LINES_POSE[line - 1] }
+  let tpto = Score.current.preferences.ligne(otype)
+  // Si c'est une valeur positive, donc en dessous du système, il faut
+  // ajouter la hauteur du système pour connaitre son vrai 'top'
+  if ( tpto >= 0 ) tpto += this.rHeight
+  return tpto
+}
 
   // La limite vraiment inférieure du système, tout compris
   get bottom_limit(){

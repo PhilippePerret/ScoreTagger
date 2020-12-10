@@ -6,6 +6,8 @@
 ***/
 const MIN_WIDTH_OBJET_WITH_TRAIT = 40
 
+const LINES_POSE = ['pedale','cadence','harmony','chord','modulation','segment']
+
 class AObject {
 
 static newId(){
@@ -64,6 +66,7 @@ static getObjetProps(){
 *
 ***/
 constructor(data) {
+  if ( undefined === data.left ) data = this.fromDataSaved(data)
   this.data = data
   this.id = this.data.id
   this.system = ASystem.getByMinId(this.data.system)
@@ -86,13 +89,37 @@ showSlowly(){
 ***/
 get data2save(){
   return {
-      id:         this.id
-    , system:     this.system.minid
-    , top:        this.top
-    , left:       this.data.left
-    , width:      this.data.width
-    , height:     this.data.height
-    , objetProps: this.objetProps
+      id: this.id
+      // , system:     this.system.minid
+    , s: this.system.minid
+    // , top:        this.top
+    , t: this.top
+    // , line:       this.data.line // si on a changé l'objet de ligne de pose
+    , li: this.data.line // si on a changé l'objet de ligne de pose
+    // , left:       this.data.left
+    , l: this.data.left
+    // , width:      this.data.width
+    , w: this.data.width
+    // , height:     this.data.height
+    , h: this.data.height
+    // , objetProps: this.objetProps
+    , o: this.objetProps
+  }
+}
+
+/**
+* Les données sont enregistrées avec des diminutifs, cette méthode permet
+* d'obtenir les vrais noms de propriétés
+***/
+fromDataSaved(data){
+  return {
+      system: data.s
+    , top: data.t
+    , left: data.l
+    , width: data.w
+    , height: data.h
+    , line: data.li
+    , objetProps: data.o
   }
 }
 
@@ -132,7 +159,7 @@ build(){
   // On a besoin du score courant
   const oProps = this.objetProps
   const score = Score.current
-      , top   = this.data.top || this.system.topPerTypeObjet(oProps.type)
+      , top   = this.data.top || this.system.topPerTypeObjet(oProps.type, this.data.line)
       , left  = this.data.left
 
   // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
@@ -173,6 +200,10 @@ build(){
     default: $(this.obj).html(this.mark)
   }
   this.observe()
+}
+
+repositionne(){
+  this.top = this.data.top = this.system.topPerTypeObjet(this.data.type, this.data.line)
 }
 
 buildAsModulation(){
@@ -221,8 +252,25 @@ observe(){
     stop: my.onChangeXByDrag.bind(my)
   })
   this.obj.style.position = 'absolute' //draggable ajoute 'relative'
-  // Le rendre sensible au click pour le sélectionner
-  $(this.obj).on('click', this.toggleSelect.bind(this))
+  // Menu context
+  const dataCMenu = [
+    {name: 'Mettre sur la ligne de pose supérieure', method: this.onChangeLignePose.bind(this, 1)}
+  , {name: 'Mettre sur la ligne de pose inférieur', method: this.onChangeLignePose.bind(this, -1)}
+  ]
+  new ContextMenu(this.obj, dataCMenu, {onclick: this.toggleSelect.bind(this)})
+}
+
+/**
+* Méthode appelée par le menu contextuel pour changer l'objet de ligne
+* de pose, exceptionnellement
+* +which+ 1: ligne supérieure, -1: ligne inférieur
+***/
+onChangeLignePose(which, ev){
+  console.debug("-> onChangeLignePose(which=%i)", which)
+  if ( !this.data.line ) this.data.line = LINES_POSE.indexOf(this.data.type)
+  this.data.line += which
+  console.debug("Nouvelle ligne de pose : ", this.data.line, LINES_POSE[this.data.line])
+  this.repositionne()
 }
 
 onChangeXByDrag(ev, ui){

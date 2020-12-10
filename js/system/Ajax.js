@@ -38,10 +38,23 @@ class Ajax {
     return this.proceedSending(hdata).then(this.traiteErrorInRetour.bind(this))
   }
 
+  // static proceedSending(hdata){
+  //   return new Promise((ok,ko)=>{
+  //     var data = {
+  //         url: 'ajax/ajax.rb'
+  //       , data: hdata
+  //       , success: ok
+  //       , error: this.onError.bind(this,ko)
+  //     }
+  //     $.ajax(data)
+  //   })
+  // }
+  //
   static proceedSending(hdata){
     return new Promise((ok,ko)=>{
       var data = {
           url: 'ajax/ajax.rb'
+        , type: 'post'
         , data: hdata
         , success: ok
         , error: this.onError.bind(this,ko)

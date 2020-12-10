@@ -154,7 +154,7 @@ print(){
 getValuesAndSave(){
   if(this.getValuesInFields()) {
     this.save()
-    this.setInterface()
+    UI.setInterface()
   }
 }
 
