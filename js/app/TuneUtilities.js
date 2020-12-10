@@ -151,7 +151,8 @@ calcRelative(){
 
 calcSousDominante(){
   var vprov = this.indiceTon + 3
-  const noteSDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : 7 - vprov]
+  console.log("vprov = ", vprov)
+  const noteSDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : vprov - 7]
   const modeSDom = String(this.mode)
   const alterSDom = (my => {
     if ( my.note == 'F' ) {
@@ -171,7 +172,7 @@ calcSousDominante(){
 ***/
 calcDominante(){
   var vprov = this.indiceTon + 4
-  const noteDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : 7 - vprov]
+  const noteDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : vprov - 7]
   const modeDom = 'M'
   const alterDom = (my => {
     if ( my.note == 'B' ) {
@@ -180,7 +181,7 @@ calcDominante(){
       else { return 'd'}
     } else { return my.alter }
   })(this)
-  
+
   const empDom = `${noteDom}${alterDom||''}${modeDom}`
   console.debug("Dominante = %s", empDom)
   return new Tune(empDom)

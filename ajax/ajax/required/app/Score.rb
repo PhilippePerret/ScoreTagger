@@ -18,7 +18,7 @@ end #/ create
 # Pour mettre cette analyse en analyse courante
 def set_current
   File.open(File.join(SCORE_FOLDER,'_CURRENT_.js'),'wb') do |f|
-    f.write("const CURRENT_ANALYSE = '#{name}';\n")
+    f.write("let CURRENT_ANALYSE = '#{name}';\n")
   end
 end #/ set_current
 

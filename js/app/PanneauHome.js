@@ -267,23 +267,24 @@ onClickRevenirPrefsDefault(ev){
   if(!CURRENT_ANALYSE)return erreur("Il faut au préalable définir l'analyse.")
   console.warn("Il faut implémenter le retour aux préférences par défaut")
 }
-  /**
-  * Quand on clique le bouton pour préparer la partition, c'est-à-dire
-  * en faire des pages exploitables par la découpe.
-  * Par la même occasion, cette méthode enregistre le chemin d'accès au
-  * fichier original qui vient peut-être d'être défini.
-  ***/
-  onClickPrepareButton(ev){
-    const score_path = $('#analyse_partition_path').val().trim()
-    if ( score_path == "" ) return erreur("Il faut définir le chemin d'accès à la partition ou au dossier contenant les pages classées de la partition.")
-    message("Préparation de la partition…")
-    Ajax.send('prepare_score.rb', {score_path: score_path})
-    .then(this.confirmationPartitionPrepared.bind(this))
-  }
-  confirmationPartitionPrepared(ret){
-    message(`Partition préparée (nombre de pages : ${ret.page_count}). Tu peux passer à la coupe.`)
-    Panneau.get('crop').open()
-  }
+
+/**
+* Quand on clique le bouton pour préparer la partition, c'est-à-dire
+* en faire des pages exploitables par la découpe.
+* Par la même occasion, cette méthode enregistre le chemin d'accès au
+* fichier original qui vient peut-être d'être défini.
+***/
+onClickPrepareButton(ev){
+  const score_path = $('#analyse_partition_path').val().trim()
+  if ( score_path == "" ) return erreur("Il faut définir le chemin d'accès à la partition ou au dossier contenant les pages classées de la partition.")
+  message("Préparation de la partition…")
+  Ajax.send('prepare_score.rb', {score_path: score_path})
+  .then(this.confirmationPartitionPrepared.bind(this))
+}
+confirmationPartitionPrepared(ret){
+  message(`Partition préparée (nombre de pages : ${ret.page_count}). Tu peux passer à la coupe.`)
+  Panneau.get('crop').open()
+}
 
 onClickSaveButton(ev){
   Score.current.getValuesAndSave()

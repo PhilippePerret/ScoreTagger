@@ -52,6 +52,8 @@ static getAllValuesInHomePage(){
   }
 
 static initializeWithData(ret){
+  console.log("ret:", ret)
+  CURRENT_ANALYSE = ret.data.folder_name
   $('#analyse_folder_name').val(CURRENT_ANALYSE)
   this.current = new Score(ret.data)
   this.current.dispatchData()

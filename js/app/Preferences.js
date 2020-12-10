@@ -148,7 +148,12 @@ divers(key){
 
 getBinaryDefault(key){
   const [mainkey, subkey] = key.split('.')
-  return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
+  try {
+    return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
+  } catch (e) {
+    console.error("Problème avec la préférence binaire '%s' : %s", key, e)
+    return false
+  }
 }
 getDiversDefault(key){
   return PREFS_DEFAULT_VALUES.divers[key].value
