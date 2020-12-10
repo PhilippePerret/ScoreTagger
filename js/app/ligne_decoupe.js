@@ -14,5 +14,17 @@ class Line {
   }
   observe(){
     $(this.obj).draggable({axis:'y'})
+    const dataMenu = [
+      {name: "Supprimer…", method: this.onRemoveLine.bind(this)}
+    ]
+    new ContextMenu($(this.obj), dataMenu)
   }
+
+/**
+* Suppression de la ligne
+***/
+onRemoveLine(ev){
+  $(this.obj).remove()
 }
+
+} // /class Line
