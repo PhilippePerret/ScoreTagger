@@ -34,6 +34,10 @@ class App {
   // Quand tout est prêt
   static start(){
     // console.clear()
+
+    // On règle l'interface en fonction des données
+    UI.setInterface()
+
     console.log("On peut commencer !")
 
     // Pour lancer des procédures directement au cours de l'implémentation

@@ -3,12 +3,28 @@
 const TABS = ['home','crop','analyse','export'];
 
 class UI {
-  static init(){
-    this.prepare()
-    this.observe()
+
+static init(){
+  this.prepare()
+  this.observe()
+}
+
+static prepare(){
+}
+
+/**
+* Méthode qui règle l'interface en fonction des données connues
+* Par exemple, les onglets ne seront pas accessibles si aucun dossier
+* d'analyse n'est choisi.
+***/
+static setInterface(){
+  const noOnglets = (!Score.current) || (Score.current.folder_name == '') || (Score.current.score_ini_path == '')
+  if ( noOnglets ) {
+    DGet('button#btn-panneau-crop').disabled = true
+    DGet('button#btn-panneau-analyse').disabled = true
+    DGet('button#btn-panneau-export').disabled = true
   }
-  static prepare(){
-  }
+}
 
   static observe(){
     TABS.forEach(tab => Panneau.get(tab))

@@ -9,6 +9,19 @@ def initialize(name)
   @name = name
 end #/ initialize
 
+# Création de l'analyse
+def create(hdata)
+  mkdir_p_folders
+  set(hdata)
+end #/ create
+
+# Pour mettre cette analyse en analyse courante
+def set_current
+  File.open(File.join(SCORE_FOLDER,'_CURRENT_.js'),'wb') do |f|
+    f.write("const CURRENT_ANALYSE = '#{name}';\n")
+  end
+end #/ set_current
+
 # Fabrication de tous les dossiers de l'analyse
 def mkdir_p_folders
   [systems_folder, images_systems_folder, data_systems_folder, pages_score_folder].each do |dossier|

@@ -6,8 +6,37 @@ const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 
 class Score {
 
-  static get current(){ return this._current || (this._current = new Score())}
-  static set current(v){ this._current = v }
+static get current(){ return this._current || (this._current = new Score())}
+static set current(v){ this._current = v }
+
+/**
+* Réinitialise toutes les valeurs de la page d'accueil, en vue d'une
+* création d'analyse.
+***/
+static resetForm(){
+  const l = ['analyse_folder_name', 'analyse_partition_path']
+  l.forEach(id => $(`#${id}`).val(''))
+  SCORE_ANALYZE_PROPS.forEach(id => $(`#score-${id}`).val(''))
+  // On désactive les boutons qui permettent d'enregistrer
+  Panneau.get('home').buttonsSaveData.each((i,o) => o.disabled = true)
+}
+
+/**
+* Retourne toutes les valeurs présentes sur la page d'accueil (sauf les
+* valeurs de préférences — pour le moment)
+***/
+static getAllValuesInHomePage(){
+  const d = {}
+  Object.assign(d, {
+      folder_name: $('input#analyse_folder_name').val().trim()
+    , score_ini_path: $('input#analyse_partition_path').val().trim()
+  })
+  // Les valeurs options des titre, compositeur, etc.
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    Object.assign(d, {[prop]: $(`#score-${prop}`).val().trim()})
+  })
+  return d
+}
 
   /**
   * Initialisation de la partition (au chargement de l'application)
@@ -22,11 +51,12 @@ class Score {
     }
   }
 
-  static initializeWithData(ret){
-    $('#analyse_folder_name').val(CURRENT_ANALYSE)
-    this.current = new Score(ret.data)
-    this.current.dispatchData()
-  }
+static initializeWithData(ret){
+  $('#analyse_folder_name').val(CURRENT_ANALYSE)
+  this.current = new Score(ret.data)
+  this.current.dispatchData()
+  UI.setInterface()
+}
 
 /** ---------------------------------------------------------------------
   *
@@ -120,29 +150,23 @@ print(){
 * et les enregistre dans le fichier data.yml de la partition.
 ***/
 getValuesAndSave(){
-  if(this.getValuesInFields()){this.save()}
+  if(this.getValuesInFields()) {
+    this.save()
+    this.setInterface()
+  }
 }
+
+get folder_name(){ return $('input#analyse_folder_name').val().trim() }
+get score_ini_path(){ return $('input#analyse_partition_path').val().trim() }
 
 /**
 * Retourne les valeurs des champs de données de la page principale
 * (normalement : en vue de leur enregistrement)
 ***/
 getValuesInFields(){
-  this._data.folder_name = $('input#analyse_folder_name').val()
-  if ( this._data.folder_name == "" ) {
-    return erreur("Il faut indiquer le nom de l'analyse !")
-  }
-  this._data.score_ini_path = $('input#analyse_partition_path').val()
-  if ( this._data.score_ini_path == ""){
-    return erreur("Il faut indiquer le chemin d'accès à la partition originale !")
-  }
-  // Les valeurs options des titre, compositeur, etc.
-  SCORE_ANALYZE_PROPS.forEach(prop => {
-    Object.assign(this._data, {[prop]: $(`#score-${prop}`).val().trim()})
-  })
+  this._data = this.constructor.getAllValuesInHomePage()
   // On ajoute les préférences actuelles
   this._data.preferences = this.preferences.data
-
   // Pour poursuivre
   return true
 }

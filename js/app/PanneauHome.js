@@ -3,18 +3,19 @@
 const ROSE_DES_VENTS = ['top','left','bottom','right']
 
 class PanneauHome extends Panneau {
-  constructor() {
-    super('home')
-  }
 
-  onActivate(){
-    console.debug("Home activé")
-    if (!this.observed){
-      this.prepare()
-      this.observe()
-    }
-    document.body.style.width = '1040px'
+constructor() {
+  super('home')
+}
+
+onActivate(){
+  console.debug("Home activé")
+  if (!this.observed){
+    this.prepare()
+    this.observe()
   }
+  document.body.style.width = '1040px'
+}
 
 /**
 * Préparation de la page d'accueil
@@ -26,6 +27,7 @@ class PanneauHome extends Panneau {
 prepare(){
   const score   = Score.current
   const cPrefs  = score.preferences
+
   // Les titres, auteurs, etc.
   /**
   * Les titre, compositeurs, etc.
@@ -103,11 +105,24 @@ prepare(){
     }
   })
 
+  /**
+  * On prépare le menu qui va contenir toutes les analyses
+  ***/
+  Ajax.send('get_all_analysis.rb').then(ret => {
+    // console.debug("Analyses: ", ret.analyses)
+    ret.analyses.splice(0,0,{folder:'none', titre:'Choisir l’analyse…'})
+    ret.analyses.forEach(dana => {
+      $('#analyses').append(DCreate('OPTION', {value: dana.folder, text: dana.titre}))
+    })
+  })
+
 }// prepare
 
+get buttonsSaveData(){ return $('.btn-save-analyse-data') }
 observe(){
   super.observe()
-  $('.btn-save-analyse-data').on('click', this.onClickSaveButton.bind(this))
+  this.buttonsSaveData.on('click', this.onClickSaveButton.bind(this))
+  $('.btn-reset-data').on('click', Score.resetForm.bind(Score))
   $('#btn-load-analyse-data').on('click', this.onClickLoadButton.bind(this))
   $('#btn-prepare-score').on('click', this.onClickPrepareButton.bind(this))
 
@@ -117,9 +132,26 @@ observe(){
   $('button.btn-save-preferences').on('click', this.onClickSavePreferences.bind(this))
   $('button.btn-revenir-prefs-default').on('click', this.onClickRevenirPrefsDefault.bind(this))
 
+  // Quand on choisit une analyse dans le menu des analyses
+  $('#analyses').on('change', this.onChooseAnalyse.bind(this))
   this.observed = true
 }
 
+/**
+* Méthode appelée quand on choisit une analyse dans le menu
+* Note : ça ne la change que lorsqu'elle est différente de l'analyse
+* courante
+***/
+onChooseAnalyse(ev){
+  const folder = $('#analyses').val()
+  $('#analyses').val('none')
+  if ( folder == Score.current.folder_name ) {
+    message("C'est l'analyse courante !")
+  } else {
+    Score.resetForm()
+    $('#analyse_folder_name').val(folder)
+  }
+}
 /**
 Méthode appelée quand on finit de déplacer un élément comme
 le titre, le compositeur, etc.
@@ -253,18 +285,23 @@ onClickRevenirPrefsDefault(ev){
     Panneau.get('crop').open()
   }
 
-  onClickSaveButton(ev){
-    Score.current.getValuesAndSave()
-  }
+onClickSaveButton(ev){
+  Score.current.getValuesAndSave()
+}
 
-  onClickLoadButton(ev){
-    console.info("Je dois charger les données de l'analyse")
+/**
+* Quand on clique sur le bouton pour charger/créer l'analyse
+***/
+onClickLoadButton(ev){
+  const folder = Score.current.folder_name
+  if ( folder == '' ) return erreur("Il faut définir le nom du dossier d'analyse ! (même s'il n'existe pas encore)")
+  Ajax.send('set_current_and_load.rb', {data: Score.getAllValuesInHomePage()})
+    .then(Score.initializeWithData.bind(Score))
+}
 
-  }
-
-  showHelp(){
-    message("Je dois afficher l'aide pour l'analyse")
-  }
+showHelp(){
+  message("Je dois afficher l'aide pour l'analyse")
+}
 
 
 }
