@@ -148,6 +148,9 @@ observe(){
   // Pour jouer l'analyse
   $('button#btn-play-analyse').on('click', Score.current.analyse.play.bind(Score.current.analyse))
 
+  // Pour repositionner tous les éléments
+  $('button#btn-repositionne-systems').on('click', this.repositionneAll.bind(this))
+
   // Pour sauver les systèmes de force (en cliquant sur le voyant)
   this.voyantSave.on('click', score.autosave.bind(score))
 }
@@ -161,12 +164,35 @@ onClickOnTableAnalyse(ev){
 }
 
 /**
+* Méthode appelée quand on clique sur le bouton pour repositionner les systèmes
+* ainsi que l'annexe.
+* Note : en plus, la méthode donne des indications sur les données
+***/
+repositionneAll(ev){
+  console.debug("-> repositionneAll")
+  var prevSys = null
+  Score.current.systems.forEach(system => {
+    system.prevSystem = prevSys
+    system.top || this.calcSystemPos(system, /* debug = */ true)
+    console.debug("Système #%i mis à top: %ipx", system.index, system.top)
+    system.positionne()
+    prevSys = system
+  })
+  // On redessine les délimiteurs de page
+  $('.page-separator').remove()
+  this.drawPageDelimitors()
+  // On repositionne l'annexe
+  $('#annexe').css('top', this.topLastPage)
+
+  console.debug("<- repositionneAll")
+}
+
+/**
 * Méthode qui maintenant calcule, "à blanc" (*) la position du système
 * de données initiales +iniData+ (qui contient l'index de page, l'index
 * de système, etc.)
 ***/
-calcSystemPos(system){
-  const debug = false
+calcSystemPos(system, debug = false){
   const score = system.score || Score.current
   debug && console.debug("\n=== CALCUL TOP DU SYSTÈME %s ===", system.minid)
   var fromY ;
@@ -181,7 +207,7 @@ calcSystemPos(system){
 
   if ( system.index == 0 ) {
     // Tout premier système
-    system.data.top = system.top = score.preferences.first_page.first_system_top
+    system.data.top = system.top = score.preferences.first_page('first_system_top')
     debug && console.debug("Première page, this.top = %i", system.top)
   } else {
     // Le système précédent (au-dessus)
@@ -235,7 +261,7 @@ get firstTopLineType(){
 }
 
 get pref_no_ligne_segment(){
-  return false === Score.current.preferences.binary('export.user_segment_line')
+  return false === Score.current.preferences.binary('export.use_segment_line')
 }
 
 get systemsContainer(){

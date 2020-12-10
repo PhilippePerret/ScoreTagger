@@ -151,7 +151,7 @@ getBinaryDefault(key){
   try {
     return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
   } catch (e) {
-    console.error("Problème avec la préférence binaire '%s' : %s", key, e)
+    console.error("Problème avec la préférence binaire '%s' :", key, e)
     return false
   }
 }
