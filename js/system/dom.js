@@ -40,13 +40,19 @@ function DCreate(tagName,attrs){
   for(var attr in attrs){
     var value = attrs[attr]
     switch (attr) {
-      case 'text': o.innerHTML = value; break;
+      case 'text':
+        o.innerHTML = value;
+        break;
       case 'inner':
         if ( !Array.isArray(value) ) value = [value]
         value.forEach(obj => o.appendChild(obj))
         break;
-      case 'css': case 'class': o.className = value ; break;
-      default: o.setAttribute(attr, value)
+      case 'css':
+      case 'class':
+        o.className = value;
+        break;
+      default:
+        o.setAttribute(attr, value)
     }
   }
   return o;

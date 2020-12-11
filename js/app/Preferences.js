@@ -98,18 +98,6 @@ set data(h){
 *** --------------------------------------------------------------------- */
 
 /**
-* Distance entre systèmes
-*
-* Attention, il ne s'agit pas de la distance entre le 'bottom' d'un système et
-* le 'top' du suivant, mais entre la ligne de pédale du système et la ligne
-* de segment (la plus en haut) du suivant
-***/
-
-get space_between_systems(){
-  return this.divers('space_between_systems') || PREFS_DEFAULT_VALUES.divers.space_between_systems.value
-}
-
-/**
 * Pour obtenir la hauteur de la ligne de type +type+ ou
 * sa valeur par défaut.
 ***/

@@ -22,7 +22,9 @@ onActivate(){
   const my = this
   console.debug("-> PanneauAnalyse#onActivate")
   document.body.style.width = null
-  if(!this.observed){
+  if ( !this.observed ){
+    // Si le panneau n'est pas observé, c'est qu'il n'a pas été préparé
+    this.prepare()
     this.propsAObjectToolbox = new PropsAObjectToolbox()
     this.propsAObjectToolbox.setInterfaceForType('chord')
     this.propsAObjectToolbox.observe()
@@ -53,6 +55,40 @@ onDesactivate(){
     Score.current.autosave() // une dernière fois
     Score.current.stopAutosave()
   }
+}
+
+/**
+* Préparation du panneau d'analyse
+*
+* Maintenant, tous les boutons sont construits à la volée
+***/
+prepare(){
+
+  // Construction de tous les boutons
+  const boiteBoutonsObjet = $('#objets')
+  for(var ktype in AOBJETS_TOOLBOX_BUTTONS) {
+    const dtype = AOBJETS_TOOLBOX_BUTTONS[ktype]
+    const div_id = `objets-${ktype}s`
+    const divBoutons = DCreate('DIV', {id:div_id, class:'objets-prop'})
+    boiteBoutonsObjet.append(divBoutons)
+    // On ajoute les boutons
+    dtype.order.forEach( butid => {
+      const dbutton = dtype.items[butid]
+      const mark_selected = dtype.selected == butid ? ' selected' : '' ;
+      const text = dbutton.img ? `<img src="img/${dbutton.img}.png" class="objet-prop-img" />` : dbutton.text ;
+      let attrs = {
+          type:'button'
+        , id:`${ktype}-${dbutton.id}`
+        , class: `obb${mark_selected}`
+        , text: text // soit le texte, soit l'image
+        , 'data-value':(dbutton.value||dbutton.id)
+        , 'data-type-aobject': ktype
+      }
+      const button = DCreate('BUTTON', attrs)
+      divBoutons.append(button)
+    })
+  }
+
 }
 
 get pref_auto_save(){return Score.current.preferences.binary('analyse.autosave') }
@@ -216,7 +252,7 @@ calcSystemPos(system, debug = false){
     debug && console.debug("fromY (prevSystem.bottom_limit) = %i", prevSystem.bottom_limit)
 
     // La distance entre système (Space Between Systems)
-    const SBS = score.preferences.space_between_systems
+    const SBS = score.preferences.divers('space_between_systems')
     debug && console.debug("space_between_systems = %i", SBS)
 
     // La page sur laquelle on se trouve

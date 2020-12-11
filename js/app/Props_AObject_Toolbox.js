@@ -23,6 +23,13 @@ constructor(container) {
   this.container = $(container||document.body)
 }
 
+/**
+* Construction de la boite d'objet
+***/
+build(){
+
+}
+
 
 // Observation de tous les boutons
 observe(){
@@ -280,7 +287,7 @@ class POAButton {
     * pressé maintenant) concerne la tonalité à voir
     ***/
     if (this.toolbox.currentOType == 'harmony' && this.type == 'harmony'){
-      
+
     }
 
 
