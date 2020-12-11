@@ -83,17 +83,42 @@ get segmentButtons(){
 ***/
 setInterfaceForType(ot){
   // console.debug(`-> setInterfaceForType(ot = ${ot})`)
-  this.currentOType = ot
 
   const DataType = AOBJETS_TOOLBOX_BUTTONS.otype.items[ot]
   // console.debug("DataType: ", DataType)
   // On commence par masquer tous les groupes de boutons (noter que le
   // groupe principal 'otype' ne possède pas cette classe.)
   $('.grp-buttons-type').addClass('hidden')
+
   // Ensuite, on réaffiche seulement les groupes visibles
   DataType.visible.forEach(type => {
-    $(`#objets-${type}s`).removeClass('hidden')
+    if ( 'string' == typeof(type) ) {
+      $(`#objets-${type}s`).removeClass('hidden')
+    } else {
+      const objetGrp = type[0]
+      $(`#objets-${type}s`).removeClass('hidden')
+      // On doit masquer tous les boutons de ce groupe
+      // TODO
+      // On affiche seulement les boutons qui sont utiles
+      type[1].each( buttonId => )
+    }
   })
+
+  // Ensuite, il faut n'afficher, dans chaque groupe, que les boutons
+  // utiles. Ils sont définis comment ? Avant, c'était REALVALS_PER_TYPE qui
+  // contenait ces informations.
+  // Par exemple, pour le type harmonie (harmony), les seuls types d'altération
+  // utiles sont bécarre, bémol et dièse, pas double bémol ou dièse.
+  // On règle ça dans la propriété 'visible' du otype. Au lieu de mettre
+  //
+  /**
+  * simplement un string qui définit le groupe de boutons à afficher (p.e.
+  * 'alteration' ici), on met un objet avec un clé l'id du groupe de bouton,
+  * (p.e. 'alteration') et en valeur de cette clé la LISTE (array) des seuls
+  * boutons qu'il faut afficher, par leur ID.
+  ***/
+
+
 
   // TODO il faut actualiser l'aperçu du texte
   return // pour le moment
@@ -159,9 +184,9 @@ setInterfaceForType(ot){
 }
 
 getValues(){
-  let d = {}
-  const DataOType = AOBJETS_TOOLBOX_BUTTONS.otypes.items[this.currentOType]
-  // console.debug("DataOType = ", DataOType)
+  let d = {otype: this.currentOType}
+  const DataOType = AOBJETS_TOOLBOX_BUTTONS.otype.items[this.currentOType]
+  console.debug("this.currentOType=%s, DataOType = ", this.currentOType, DataOType)
   // On ne prend que les valeurs des types visibles
   DataOType.visible.forEach(ktype => {
     Object.assign(d, {[ktype]: $(`button[data-type-aobject="${ktype}"].obb.selected`).data('value')})
@@ -181,35 +206,59 @@ updateOverview(){
 }
 
 /**
+* Retourne la valeur "humaine", pour affichage, du bouton de otype +otype+
+* et d'identifiant +id+.
+* Si c'est une image, retourne le code HTML de l'image, si c'est un texte
+* retourne le span contenant le texte.
+***/
+static getHumanPropValue(otype, id){
+  const dat = AOBJETS_TOOLBOX_BUTTONS[otype].items[id]
+  if ( dat.img ) {
+    return `<img src="img/${dat.img}.png" class="objet-prop-img ${otype}" />`
+  } else {
+    return `<span class="${otype}">${dat.text}</span>`
+  }
+}
+
+
+/**
 * Méthode qui construit le texte final en fonction des données choisies
 * ou enregistrées.
 * Cette méthode est utilisée aussi bien pour l'aperçu que pour la construction
 * de l'objet sur la partition.
 ***/
-static buildFinalText(data){
+static buildFinalText(objProps){
+  console.debug("-> buildFinalText(data=%s)", JSON.stringify(objProps))
   var mark ;
-  const objProps = data;
-  const otype = objProps.type
+  const otype = objProps.otype
   const DataButtons = AOBJETS_TOOLBOX_BUTTONS[otype]
   const DataNature  = AOBJETS_TOOLBOX_BUTTONS.nature
 
   switch(otype){
     case 'harmony':
-      mark = objProps.harmony
-      mark = `<img src="img/${DataButtons.items[mark].img}.png" class="objet-prop-img harmony" />`
+    case 'chord':
+      console.debug("otype = %s, objProps, ", otype, objProps)
+      mark = this.getHumanPropValue(otype, objProps[otype])
       break;
-    default: mark = objProps.note
+    default:
+      mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
+      mark = `<span class="nom">${mark}</span>`
   }
-  mark = `<span class="nom">${mark}</span>`
-  if ( objProps.alteration != '' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
+  var alter = objProps.alteration;
+  if ( alter != 'n' ) {
+    mark += `<span class="alte">${
+      this.getHumanPropValue('alteration', alter)
+    }</span>`
+  }
+
   if (objProps.nature != 'Maj') {
-    mark += `<img class="objet-prop-img nature" src="img/${DataNature.items[objProps.nature].img}.png" />`
+    mark += this.getHumanPropValue('nature', objProps.nature)
   }
   if (otype == 'modulation' && objProps.harmony != 'none') {
     mark += `<span class="rel">(${objProps.harmony})</span>`
   }
-  if ( otype == 'harmony' && data.renv != 0) {
-    mark += ` <span class="renv">${$(`button#renversement-${data.renv}`).html()}</span>`
+  if ( otype == 'harmony' && objProps.renv != 0) {
+    mark += ` <span class="renv">${$(`button#renversement-${objProps.renv}`).html()}</span>`
   }
   return mark
 
@@ -219,7 +268,7 @@ static buildFinalText(data){
 * Retourne le otype courant
 ***/
 get currentOType(){
-  return $('button[data-type-aobject="type"].obb.selected').data('value')
+  return $('button[data-type-aobject="otype"].obb.selected').data('value')
 }
 
 /**

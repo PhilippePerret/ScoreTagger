@@ -14,7 +14,7 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   , selected: 'chord'
   , items: {
         'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
-      , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:['alteration','harmony','nature','renv']}
+      , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['b','d','b']], 'harmony','nature','renv']}
       , 'modulation': {id:'modulation', text: 'Modulation', visible:['note','alteration','harmony','nature']}
       , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
       , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
@@ -68,12 +68,14 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   }// type 'chord'
   , 'alteration':{
       id: 'alteration'
-    , order: ['n','d','b']
+    , order: ['n','d','b','x','t']
     , selected: 'n'
     , items: {
         'n': {id:'n', text:'♮', value:''}
-      , 'd': {id:'d', text:'♯'}
-      , 'b': {id:'b', text:'♭'}
+      , 'd': {id:'d', img:"alteration/diese", alt:'♯' /* alt = juste pour garder le signe */}
+      , 'b': {id:'b', img:"alteration/bemol", alt:'♭' /* idem */}
+      , 'x': {id:'x', img:"alteration/dbl-dieses"}
+      , 't': {id:'t', img:"alteration/dbl-bemols"}
     } // items
   }// type 'alterations'
   , 'harmony':{
