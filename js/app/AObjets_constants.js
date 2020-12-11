@@ -13,12 +13,12 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   , order: ['chord','harmony','modulation','cadence','segment','pedale']
   , selected: 'chord'
   , items: {
-        'chord':      {id: 'chord',     text: 'Accord'}
-      , 'harmony':    {id:'harmony',    text: 'Harmonie'}
-      , 'modulation': {id:'modulation', text: 'Modulation'}
-      , 'cadence':    {id:'cadence',    text: 'Cadence'}
-      , 'segment':    {id:'segment',    text: 'Segment'}
-      , 'pedale':     {id:'pedale',     text: 'Pédale'}
+        'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
+      , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:['alteration','harmony','nature','renv']}
+      , 'modulation': {id:'modulation', text: 'Modulation', visible:['note','alteration','harmony','nature']}
+      , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
+      , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
+      , 'pedale':     {id:'pedale',     text: 'Pédale',     visible:['degre','alteration']}
     }
   }
   , 'note': {
@@ -35,7 +35,37 @@ const AOBJETS_TOOLBOX_BUTTONS = {
       , 'b': {id:'b', text:'si'}
       , '0': {id:'0', text:'&nbsp;', value:''}
     }//items
-  }// type 'note'
+  }
+  , 'degre': {
+      id:'degre'
+    , order: ['1','2','3','4','5','6','7', '0']
+    , selected: '1'
+    , items: {
+        '1': {id:'1', text:'1'}
+      , '2': {id:'2', text:'2'}
+      , '3': {id:'3', text:'3'}
+      , '4': {id:'4', text:'4'}
+      , '5': {id:'5', text:'5'}
+      , '6': {id:'6', text:'6'}
+      , '7': {id:'7', text:'7'}
+      , '0': {id:'0', text:'&nbsp;', value:''}
+    }//items
+  }// type 'degre'
+  , 'chord':{
+      id: 'chord'
+    , order: ['C','D','E','F','G','A','B','0']
+    , selected: 'C'
+    , items:{
+        'C': {id:'C', img:'chord/C'}
+      , 'D': {id:'D', img:'chord/D'}
+      , 'E': {id:'E', img:'chord/E'}
+      , 'F': {id:'F', img:'chord/F'}
+      , 'G': {id:'G', img:'chord/G'}
+      , 'A': {id:'A', img:'chord/A'}
+      , 'B': {id:'B', img:'chord/B'}
+      , '0': {id:'0', text:'&nbsp;'}
+    }// /items
+  }// type 'chord'
   , 'alteration':{
       id: 'alteration'
     , order: ['n','d','b']
@@ -48,33 +78,34 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   }// type 'alterations'
   , 'harmony':{
       id: 'harmony'
-    , order: ['I','VII','V','VdV','II','II-av','II-ap','IV','IV-av','IV-ap','VI','Rel','VII-av','VII-ap','I-av','I-ap','V-av','V-ap','VI-av','VI-ap','III', 'III-av','III-ap','0']
+    , order: ['I','VII','V','VdV','II','II-av','II-ap','IV','IV-av','IV-ap','VI','I64','Rel','VII-av','VII-ap','I-av','I-ap','V-av','V-ap','VI-av','VI-ap','III', 'III-av','III-ap','0']
     , selected: 'I'
     , items:{
-        '0':      {id:'none',   text:'&nbsp;'}
-      , 'I':      {id:'I',      img:'harmony/I'}
-      , 'I-av':   {id:'I-av',   img:'harmony/I-av'}
-      , 'I-ap':   {id:'I-ap',   img:'harmony/I-ap'}
-      , 'II':     {id:'II',     img:'harmony/II'}
-      , 'II-av':  {id:'II-av',  img:'harmony/II-av'}
-      , 'II-ap':  {id:'II-ap',  img:'harmony/II-ap'}
+        '0':      {id:'none',   text:'&nbsp;',        default:{nature:'Maj'}}
+      , 'I':      {id:'I',      img:'harmony/I',      default:{nature:'Maj'}}
+      , 'I-av':   {id:'I-av',   img:'harmony/I-av',   default:{nature:'Maj'}}
+      , 'I-ap':   {id:'I-ap',   img:'harmony/I-ap',   default:{nature:'Maj'}}
+      , 'I64':    {id:'I64',    img:'harmony/I-quarte-et-sixte', default:{nature:'Maj'}}
+      , 'II':     {id:'II',     img:'harmony/II',     default:{nature:'m7'}}
+      , 'II-av':  {id:'II-av',  img:'harmony/II-av',  default:{nature:'m7'}}
+      , 'II-ap':  {id:'II-ap',  img:'harmony/II-ap',  default:{nature:'m7'}}
       , 'III':    {id:'III',    img:'harmony/III'}
       , 'III-av': {id:'III-av', img:'harmony/III-av'}
       , 'III-ap': {id:'III-ap', img:'harmony/III-ap'}
-      , 'IV':     {id:'IV',     img:'harmony/IV'}
-      , 'IV-av':  {id:'IV-av',  img:'harmony/IV-av'}
-      , 'IV-ap':  {id:'IV-ap',  img:'harmony/IV-ap'}
-      , 'V':      {id:'V',      img:'harmony/V'}
-      , 'V-av':   {id:'V-av',   img:'harmony/V-av'}
-      , 'V-ap':   {id:'V-ap',   img:'harmony/V-ap'}
-      , 'VI':     {id:'VI',     img:'harmony/VI'}
-      , 'VI-av':  {id:'VI-av',  img:'harmony/VI-av'}
-      , 'VI-ap':  {id:'VI-ap',  img:'harmony/VI-ap'}
-      , 'VII':    {id:'VII',    img:'harmony/VII'}
-      , 'VII-av': {id:'VII-av', img:'harmony/VII-av'}
-      , 'VII-ap': {id:'VII-ap', img:'harmony/VII-ap'}
+      , 'IV':     {id:'IV',     img:'harmony/IV',     default:{nature:'Maj'}}
+      , 'IV-av':  {id:'IV-av',  img:'harmony/IV-av',  default:{nature:'Maj'}}
+      , 'IV-ap':  {id:'IV-ap',  img:'harmony/IV-ap',  default:{nature:'Maj'}}
+      , 'V':      {id:'V',      img:'harmony/V',      default:{nature:'7'}}
+      , 'V-av':   {id:'V-av',   img:'harmony/V-av',   default:{nature:'7'}}
+      , 'V-ap':   {id:'V-ap',   img:'harmony/V-ap',   default:{nature:'7'}}
+      , 'VI':     {id:'VI',     img:'harmony/VI',     default:{nature:'min'}}
+      , 'VI-av':  {id:'VI-av',  img:'harmony/VI-av',  default:{nature:'min'}}
+      , 'VI-ap':  {id:'VI-ap',  img:'harmony/VI-ap',  default:{nature:'min'}}
+      , 'VII':    {id:'VII',    img:'harmony/VII',    default:{nature:'7dim'}}
+      , 'VII-av': {id:'VII-av', img:'harmony/VII-av', default:{nature:'7dim'}}
+      , 'VII-ap': {id:'VII-ap', img:'harmony/VII-ap', default:{nature:'7dim'}}
       //
-      , 'VdV':    {id:'VdV',    img:'harmony/VdeV'}
+      , 'VdV':    {id:'VdV',    img:'harmony/VdeV',   default:{nature:'7'}}
       , 'Rel':    {id:'Rel',    img:'harmony/Rel'}
     }// /items
   }// type 'harmony'
@@ -90,11 +121,11 @@ const AOBJETS_TOOLBOX_BUTTONS = {
       , '7dim': {id:'7dim',   img:'chiffrage/7dim'}
       , '5dim': {id:'5dim',   img:'chiffrage/5dim'}
       , '6aug': {id:'6aug',   img:'chiffrage/6aug'}
-      , '6nap': {id:'6nap',   img:'harmony/II-6nap'}
+      , '6nap': {id:'6nap',   img:'chiffrage/6nap'}
     }// /items
   }// type 'nature'
-  , 'renversement':{
-      id:'renversement'
+  , 'renv':{ // renversements
+      id:'renv'
     , order: ['0','1','2','3','4']
     , selected: '0'
     , items: {
@@ -104,7 +135,22 @@ const AOBJETS_TOOLBOX_BUTTONS = {
       , '3': {id:'3', img: 'chiffrage/7-bass'}
       , '4': {id:'4', img: 'chiffrage/9-bass'}
     } // /items
-  }// type 'renversement'
+  }// type 'renv'
+  , 'cadence':{
+      id:'cadence'
+    , order: ['parfaite']
+    , selected: 'parfaite'
+    , items:{
+          'parfaite':     {id:'parfaite',     value:'CP', img:'cadence/Cad-parfaite'}
+        , 'imparfaite':   {id:'imparfaite',   value:'CI', img:'cadence/Cad-imparfaite'}
+        , 'demi-cadence': {id:'demi-cadence', value:'DC', img:'cadence/Cad-demi'}
+        , 'rompue':       {id:'rompue',       value:'CR', img:'cadence/Cad-rompue'}
+        , 'plagale':      {id:'plagale',      value:'PG', img:'cadence/Cad-plagale'}
+        , 'baroque':      {id:'baroque',      value:'CB', img:'cadence/Cad-baroque'}
+        , 'faureenne':    {id:'faureenne',    value:'CF', img:'cadence/Cad-faureenne'}
+        , 'picarde':      {id:'picarde',      value:'TP', img:'cadence/Cad-picarde'}
+    }// /items
+  }// type 'cadence'
   , 'segment':{
       id: 'segment'
     , order: ['up','down']

@@ -23,13 +23,6 @@ constructor(container) {
   this.container = $(container||document.body)
 }
 
-/**
-* Construction de la boite d'objet
-***/
-build(){
-
-}
-
 
 // Observation de tous les boutons
 observe(){
@@ -82,21 +75,28 @@ get segmentButtons(){
   return this._segmentbuttons || (this._segmentbuttons = this.container.find('div#objets div#objets-segments'))
 }
 
-// Méthode qui affiche ou masque les éléments en fonction du type
-// d'objet voulu.
+/**
+* Règle l'interface en fonction du type choisi et parfois de la valeur
+* générale de ce type choisi. Par exemple, si on choisit le type "harmony",
+* seuls les boutons correspondant à l'harmonie sont affichés. Si l'on choisit
+* l'harmonie 'V', la nature '7' (7e de dominante) est sélectionnée.
+***/
 setInterfaceForType(ot){
   // console.debug(`-> setInterfaceForType(ot = ${ot})`)
   this.currentOType = ot
 
-  /**
-  * Visibilité des groupes de boutons en fonction du type courant
-  ***/
-  new DOM(this.noteButtons).showIf(!['harmony'].includes(ot))
-  new DOM(this.alterButtons).showIf(!['cadence'].includes(ot))
-  new DOM(this.segmentButtons).showIf(ot == 'segment')
-  new DOM(this.natureButtons).showIf(!['cadence','segment'].includes(ot))
-  new DOM(this.harmonyButtons).showIf(['harmony','modulation'].includes(ot))
-  new DOM(this.renversementButtons).showIf(ot == 'harmony')
+  const DataType = AOBJETS_TOOLBOX_BUTTONS.otype.items[ot]
+  // console.debug("DataType: ", DataType)
+  // On commence par masquer tous les groupes de boutons (noter que le
+  // groupe principal 'otype' ne possède pas cette classe.)
+  $('.grp-buttons-type').addClass('hidden')
+  // Ensuite, on réaffiche seulement les groupes visibles
+  DataType.visible.forEach(type => {
+    $(`#objets-${type}s`).removeClass('hidden')
+  })
+
+  // TODO il faut actualiser l'aperçu du texte
+  return // pour le moment
 
   const ens = REALVALS_PER_TYPE[ot] || REALVALS_PER_TYPE.default
   // Les valeurs vraies
@@ -159,14 +159,15 @@ setInterfaceForType(ot){
 }
 
 getValues(){
-  const note = $('button[data-type-aobject="note"].obb.selected')[0].getAttribute('data-value')
-  const alteration = $('button[data-type-aobject="alteration"].obb.selected')[0].getAttribute('data-value')
-  const type = $('button[data-type-aobject="otype"].obb.selected')[0].getAttribute('data-value')
-  const harmony = $('button[data-type-aobject="harmony"].obb.selected')[0].getAttribute('data-value')
-  const nature = $('button[data-type-aobject="nature"].obb.selected')[0].getAttribute('data-value')
-  const segment = $('button[data-type-aobject="segment"].obb.selected')[0].getAttribute('data-value')
-  const renv = Number($('button[data-type-aobject="renversement"].obb.selected')[0].getAttribute('data-value'))
-  return { note:note, type:type, harmony:harmony, renv:renv, nature:nature, alteration:alteration, segment:segment }
+  let d = {}
+  const DataOType = AOBJETS_TOOLBOX_BUTTONS.otypes.items[this.currentOType]
+  // console.debug("DataOType = ", DataOType)
+  // On ne prend que les valeurs des types visibles
+  DataOType.visible.forEach(ktype => {
+    Object.assign(d, {[ktype]: $(`button[data-type-aobject="${ktype}"].obb.selected`).data('value')})
+  })
+  console.debug("<- getValues avec ", d)
+  return d
 }
 
 /**
@@ -182,20 +183,27 @@ updateOverview(){
 /**
 * Méthode qui construit le texte final en fonction des données choisies
 * ou enregistrées.
+* Cette méthode est utilisée aussi bien pour l'aperçu que pour la construction
+* de l'objet sur la partition.
 ***/
 static buildFinalText(data){
   var mark ;
   const objProps = data;
   const otype = objProps.type
+  const DataButtons = AOBJETS_TOOLBOX_BUTTONS[otype]
+  const DataNature  = AOBJETS_TOOLBOX_BUTTONS.nature
 
   switch(otype){
-    case 'harmony': mark = objProps.harmony; break;
+    case 'harmony':
+      mark = objProps.harmony
+      mark = `<img src="img/${DataButtons.items[mark].img}.png" class="objet-prop-img harmony" />`
+      break;
     default: mark = objProps.note
   }
   mark = `<span class="nom">${mark}</span>`
   if ( objProps.alteration != '' ) { mark += `<span class="alte">${objProps.alteration}</span>` }
   if (objProps.nature != 'Maj') {
-    mark += `<span class="nat">${objProps.nature}</span>`
+    mark += `<img class="objet-prop-img nature" src="img/${DataNature.items[objProps.nature].img}.png" />`
   }
   if (otype == 'modulation' && objProps.harmony != 'none') {
     mark += `<span class="rel">(${objProps.harmony})</span>`
@@ -207,7 +215,12 @@ static buildFinalText(data){
 
 }
 
-
+/**
+* Retourne le otype courant
+***/
+get currentOType(){
+  return $('button[data-type-aobject="type"].obb.selected').data('value')
+}
 
 /**
   * Pour sélectionner le bouton de type +type+ et de valeur +value+
@@ -215,6 +228,7 @@ static buildFinalText(data){
 * 'type-value' (sauf pour les cadences, actuellement)
 ***/
 selectButton(type, value){
+  console.debug("-> selectButton(type=%s, value=%s)", type, value)
   POAButton.get(`${type}-${value}`).select()
 }
 
@@ -268,12 +282,12 @@ class POAButton {
     ***/
     if ( this.pref_auto_choose_best_value ){
       if (this.toolbox.currentOType == 'harmony' && this.type == 'harmony'){
-        switch(this.value){
-          case 'I': case 'IV': this.toolbox.selectButton('nature', 'Maj');break;
-          case 'VI':  this.toolbox.selectButton('nature', 'm');break;
-          case 'V':   this.toolbox.selectButton('nature', '7');break;
-          case 'II':  this.toolbox.selectButton('nature','m7');break;
-          case 'VII': this.toolbox.selectButton('nature', '7dim');break;
+        const dButton = AOBJETS_TOOLBOX_BUTTONS.harmony
+        const selectionDefaut = dButton.items[this.value].default
+        if ( selectionDefaut ) {
+          for (var k in selectionDefaut){
+            this.toolbox.selectButton(k, selectionDefaut[k])
+          }
         }
       }
     }//Si les préférences le demandent

@@ -63,13 +63,14 @@ onDesactivate(){
 * Maintenant, tous les boutons sont construits à la volée
 ***/
 prepare(){
-
   // Construction de tous les boutons
   const boiteBoutonsObjet = $('#objets')
   for(var ktype in AOBJETS_TOOLBOX_BUTTONS) {
     const dtype = AOBJETS_TOOLBOX_BUTTONS[ktype]
     const div_id = `objets-${ktype}s`
-    const divBoutons = DCreate('DIV', {id:div_id, class:'objets-prop'})
+    const css = ['objets-prop']
+    if ( ktype != 'otype' ) css.push('grp-buttons-type')
+    const divBoutons = DCreate('DIV', {id:div_id, class:css.join(' ')})
     boiteBoutonsObjet.append(divBoutons)
     // On ajoute les boutons
     dtype.order.forEach( butid => {
