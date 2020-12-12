@@ -15,32 +15,33 @@ div#objets
       text-align: center
       min-width: 24px
       min-height: 24px
+      margin-left: 4px
+      vertical-align: middle
       // Un bouton outil sélection
       &.selected
         background-color: darkgreen
         color: white
+        border: none
+
+      // L'image contenu dans le bouton. Elle prend toujours toute la
+      // place, il faut donc bien régler la taille du bouton, pour tous les
+      // types de boutons.
+      // img.objet-prop-img
+      //   width: 100%
+
     &[data-type-aobject="note"]
       width: 48px
       vertical-align: middle
     &[data-type-aobject="alteration"]
-      width: 30px
-      height: 32px
-      vertical-align: middle
-      img
-        width: 12px!important
+      width: 32px
+      height: 42px
     &[data-type-aobject="harmony"]
       min-width: 30px
     &[data-type-aobject="nature"]
-      height: 30px
-      img
-        width: 20px !important
-    &[data-type-aobject="renversement"]
+      height: 42px
+    &[data-type-aobject="renv"]
       width: 48px
-      height: 30px
-      line-height: 1.6
-
-    img.objet-prop-img
-      width: 15px
+      height: 39px
 
   div#objets-notes
     &.cadence

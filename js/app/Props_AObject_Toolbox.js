@@ -1,15 +1,12 @@
 'use strict';
 /** ---------------------------------------------------------------------
-  *   Class PropsAObjecToolbox
-  *   ------------------------
-  *
-  * Pour la gestion de la boite qui permet de choisir les propriétés
-  * de l'objet d'analyse (accord, modulation, etc.)
-  *
-  * On trouve en bas de ce module la constante REALVALS_PER_TYPE qui définit
-  * les valeurs en fonction du type (otype)
-  *
-
+*   Class PropsAObjecToolbox
+*   ------------------------
+*
+* Pour la gestion de la boite qui permet de choisir les propriétés
+* de l'objet d'analyse (accord, modulation, etc.)
+*
+*
 *** --------------------------------------------------------------------- */
 class PropsAObjectToolbox {
 
@@ -93,93 +90,44 @@ setInterfaceForType(ot){
   // Ensuite, on réaffiche seulement les groupes visibles
   DataType.visible.forEach(type => {
     if ( 'string' == typeof(type) ) {
-      $(`#objets-${type}s`).removeClass('hidden')
+      DGet(`#objets-${type}s`).classList.remove('hidden')
     } else {
-      const objetGrp = type[0]
-      $(`#objets-${type}s`).removeClass('hidden')
-      // On doit masquer tous les boutons de ce groupe
-      // TODO
-      // On affiche seulement les boutons qui sont utiles
-      type[1].each( buttonId => )
+      const [otype, buttonsIds, selectedButtonId] = type
+      const buttonsGroup  = $(`#objets-${otype}s`)
+      buttonsGroup.removeClass('hidden')
+      if ( buttonsIds === null ) {
+        /**
+        * Le fait que +buttonsIds+ soit NULL signifie 1) que tous les boutons
+        * du groupe doivent être affichés et 2) qu'un bouton doit être sélec-
+        * tionné. On boucle donc sur tous les boutons pour les faire apparaitre
+        * tout en sélectionnant le bouton par défaut
+        ***/
+        const selectButtonId = `${otype}-${selectedButtonId}`
+        buttonsGroup.find('button').each((i, button) => {
+          button.classList[button.id == selectButtonId ? 'add' : 'remove']('selected')
+          button.classList.add('hidden')
+        })
+      } else {
+        /**
+        * Sinon, ça signifie que les seuls boutons à afficher sont définis.
+        * On commence par tous les masquer.
+        ***/
+        buttonsGroup.find('button').each((i, button) => button.classList.add('hidden'))
+        // Ensuite, on affiche seulement les boutons utiles, en sélectionnant
+        // celui qui doit être sélectionné s'il est défini.
+        buttonsIds.forEach( buttonId => {
+          const button = $(`button#${otype}-${buttonId}`)
+          const isSelected = selectedButtonId === buttonId
+          button.removeClass('hidden')
+          button[0].classList[isSelected?'add':'remove']('selected')
+        })
+      }
     }
   })
 
-  // Ensuite, il faut n'afficher, dans chaque groupe, que les boutons
-  // utiles. Ils sont définis comment ? Avant, c'était REALVALS_PER_TYPE qui
-  // contenait ces informations.
-  // Par exemple, pour le type harmonie (harmony), les seuls types d'altération
-  // utiles sont bécarre, bémol et dièse, pas double bémol ou dièse.
-  // On règle ça dans la propriété 'visible' du otype. Au lieu de mettre
-  //
   /**
-  * simplement un string qui définit le groupe de boutons à afficher (p.e.
-  * 'alteration' ici), on met un objet avec un clé l'id du groupe de bouton,
-  * (p.e. 'alteration') et en valeur de cette clé la LISTE (array) des seuls
-  * boutons qu'il faut afficher, par leur ID.
+  * On actualise l'aperçu qui permet de voir à quoi ressemblera l'objet
   ***/
-
-
-
-  // TODO il faut actualiser l'aperçu du texte
-  return // pour le moment
-
-  const ens = REALVALS_PER_TYPE[ot] || REALVALS_PER_TYPE.default
-  // Les valeurs vraies
-  const notesValues = ens.note || REALVALS_PER_TYPE.default.note
-  for(var k in notesValues){
-    const button = $(`button#note-${k}`)
-    const value  = notesValues[k]
-    if ( value === null ) {
-      button.addClass('invisible')
-    } else {
-      button.removeClass('invisible')
-      button.html(value)
-      button.attr('data-value', value)
-    }
-  }
-  // Les altérations vraies
-  const alterValues = ens.alteration || REALVALS_PER_TYPE.default.alteration
-  for(var k in alterValues){
-    const button = $(`button#alteration-${k}`)
-    const value  = alterValues[k]
-    UI.addClassIf(button, value === null, 'invisible')
-    if ( ! (value === null) ) {
-      button.html(value)
-      button.attr('data-value', value)
-    }
-  }
-  /**
-  * Si c'est le type 'cadence', il faut l'indiquer dans le div contenant
-  * les boutons pour changer leur taille
-  ***/
-  UI.addClassIf(this.noteButtons, ot=='cadence', 'cadence')
-
-  /**
-  * Si c'est le type modulation, il faut :
-  *   - sélection "sans degré harmonique"
-  *   - masquer les boutons de nature autre que "Maj" et "min"
-  *   - sélectionner la nature "Maj"
-  */
-  let butNoHarm;
-  if ( POAButton.items ) {
-    butNoHarm = POAButton.get('harmony-none')
-    butNoHarm.hideIf(ot=='harmony')
-  }
-  if ( ot == 'modulation' ) {
-    if (POAButton.items){
-      butNoHarm.select()
-      POAButton.select('nature-Maj')
-    }
-  } else if ( ot == 'harmony' ) {
-    POAButton.select('harmony-I')
-  }
-  // Pour le type 'modulation', on doit désactiver toutes les natures
-  // sauf 'Maj' et 'min'
-  $('*[data-type-aobject="nature"]').each((i, button) => {
-    const isInvi = (ot != 'modulation') || ['nature-Maj','nature-m'].includes(button.id)
-    UI.addClassIf(button, !isInvi, 'invisible')
-  })
-
   this.updateOverview()
 }
 
@@ -188,8 +136,16 @@ getValues(){
   const DataOType = AOBJETS_TOOLBOX_BUTTONS.otype.items[this.currentOType]
   console.debug("this.currentOType=%s, DataOType = ", this.currentOType, DataOType)
   // On ne prend que les valeurs des types visibles
+  /**
+  * On ne prend que les valeurs visibles
+  *
+  * Rappel : dans la propriété :visible, on peut trouver soit un string avec
+  * l'otype, soit un array avec en premier élément l'otype et en second les
+  * seuls boutons affichés.
+  ***/
   DataOType.visible.forEach(ktype => {
-    Object.assign(d, {[ktype]: $(`button[data-type-aobject="${ktype}"].obb.selected`).data('value')})
+    const ot = 'string' == typeof(ktype) ? ktype : ktype[0]
+    Object.assign(d, {[ot]: $(`button[data-type-aobject="${ot}"].obb.selected`).data('value')})
   })
   console.debug("<- getValues avec ", d)
   return d
@@ -206,17 +162,28 @@ updateOverview(){
 }
 
 /**
-* Retourne la valeur "humaine", pour affichage, du bouton de otype +otype+
+* RETOURNE la valeur "humaine", pour affichage, du bouton de otype +otype+
 * et d'identifiant +id+.
 * Si c'est une image, retourne le code HTML de l'image, si c'est un texte
 * retourne le span contenant le texte.
+*
+* +otype+   {String} Type de l'objet ('harmony', 'chord', etc.)
+* +id+      {String} Identifiant prope au bouton (p.e. 'II', 'c', 'min')
+*
 ***/
 static getHumanPropValue(otype, id){
-  const dat = AOBJETS_TOOLBOX_BUTTONS[otype].items[id]
-  if ( dat.img ) {
-    return `<img src="img/${dat.img}.png" class="objet-prop-img ${otype}" />`
-  } else {
-    return `<span class="${otype}">${dat.text}</span>`
+  try {
+    const dat = AOBJETS_TOOLBOX_BUTTONS[otype].items[id]
+    if ( dat.img ) {
+      return `<img src="img/${dat.img}.png" class="objet-prop-img ${otype}" />`
+    } else {
+      return `<span class="${otype}">${dat.text}</span>`
+    }
+  } catch (e) {
+    console.error("Problème fatal dans PropsAObjectToolbox::getHumanPropValue avec otype=%s, id=%s", otype, id)
+    console.error("ERREUR : ", e)
+    console.error("Pour information, AOBJETS_TOOLBOX_BUTTONS = ", AOBJETS_TOOLBOX_BUTTONS)
+    return '[?]'
   }
 }
 
@@ -237,7 +204,7 @@ static buildFinalText(objProps){
   switch(otype){
     case 'harmony':
     case 'chord':
-      console.debug("otype = %s, objProps, ", otype, objProps)
+      console.debug("otype = %s, objProps = ", otype, objProps)
       mark = this.getHumanPropValue(otype, objProps[otype])
       break;
     default:
@@ -353,8 +320,7 @@ class POAButton {
 
     }
 
-
-    Panneau.get('analyse').propsAObjectToolbox.updateOverview()
+    TableAnalyse.propsAObjectToolbox.updateOverview()
 
   }
 
@@ -383,46 +349,4 @@ class POAButton {
   get pref_auto_choose_best_value(){
     return Score.current.preferences.binary('analyse.autochoose_values')
   }
-}
-
-
-
-
-const REALVALS_PER_TYPE = {
-  default: {
-      note: {
-        '0': null, 'c':'c', 'd':'d', 'e':'e', 'f':'f', 'g':'g', 'a':'a', 'b':'b'
-      }
-    , alteration: {
-        'n': '', 'd': '♯', 'b': '♭'
-      }
-    }
-  , chord: {
-      note: {
-        '0': null, 'c':'C', 'd':'D', 'e':'E', 'f':'F', 'g':'G', 'a':'A', 'b':'B'
-      }
-  }
-  , modulation: {
-      note: {
-        '0': null, 'c':'DO', 'd':'RÉ', 'e':'MI', 'f':'FA', 'g':'SOL', 'a':'LA', 'b':'SI'
-      }
-  }
-  , cadence: {
-      note: {
-        '0': null, 'c':'Cad. Parf', 'd':'Cad. Imp', 'e':'½ Cad.', 'f':'Cad. Plag', 'g':'Cad. Romp', 'a':'Cad. Faur', 'b':'Cad. Bar'
-      }
-  }
-  , pedale: {
-      note: {
-        '0': null, 'c':'1', 'd':'5', 'e':'4', 'f':'2', 'g':'3', 'a':'6', 'b':'7'
-      }
-  }
-  , segment: {
-      note: {
-        '0': '', 'c':'A', 'd':'B', 'e':'C', 'f':'D', 'g':'E', 'a':'F', 'b':'G'
-      }
-    , alteration: {
-        'n': '', 'd': '’', 'b': '”'
-      }
-    }
 }

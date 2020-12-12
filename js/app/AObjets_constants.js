@@ -6,6 +6,9 @@
 
 /**
 * Données de tous les boutons
+*
+* Pour savoir comment est constitué cette donnée, cf. AOBJETS_TOOLBOX_BUTTONS
+* en annexe du manuel développeur.
 ***/
 const AOBJETS_TOOLBOX_BUTTONS = {
   'otype': {
@@ -14,8 +17,8 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   , selected: 'chord'
   , items: {
         'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
-      , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['b','d','b']], 'harmony','nature','renv']}
-      , 'modulation': {id:'modulation', text: 'Modulation', visible:['note','alteration','harmony','nature']}
+      , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
+      , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII'],'I'],['nature',['Maj','min'],'Maj']]}
       , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
       , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
       , 'pedale':     {id:'pedale',     text: 'Pédale',     visible:['degre','alteration']}

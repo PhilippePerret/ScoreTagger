@@ -7,8 +7,11 @@
 ~~~tex
 
 Score							La partition, dans son entier
-		|__ Preferences
-		|__ Analyse
+		|
+		|__ Preferences		L'aspect des éléments, le comportement de
+		|									l'application, etc.
+		|
+		|__ Analyse			Gère l'animation, par exemple.
 	⇩
 ASystem						Un système, donc une portée horizontale
 	⇩
@@ -19,6 +22,8 @@ AObject						Un objet d'analyse, par exemple un accord, une
 
 
 ## Constitution du dossier de l'analyse
+
+> Il s’agit donc du dossier, dans le dossier `_score_`, qui contient tous les éléments d’une analyse.
 
 ~~~bash
 
@@ -165,6 +170,80 @@ La classe qui s’occupe de la lecture est la classe `Analyse` et particulièrem
 
 
 ## Annexe
+
+---
+
+
+
+## Détails de l'implémentation
+
+#### AOBJETS_TOOLBOX_BUTTONS
+
+`AOBJETS_TOOLBOX_BUTTONS` est une constante qui définit tous les boutons de la boite d’outils qui permet de définir un [objet d'analyse][] ainsi que leur comportement.
+
+Les **clés** de cette constante (donc chaque élément racine) se rapportent à un **groupe de boutons**. Les groupes de boutons sont par exemple les altérations ou les chiffrages d’harmonie.
+
+Ces clés définissent les « objets-type » (`otype`).
+
+Le premier élément, de clé `otype` est un peu différent puisqu’il définit tous les `otype`s et leur comportement. Nous y reviendrons.
+
+Chaque `otype` (chaque « type d'objet »), donc chaque élément racine de cette constante définit :
+
+~~~javascript
+id:				Son identifiant, qui reprend la clé
+order:		L’ordre dans lequel doivent être affichés les boutons
+selected:	Le bouton sélectionné par défaut (on verra qu’il peut être surclassé
+          par une autre définition)
+items:		La table (Object) des boutons eux-mêmes.
+					Chaque élément est un Object (une table) qui définit :
+					buttonKey: {id: buttonKey, text: "le texte si texte", img:"path/to/image"}
+					Note : ci-dessus, on doit utiliser SOIT :text SOIT :img, mais pas
+          les deux.
+~~~
+
+**Particularité du premier élément**
+
+La définition des boutons (donc de la propriété `items`) du premier élément, de clé `otype`, est plus complexe. Elle possède en plus des autres la propriété `visible` qui va définir l’interface propre pour chaque type d’objet (accord, harmonie, segment, etc.).
+
+À la base, `:visible` peut être une liste (Array) de « clé de type » (c’est-à-dire les clés racine de la constante, à savoir `note`, `chord`, `alteration`, etc.). La donnée :
+
+~~~javascript
+visible: ['note','alteration','nature']
+~~~
+
+… signifie qu’il faut afficher le groupe de boutons des notes (clé `note`), le groupe de boutons des altérations (clé `alteration`) et le groupe de boutons des *natures* (clé `nature`). Tous les autres groupes de boutons (harmonies, segment, etc.) seront masqués.
+
+Mais on peut définir les choses encore plus précisément en indiquant les seuls boutons qui doivent être accessible dans chaque groupe. La clé `String` de la liste de la propriété `:visible` devient alors une liste Array qui contient en premier élément la clé du type et en deuxième élément la liste Array des identifiants de boutons qu’il faut afficher. Les autres seront masqués.
+
+Par exemple, avec :
+
+~~~javascript
+visible: ['note',   ['alteration',['n','b','d']],   'nature']
+~~~
+
+… seules les boutons d’altération `n` (bécarre ou aucune), `b` (bémol) et `d` (dièse) seront visibles/accessibles. Les boutons double bémol et double dièse seront masqués.
+
+> Noter que l’ordre de définition dans la liste des identifiants est indifférent, cela ne classera pas les boutons dans cet ordre.
+
+Enfin, on peut définir le bouton qui doit être sélectionné lorsque l’on choisit le type d’objet définissant cette propriété `:visible` en indiquant son `id` en troisième élément de la liste. Ainsi, avec :
+
+~~~javascript
+visible: ['note',   ['alteration',['n','b','d'], 'b'],   'nature']
+~~~
+
+… on demande de sélectionner le bouton « bémol », quelle que soit la valeur de la propriété `selected` du groupe des altérations.
+
+Si on doit garder tous les boutons et définir celui qui doit être sélectionné (si ce n’est pas celui par défaut), alors on met le deuxième élément à `null` :
+
+~~~javascript
+visible: ['note',   ['alteration', null, 'b'],   'nature']
+~~~
+
+
+
+---
+
+
 
 ### Lexique
 
