@@ -18,7 +18,7 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   , items: {
         'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
       , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
-      , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII'],'I'],['nature',['Maj','min'],'Maj']]}
+      , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII','0'],'0'],['nature',['Maj','min'],'Maj']]}
       , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
       , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
       , 'pedale':     {id:'pedale',     text: 'Pédale',     visible:['degre','alteration']}
@@ -86,7 +86,7 @@ const AOBJETS_TOOLBOX_BUTTONS = {
     , order: ['I','VII','V','VdV','II','II-av','II-ap','IV','IV-av','IV-ap','VI','I64','Rel','VII-av','VII-ap','I-av','I-ap','V-av','V-ap','VI-av','VI-ap','III', 'III-av','III-ap','0']
     , selected: 'I'
     , items:{
-        '0':      {id:'none',   text:'&nbsp;',        default:{nature:'Maj'}}
+        '0':      {id:'0',      text:'&nbsp;',        value:'', default:{nature:'Maj'}}
       , 'I':      {id:'I',      img:'harmony/I',      default:{nature:'Maj'}}
       , 'I-av':   {id:'I-av',   img:'harmony/I-av',   default:{nature:'Maj'}}
       , 'I-ap':   {id:'I-ap',   img:'harmony/I-ap',   default:{nature:'Maj'}}
@@ -143,17 +143,17 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   }// type 'renv'
   , 'cadence':{
       id:'cadence'
-    , order: ['parfaite','imparfaite','demi-cadence','rompue','plagale','baroque','faureenne','picarde']
-    , selected: 'parfaite'
+    , order: ['CP','CI','DC','CR','PG','CB','CF','TP']
+    , selected: 'CP'
     , items:{
-          'parfaite':     {id:'parfaite',     value:'CP', img:'cadence/Cad-parfaite'}
-        , 'imparfaite':   {id:'imparfaite',   value:'CI', img:'cadence/Cad-imparfaite'}
-        , 'demi-cadence': {id:'demi-cadence', value:'DC', img:'cadence/Cad-demi'}
-        , 'rompue':       {id:'rompue',       value:'CR', img:'cadence/Cad-rompue'}
-        , 'plagale':      {id:'plagale',      value:'PG', img:'cadence/Cad-plagale'}
-        , 'baroque':      {id:'baroque',      value:'CB', img:'cadence/Cad-baroque'}
-        , 'faureenne':    {id:'faureenne',    value:'CF', img:'cadence/Cad-faureenne'}
-        , 'picarde':      {id:'picarde',      value:'TP', img:'cadence/Cad-picarde'}
+          'CP': {id:'CP', img:'cadence/Cad-parfaite'}
+        , 'CI': {id:'CI', img:'cadence/Cad-imparfaite'}
+        , 'DC': {id:'DC', img:'cadence/Cad-demi'}
+        , 'CR': {id:'CR', img:'cadence/Cad-rompue'}
+        , 'PG': {id:'PG', img:'cadence/Cad-plagale'}
+        , 'CB': {id:'CB', img:'cadence/Cad-baroque'}
+        , 'CF': {id:'CF', img:'cadence/Cad-faureenne'}
+        , 'TP': {id:'TP', img:'cadence/Cad-picarde'}
     }// /items
   }// type 'cadence'
   , 'segment':{

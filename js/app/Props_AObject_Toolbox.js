@@ -92,7 +92,10 @@ setInterfaceForType(ot){
     if ( 'string' == typeof(type) ) {
       DGet(`#objets-${type}s`).classList.remove('hidden')
     } else {
-      const [otype, buttonsIds, selectedButtonId] = type
+      let [otype, buttonsIds, selectedButtonId] = type
+      // ID du bouton à sélectionner. Soit le bouton spécifié dans :visible,
+      // soit le bouton par défaut
+      selectedButtonId = selectedButtonId || AOBJETS_TOOLBOX_BUTTONS[ot].selected
       const buttonsGroup  = $(`#objets-${otype}s`)
       buttonsGroup.removeClass('hidden')
       if ( buttonsIds === null ) {
@@ -204,28 +207,38 @@ static buildFinalText(objProps){
   switch(otype){
     case 'harmony':
     case 'chord':
+    case 'cadence':
+    case 'segment':
       console.debug("otype = %s, objProps = ", otype, objProps)
       mark = this.getHumanPropValue(otype, objProps[otype])
-      break;
+      break
+    case 'modulation':
+      mark = this.getHumanPropValue('chord', objProps.chord)
+      break
+    case 'pedale':
+      mark = this.getHumanPropValue('degre', objProps.degre)
+      break
     default:
       mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
       mark = `<span class="nom">${mark}</span>`
   }
   var alter = objProps.alteration;
-  if ( alter != 'n' ) {
+  if ( alter && alter != 'n' ) {
     mark += `<span class="alte">${
       this.getHumanPropValue('alteration', alter)
     }</span>`
   }
 
-  if (objProps.nature != 'Maj') {
+  if (objProps.nature && objProps.nature != 'Maj') {
     mark += this.getHumanPropValue('nature', objProps.nature)
   }
-  if (otype == 'modulation' && objProps.harmony != 'none') {
+  if (otype == 'modulation' && objProps.harmony != '0') {
     mark += `<span class="rel">(${objProps.harmony})</span>`
   }
   if ( otype == 'harmony' && objProps.renv != 0) {
-    mark += ` <span class="renv">${$(`button#renversement-${objProps.renv}`).html()}</span>`
+    const DataRenv = AOBJETS_TOOLBOX_BUTTONS.renv
+    const renv = objProps.renv
+    mark += this.getHumanPropValue('renv', objProps.renv)
   }
   return mark
 

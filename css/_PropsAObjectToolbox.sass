@@ -34,6 +34,7 @@ div#objets
     // Les boutons principaux (otype)
     &[data-type-aobject="otype"]
       background-color: green
+      border-color: transparent
       color: white
 
     &[data-type-aobject="chord"]
@@ -55,9 +56,10 @@ div#objets
         width: 26px
         margin-top: 2px
     &[data-type-aobject="renv"]
-      +mediumButtonAndImg
+      +mediumButton
       img
-        margin-top: 4px
+        margin-top: -13px
+        width: 15px
 
   div#objets-notes
     &.cadence
