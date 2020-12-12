@@ -143,7 +143,7 @@ const AOBJETS_TOOLBOX_BUTTONS = {
   }// type 'renv'
   , 'cadence':{
       id:'cadence'
-    , order: ['parfaite']
+    , order: ['parfaite','imparfaite','demi-cadence','rompue','plagale','baroque','faureenne','picarde']
     , selected: 'parfaite'
     , items:{
           'parfaite':     {id:'parfaite',     value:'CP', img:'cadence/Cad-parfaite'}
