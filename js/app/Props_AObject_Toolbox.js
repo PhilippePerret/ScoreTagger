@@ -27,7 +27,6 @@ static buildFinalText(objProps){
     case 'harmony':
     case 'chord':
     case 'cadence':
-    case 'segment':
       console.debug("otype = %s, objProps = ", otype, objProps)
       mark = this.getHumanPropValue(otype, objProps[otype])
       break
@@ -36,6 +35,9 @@ static buildFinalText(objProps){
       break
     case 'pedale':
       mark = this.getHumanPropValue('degre', objProps.degre)
+      break
+    case 'segment':
+      mark = ""
       break
     default:
       mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)

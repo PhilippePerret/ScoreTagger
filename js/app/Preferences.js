@@ -49,7 +49,7 @@ const PREFS_DEFAULT_VALUES = {
       }
   }
   , lignes: {
-      segment:      -(60 + 17) // ou garder pour mode analyse structurelle ?
+      segment:      -(100 + 17) // ou garder pour mode analyse structurelle ?
     , modulation:   -(50 + 20)
     , chord:        -(0 + 17)
     , harmony:      0

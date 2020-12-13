@@ -19,7 +19,7 @@ div.aobjet
 
   // L'objet quand il est sélectionné
   &.selected
-    border-color: blue!important
+    border-color: blue !important
 
   // L'objet, quand on n'est pas dans une animation (il présente un fond
   // grisé pour voir où il sera)
@@ -27,13 +27,35 @@ div.aobjet
     background-color: #DDDDDD
   // L'objet d'analyse lorsqu'on est dans l'animation
   &.animate
-    background-color: white !important
-    border: 2px solid transparent
+    &:not(.segment)
+      border: 2px solid transparent
+      background-color: white !important
+    &.segment
+      background-color: transparent !important
 
   // Pour masquer l'objet au début de l'analyse
   &.hiddenO
     display: block
     opacity: 0
+
+  &:not(.segment)
+    z-index: 10
+
+
+  // Type particulier du segment
+  &.segment
+    z-index: 5
+    &:not(.selected)
+      border-style: dashed
+      border-width: 1px
+      border-color: black
+    &.up
+      &:not(.selected)
+        border-bottom: none
+    &.down
+      top: 200px!important // TODO Pouvoir le régler aussi
+      &:not(.selected)
+        border-top: none
 
   // Type particulier de la modulation
   // Cette fois, la marque est mise dans un div.mark
