@@ -1,5 +1,7 @@
 // Les objets de l'analyse
 div.system
+  img.system
+    width: 100%
   div.aobjet
     position: absolute
 div#aobject_apercu
@@ -13,6 +15,24 @@ div.aobjet
   transition: opacity 1s
   height: 24px // fixera la taille de l’image
   z-index: 10
+
+  // L'objet quand il est sélectionné
+  &.selected
+    border-color: blue!important
+
+  // L'objet, quand on n'est pas dans une animation (il présente un fond
+  // grisé pour voir où il sera)
+  &:not(.animate)
+    background-color: #DDDDDD
+  // L'objet d'analyse lorsqu'on est dans l'animation
+  &.animate
+    background-color: white !important
+    border: 2px solid transparent
+
+  // Pour masquer l'objet au début de l'analyse
+  &.hiddenO
+    display: block
+    opacity: 0
 
   img.objet-prop-img
     height: 100%

@@ -155,6 +155,20 @@ La [partition préparée][]  est affichée de façon intégrale sur la table d�
 
 
 
+### Affichage de la partition (zoom)
+
+À présent on peut définir le zoom de la partition sur la page. Cela entraine des difficultés au niveau des valeurs à enregistrer et à utiliser sur la table. On se sert principalement des méthodes `TableAnalyse.byScaleFactor` et `TableAnalyse.toScaleFactor` pour gérer ces valeurs.
+
+
+
+## Production des images
+
+Toutes les images peuvent être produites avec le deux fichiers Gimp du dossier `chantier/imagerie`. Le principe est de produire le PNG avec ce fichier puis, pour certains images, de les raboter horizontalement dans Aperçu pour qu’elles n’aient pas de blanc à droite et à gauche. C’est le cas par exemple des marques d’harmonie `7` ou septième diminuée, etc.
+
+Les altérations, pour le moment, sont travaillées dans un autre fichier Gimp, mais puisqu’on rabote de cette façon, il serait possible de les produire de le même et unique fichier.
+
+
+
 ---
 
 ## Lecture de l'analyse

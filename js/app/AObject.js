@@ -174,7 +174,7 @@ build(){
   // ID, zoom, position et taille
   const dobj = {
       id:`ao-${this.data.id}`
-    , top: top
+    , top: TableAnalyse.byScaleFactor(top)
     , left: left
     , zoom: `${TableAnalyse.ScoreScale}%;`
   }
