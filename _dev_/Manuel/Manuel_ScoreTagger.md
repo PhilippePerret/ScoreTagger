@@ -281,8 +281,21 @@ C’est un terme générique qui désigne tous les « objets » qu’on place su
 
 Ce qu’on appelle « partition préparée » ici, c’est la partition où les systèmes ont été découpés et répartis (écartés) de telle sorte qu’on puisse placer facilement les [objets d'analyse][].
 
+<a id="lignecoupe"></a>
+
+#### Ligne de coupe
+
+Les « lignes de coupe » sont les lignes que l’on dessine pour découper la partition originale en système, afin de les écarter pour pouvoir analyser plus facilement la partition.
+
+<a id="lignepose"></a>
+
+#### Ligne de pose
+
+Pour faciliter la gestion de l’aspect de l’analyse, des *lignes de pose* permettent de poser chaque type d’[objet d’analyse][]. Elles sont réparties au-dessus et en dessous de chaque système. On peut définir leur décalage haut ou bas avec le système sur la page d’accueil où sont définies les préférences, par simple glissement.
+
 
 
 [partition préparée]: #preparedscore
 [objets d’analyse]: #objetsanalyse
 [objet d’analyse]: #objetsanalyse
+[ligne de pose]: #lignepose

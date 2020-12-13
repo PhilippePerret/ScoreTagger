@@ -234,6 +234,7 @@ observe(){
 }
 
 onMouseDown(ev){
+  if (ev.ctrlKey||ev.metaKey||ev.shiftKey||ev.altKey) return true;
   this.moving = true
   this.offsetXStart = ev.clientX
   this.leftInit = this.data.left

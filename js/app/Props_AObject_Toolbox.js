@@ -10,6 +10,70 @@
 *** --------------------------------------------------------------------- */
 class PropsAObjectToolbox {
 
+/**
+* Méthode qui construit le texte final en fonction des données choisies
+* ou enregistrées.
+* Cette méthode est utilisée aussi bien pour l'aperçu que pour la construction
+* de l'objet sur la partition.
+***/
+static buildFinalText(objProps){
+  console.debug("-> buildFinalText(data=%s)", JSON.stringify(objProps))
+  var mark ;
+  const otype = objProps.otype
+  const DataButtons = AOBJETS_TOOLBOX_BUTTONS[otype]
+  const DataNature  = AOBJETS_TOOLBOX_BUTTONS.nature
+
+  switch(otype){
+    case 'harmony':
+    case 'chord':
+    case 'cadence':
+    case 'segment':
+      console.debug("otype = %s, objProps = ", otype, objProps)
+      mark = this.getHumanPropValue(otype, objProps[otype])
+      break
+    case 'modulation':
+      mark = this.getHumanPropValue('chord', objProps.chord)
+      break
+    case 'pedale':
+      mark = this.getHumanPropValue('degre', objProps.degre)
+      break
+    default:
+      mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
+  }
+  if (otype == 'modulation' && objProps.harmony != '0') {
+    mark += `<span class="rel">${this.getHumanPropValue('harmony', objProps.harmony)}</span>`
+  }
+  // mark = `<div class="base-value">${mark}</div>`
+
+  var alter = objProps.alteration;
+  if ( alter && alter != 'n' ) {
+    mark += this.getHumanPropValue('alteration', alter)
+  }
+
+  if (objProps.nature && objProps.nature != 'Maj') {
+    mark += this.getHumanPropValue('nature', objProps.nature)
+  }
+  if ( otype == 'harmony' && objProps.renv != 0) {
+    const DataRenv = AOBJETS_TOOLBOX_BUTTONS.renv
+    const renv = objProps.renv
+    mark += this.getHumanPropValue('renv', objProps.renv)
+  }
+
+  /**
+  * Le DIV qui sera retourné autant pour l'aperçu que pour l'objet final
+  * sur la partition.
+  ***/
+  let css = ['aobjet', otype]
+  if ( otype == 'segment' ) { css.push(objProps.segment) }
+  const div = DCreate('DIV', {class:`${css.join(' ')}`, text:mark})
+
+  if ( otype == 'modulation' ) {
+    div.appendChild(DCreate('DIV', {class:'vline'}))
+  }
+
+  return div
+}
+
 static setBoutonSegment(){
   const useSegment = true === Score.current.preferences.binary('export.use_segment_line')
   UI.showIf($('button#otype-segment'), useSegment)
@@ -192,71 +256,6 @@ static getHumanPropValue(otype, id){
 }
 
 
-/**
-* Méthode qui construit le texte final en fonction des données choisies
-* ou enregistrées.
-* Cette méthode est utilisée aussi bien pour l'aperçu que pour la construction
-* de l'objet sur la partition.
-***/
-static buildFinalText(objProps){
-  console.debug("-> buildFinalText(data=%s)", JSON.stringify(objProps))
-  var mark ;
-  const otype = objProps.otype
-  const DataButtons = AOBJETS_TOOLBOX_BUTTONS[otype]
-  const DataNature  = AOBJETS_TOOLBOX_BUTTONS.nature
-
-  switch(otype){
-    case 'harmony':
-    case 'chord':
-    case 'cadence':
-    case 'segment':
-      console.debug("otype = %s, objProps = ", otype, objProps)
-      mark = this.getHumanPropValue(otype, objProps[otype])
-      break
-    case 'modulation':
-      mark = this.getHumanPropValue('chord', objProps.chord)
-      break
-    case 'pedale':
-      mark = this.getHumanPropValue('degre', objProps.degre)
-      break
-    default:
-      mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
-  }
-  if (otype == 'modulation' && objProps.harmony != '0') {
-    mark += `<span class="rel">${this.getHumanPropValue('harmony', objProps.harmony)}</span>`
-  }
-  mark = `<div class="base-value">${mark}</div>`
-
-  var alter = objProps.alteration;
-  if ( alter && alter != 'n' ) {
-    mark += `<span class="alte">${
-      this.getHumanPropValue('alteration', alter)
-    }</span>`
-  }
-
-  if (objProps.nature && objProps.nature != 'Maj') {
-    mark += this.getHumanPropValue('nature', objProps.nature)
-  }
-  if ( otype == 'harmony' && objProps.renv != 0) {
-    const DataRenv = AOBJETS_TOOLBOX_BUTTONS.renv
-    const renv = objProps.renv
-    mark += this.getHumanPropValue('renv', objProps.renv)
-  }
-
-  /**
-  * Le DIV qui sera retourné autant pour l'aperçu que pour l'objet final
-  * sur la partition.
-  ***/
-  let css = ['aobjet', otype]
-  if ( otype == 'segment' ) { css.push(objProps.segment) }
-  const div = DCreate('DIV', {class:`${css.join(' ')}`, text:mark})
-
-  if ( otype == 'modulation' ) {
-    div.appendChild(DCreate('DIV', {class:'vline'}))
-  }
-
-  return div
-}
 
 /**
 * Retourne le otype courant
