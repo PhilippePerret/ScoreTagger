@@ -60,8 +60,7 @@ static getObjetProps(){
 /**
 * Data:
 *   id:     Identifiant (nombre)
-*   top:    Hauteur de départ
-*   left:   Décalage x
+*   left:   Décalage x (horizontal)
 *   objetProps: Les propriétés d'objet, telles que définie dans la toolbox
 *
 ***/
@@ -92,16 +91,21 @@ get data2save(){
       id: this.id
       // , system:     this.system.minid
     , s: this.system.minid
-    // , top:        this.top
-    , t: this.top
+    // // , top:        this.top
+    // NON : maintenant, on ne mémorise plus la valeur top de l'objet, car
+    // il doit se placer sur la "ligne de pose" normale pour son otype ou
+    // celle rectifiée définie dans this.data.line
+    // , t: this.top
     // , line:       this.data.line // si on a changé l'objet de ligne de pose
     , p: this.data.line // si on a changé l'objet de ligne de pose
     // , left:       this.data.left
     , l: this.data.left
     // , width:      this.data.width
     , w: this.data.width
-    // , height:     this.data.height
-    , h: this.data.height
+    // NON :  comme pour le top ci-dessus, on essaie d'enregistrer le minium
+    //        de valeur pour utiliser au maximum les valeurs conventionnelles.
+    // // , height:     this.data.height
+    // , h: this.data.height
     // , objetProps: this.objetProps
     , o: this.objetProps
   }
@@ -114,10 +118,8 @@ get data2save(){
 fromDataSaved(data){
   return {
       system: data.s
-    , top: data.t
     , left: data.l
     , width: data.w
-    , height: data.h
     , line: data.p
     , objetProps: data.o
   }
@@ -129,7 +131,7 @@ fromDataSaved(data){
   update(what){
     switch(what){
       case 'width':
-        if(['chord','harmony','pedale'].includes(this.objetProps.type)){
+        if(['chord','harmony','pedale'].includes(this.objetProps.otype)){
           const condition = this.data.width < MIN_WIDTH_OBJET_WITH_TRAIT
           UI.addClassIf($(this.obj).find('.trait'), condition, 'hidden')
         }
@@ -140,7 +142,7 @@ fromDataSaved(data){
         $(this.obj).css( what, px(this.data[what]) );
         break;
       default:
-        switch(this.objetProps.type){
+        switch(this.objetProps.otype){
           case 'modulation': this.updateAsModulation();break;
           case 'chord':
           case 'harmony':
@@ -160,12 +162,13 @@ build(){
   // On a besoin du score courant
   const oProps = this.objetProps
   const score = Score.current
-      , top   = this.data.top || this.system.topPerTypeObjet(oProps.otype, this.data.line)
+      , top   = this.system.topPerTypeObjet(oProps.otype, this.data.line)
       , left  = this.data.left
 
   // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
   this.top = top
 
+  console.debug("otype = %s, top: %i, line = %s", oProps.otype, top, this.data.line)
   /**
   * On récupère le DIV qui est renvoyé par le constructeur du texte final
   ***/
@@ -179,9 +182,10 @@ build(){
     , zoom: `${TableAnalyse.ScoreScale}%;`
   }
   this.data.width   && Object.assign(dobj, {width: this.data.width})
-  this.data.height  && Object.assign(dobj, {height: this.data.height})
 
   div.setAttribute('style', px(dobj, true))
+
+  console.debug("DIV = ", div)
 
   if ( this.data.width ) {
     div.appendChild(DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`}))
@@ -195,7 +199,7 @@ build(){
 }
 
 repositionne(){
-  this.top = this.data.top = this.system.topPerTypeObjet(this.type, this.data.line)
+  this.top = this.system.topPerTypeObjet(this.otype, this.data.line)
 }
 
 updateAsModulation(){
@@ -268,7 +272,7 @@ onMouseUp(ev){
 ***/
 onChangeLignePose(which, ev){
   console.debug("-> onChangeLignePose(which=%i)", which)
-  if ( !this.data.line ) this.data.line = LINES_POSE.indexOf(this.type) + 1
+  if ( !this.data.line ) this.data.line = LINES_POSE.indexOf(this.otype) + 1
   this.data.line += which
   console.debug("Nouvelle ligne de pose : ", this.data.line, LINES_POSE[this.data.line])
   this.repositionne()
@@ -296,7 +300,7 @@ unsetSelected(){
 }
 
 get left(){return this.data.left}
-get type(){ return this._type || (this._type = this.objetProps.type) }
+get otype(){ return this._otype || (this._otype = this.objetProps.otype) }
 get obj(){return this._obj}
 
 }
