@@ -83,7 +83,7 @@ onMouseUp(ev){
 ***/
 showMenu(ev){
   this.menu ? this.show() : this.build()
-  this.menu.css(with_pixels({top:ev.clientY - 40, left: ev.clientX - 40}))
+  this.menu.css(px({top:ev.clientY - 40, left: ev.clientX - 40}))
 }
 
 

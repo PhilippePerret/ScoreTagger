@@ -140,7 +140,7 @@ createNewAObjet(ev){
   const objProps = AObject.getObjetProps()
   const odata = {
       id: AObject.newId()
-    , left: ev.offsetX - 10
+    , left: TableAnalyse.byScaleFactor(ev.offsetX - 10)
     , objetProps: objProps
     , system: this.minid
   }

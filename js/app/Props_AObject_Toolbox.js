@@ -161,7 +161,8 @@ getValues(){
 ***/
 updateOverview(){
   const vals = this.getValues()
-  $('#aobject_apercu').html(this.constructor.buildFinalText(vals))
+  $('#aobject_apercu').html('')
+  $('#aobject_apercu').append(this.constructor.buildFinalText(vals))
 }
 
 /**
@@ -220,8 +221,12 @@ static buildFinalText(objProps){
       break
     default:
       mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
-      mark = `<span class="nom">${mark}</span>`
   }
+  if (otype == 'modulation' && objProps.harmony != '0') {
+    mark += `<span class="rel">${this.getHumanPropValue('harmony', objProps.harmony)}</span>`
+  }
+  mark = `<div class="base-value">${mark}</div>`
+
   var alter = objProps.alteration;
   if ( alter && alter != 'n' ) {
     mark += `<span class="alte">${
@@ -232,16 +237,25 @@ static buildFinalText(objProps){
   if (objProps.nature && objProps.nature != 'Maj') {
     mark += this.getHumanPropValue('nature', objProps.nature)
   }
-  if (otype == 'modulation' && objProps.harmony != '0') {
-    mark += `<span class="rel">(${objProps.harmony})</span>`
-  }
   if ( otype == 'harmony' && objProps.renv != 0) {
     const DataRenv = AOBJETS_TOOLBOX_BUTTONS.renv
     const renv = objProps.renv
     mark += this.getHumanPropValue('renv', objProps.renv)
   }
-  return mark
 
+  /**
+  * Le DIV qui sera retourné autant pour l'aperçu que pour l'objet final
+  * sur la partition.
+  ***/
+  let css = ['aobjet', otype]
+  if ( otype == 'segment' ) { css.push(objProps.segment) }
+  const div = DCreate('DIV', {class:`${css.join(' ')}`, text:mark})
+
+  if ( otype == 'modulation' ) {
+    div.appendChild(DCreate('DIV', {class:'vline'}))
+  }
+
+  return div
 }
 
 /**

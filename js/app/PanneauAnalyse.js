@@ -90,10 +90,37 @@ prepare(){
     })
   }
 
+  // Mise à la taille de la partition
+  const cont = $(this.systemsContainer)
+  const newWidth = this.toScaleFactor(cont.width())
+  cont.css('width', px(newWidth))
 }
 
 get pref_auto_save(){return Score.current.preferences.binary('analyse.autosave') }
 get pref_apercu_tonal(){return Score.current.preferences.binary('export.apercu_tonal') }
+
+/**
+* Retourne la valeur réelle de la position (x, y, h ou w) +v+ en fonction
+* du "scale factor" (cf. "Scale Factor" dans l'annexe du manuel développeur)
+* La méthode `toScaleFactor` fait le contraire.
+***/
+byScaleFactor(v){
+  return parseInt( v / this.ScaleFactor, 10)
+}
+toScaleFactor(v){
+  return parseInt( v * this.ScaleFactor, 10)
+}
+/**
+* Cf. "Scale Factor" dans l'annexe de la documentation.
+* Si la partition est zoomée de 150% dans les préférences, ce "scale factor"
+* sera de 1.5
+***/
+get ScaleFactor(){
+  return this._scalefactor || (this._scalefactor = this.ScoreScale / 100)
+}
+get ScoreScale(){
+  return Score.current.preferences.divers('score_scale')
+}
 
 /**
 * Construction des titre, compositeur, etc. en fonction des données et
@@ -115,7 +142,7 @@ drawFirstPage(){
       const dome = DCreate('DIV', {id: `score-${prop}`, class:`oeuvre-${prop}`,
         inner:elements})
       this.systemsContainer.append(dome)
-      $(dome).css(with_pixels(score.preferences.first_page(prop)))
+      $(dome).css(px(score.preferences.first_page(prop)))
     }
   })
 }

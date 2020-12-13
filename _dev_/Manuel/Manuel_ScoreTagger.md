@@ -241,6 +241,26 @@ visible: ['note',   ['alteration', null, 'b'],   'nature']
 
 
 
+#### Scale Factor
+
+Le « Scale Factor »  — propriété `ScaleFactor` du panneau d’analyse (`TableAnalyse.ScaleFactor`) — correspond au facteur avec lequel il faut diviser les positions (clics de souris sur la table par exemple pour obtenir la valeur réelle en fonction du zoom de la partition. Par exemple, si la partition est zoomée de 150%, ce "scale factor" sera de 1.5.
+
+La méthode `TableAnalyse.byScaleFactor(value)` permet d’obtenir la valeur correspondante. La méthode `TableAnalyse.toScaleFactor(value)` permet d’obtenir la valeur pour placer ou dimensionner l’objet.
+
+~~~javascript
+// Si la table est zoomée de 150% (le ScaleFactor est de 1.5)
+
+TableAnalyse.byScaleFactor(150 /* p.e. offsetX du clic de souris */)
+// => renvoie 100
+
+TableAnalyse.toScaleFactor(100 /* p.e. position x enregistrée */)
+// => renvoie 150
+~~~
+
+> Note : on n’utilise pas la propriété `zoom` pour fixer toutes les tailles et les positions simplement à cause d’un truc : `jquery.draggable` ne suit pas, donc on se retrouve avec des déplacements bizarres (sujets au zoom). La solution pourrait être de faire sa propre méthode de déplacement…
+
+
+
 ---
 
 

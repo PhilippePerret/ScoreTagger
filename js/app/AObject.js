@@ -137,7 +137,7 @@ fromDataSaved(data){
       case 'left':
       case 'top':
       case 'height':
-        $(this.obj).css( what, with_pixels(this.data[what]) );
+        $(this.obj).css( what, px(this.data[what]) );
         break;
       default:
         switch(this.objetProps.type){
@@ -152,6 +152,7 @@ fromDataSaved(data){
 
 /**
 * Construction de l'objet d'analyse
+*
 * @note : il n'est pas écrit dans cette méthode
 ***/
 build(){
@@ -159,76 +160,48 @@ build(){
   // On a besoin du score courant
   const oProps = this.objetProps
   const score = Score.current
-      , top   = this.data.top || this.system.topPerTypeObjet(oProps.type, this.data.line)
+      , top   = this.data.top || this.system.topPerTypeObjet(oProps.otype, this.data.line)
       , left  = this.data.left
 
   // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
   this.top = top
 
-  // Les propriétés d'objet sélectionnés
-  // console.debug("objetProps:", this.objetProps)
+  /**
+  * On récupère le DIV qui est renvoyé par le constructeur du texte final
+  ***/
+  const div = PropsAObjectToolbox.buildFinalText(oProps)
 
-  // console.debug("Top de l'objet #%i : %i", this.id, top)
-
-  // Le DIV PRINCIPAL qui sera ajouté au document
-  const div_id = `ao-${this.data.id}`
-  var css = ['aobjet', oProps.type]
-  if ( oProps.type == 'segment' ) { css.push(oProps.segment) }
-  const div = DCreate('DIV', {id: div_id, text:null, class: css.join(' ')})
-
-  // Position et taille
-  const dobj = {top: top, left: left}
+  // ID, zoom, position et taille
+  const dobj = {
+      id:`ao-${this.data.id}`
+    , top: top
+    , left: left
+    , zoom: `${TableAnalyse.ScoreScale}%;`
+  }
   this.data.width   && Object.assign(dobj, {width: this.data.width})
   this.data.height  && Object.assign(dobj, {height: this.data.height})
-  div.setAttribute('style', with_pixels(dobj, true))
+
+  div.setAttribute('style', px(dobj, true))
+
+  if ( this.data.width ) {
+    div.appendChild(DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`}))
+  }
 
   this._obj = div
 
-  /**
-  * En fonction du type (modulation, cadence, etc) on peut avoir à
-  * ajouter des éléments
-  ***/
-  switch(this.objetProps.type){
-    case 'modulation':
-      this.buildAsModulation();
-      break;
-    case 'chord':
-    case 'harmony':
-    case 'pedale':
-      this.buildAsWithTrait();
-      break;
-    default: $(this.obj).html(this.mark)
-  }
   this.observe()
+
+  return div // utile pour update
 }
 
 repositionne(){
   this.top = this.data.top = this.system.topPerTypeObjet(this.type, this.data.line)
 }
 
-buildAsModulation(){
-  const elements = [
-    DCreate('DIV', {class:'ton', text: this.mark}),
-    DCreate('DIV', {class:'vline'})
-  ]
-  $(this.obj).append(elements)
-}
-
 updateAsModulation(){
-  $(this.obj).find('.ton').html(this.mark)
+  this.obj.replaceWith(this.build())
 }
 
-/**
-* Pour les accords et les harmonies, on ajoute un tiret possible à partir
-* d'une certaine longueur
-***/
-buildAsWithTrait(){
-  const elements = [
-    DCreate('DIV', {class:'text', text: this.mark}),
-    DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`})
-  ]
-  $(this.obj).append(elements)
-}
 updateAsWithTrait(){
   $(this.obj).find('.text').html(this.mark)
 }
@@ -239,18 +212,18 @@ edit(){
 }
 unedit(){ this.isEdited = false }
 
-// Return la marque à écrire sur la partition en fonction du type
-get mark(){
-  return PropsAObjectToolbox.buildFinalText(this.objetProps)
-}
-
 observe(){
   // La rendre déplaçable sur l'axe des x
   const my = this
-  $(this.obj).draggable({
-    axis:'x',
-    stop: my.onChangeXByDrag.bind(my)
-  })
+  // $(this.obj).draggable({
+  //   axis:'x',
+  //   stop: my.onChangeXByDrag.bind(my)
+  // })
+
+  // Attention à ce qu'elles ne vienne pas en conflit avec le menu contextuel
+  $(this.obj).on('mousedown', this.onMouseDown.bind(this))
+
+
   this.obj.style.position = 'absolute' //draggable ajoute 'relative'
   // Menu context
   const dataCMenu = [
@@ -258,6 +231,33 @@ observe(){
   , {name: 'Mettre sur la ligne de pose inférieur', method: this.onChangeLignePose.bind(this, -1)}
   ]
   new ContextMenu(this.obj, dataCMenu, {onclick: this.toggleSelect.bind(this)})
+}
+
+onMouseDown(ev){
+  this.moving = true
+  this.offsetXStart = ev.clientX
+  this.leftInit = this.data.left
+  // console.debug("Démarrage du drag : ", ev)
+  window.onmousemove = this.onMouseMove.bind(this)
+  window.onmouseup = this.onMouseUp.bind(this)
+  $(this.obj).on('mouseup', this.onMouseUp.bind(this))
+}
+// Déplacement
+onMouseMove(ev){
+  if ( this.moving ) {
+    const decalage = TableAnalyse.byScaleFactor(ev.clientX - this.offsetXStart)
+    var newLeft = this.leftInit + decalage
+    this.data.left = newLeft
+    $(this.obj).css('left', px(newLeft))
+  }
+}
+// Fin du déplacement
+onMouseUp(ev){
+  window.onmousemove = null
+  window.onmouseup = null
+  $(this.obj).off('mouseup', this.onMouseUp.bind(this))
+  this.moving = false
+  return stopEvent(ev)
 }
 
 /**

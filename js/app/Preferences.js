@@ -3,6 +3,7 @@
   *   Classe Preferences
   *
 *** --------------------------------------------------------------------- */
+
 // Distance entre les lignes de titre, compositeur, etc. sur la première page
 // TODO Il faudrait que ce soit une valeur définissable, mais
 // il faut tenir compte du fait qu'elle est utilisée pour définir
@@ -11,8 +12,10 @@ const BASELINE_HEIGHT = 32
 // Valeurs par défaut
 const PREFS_DEFAULT_VALUES = {
   divers: {
-    space_between_systems: {name:"Espace entre les systèmes (hors ligne)", value:20, unity: 'pixels'}
+    score_scale: {name:"Taille de la partition sur la table", value:150, unity:'%'}
+  , space_between_systems: {name:"Espace entre les systèmes (hors ligne)", value:20, unity: 'pixels'}
   , frequence_animation: {name:"Durée entre deux appararitions d'objets (animation)", value: 2, unity: 'seconds'}
+
   }
   // Les checkboxs (valeurs binaires, d'où le nom)
   , binary: {
