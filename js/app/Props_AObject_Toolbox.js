@@ -40,10 +40,6 @@ static buildFinalText(objProps){
     default:
       mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
   }
-  if (otype == 'modulation' && objProps.harmony != '0') {
-    mark += `<span class="rel">${this.getHumanPropValue('harmony', objProps.harmony)}</span>`
-  }
-  // mark = `<div class="base-value">${mark}</div>`
 
   var alter = objProps.alteration;
   if ( alter && alter != 'n' ) {
@@ -53,10 +49,21 @@ static buildFinalText(objProps){
   if (objProps.nature && objProps.nature != 'Maj') {
     mark += this.getHumanPropValue('nature', objProps.nature)
   }
+
+  if (otype == 'modulation' && objProps.harmony != '0') {
+    mark += `<span class="rel">${this.getHumanPropValue('harmony', objProps.harmony)}</span>`
+  }
+
   if ( otype == 'harmony' && objProps.renv != 0) {
     const DataRenv = AOBJETS_TOOLBOX_BUTTONS.renv
     const renv = objProps.renv
     mark += this.getHumanPropValue('renv', objProps.renv)
+  }
+
+  // Quand c'est une modulation, il faut placer la marque dans un div.mark qui
+  // permettra de la mettre de travers
+  if ( otype == 'modulation' ) {
+    mark = `<div class="mark">${mark}</div>`
   }
 
   /**

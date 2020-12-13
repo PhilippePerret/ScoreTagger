@@ -35,6 +35,34 @@ div.aobjet
     display: block
     opacity: 0
 
+  // Type particulier de la modulation
+  // Cette fois, la marque est mise dans un div.mark
+  &.modulation
+    div.mark
+      transform: rotate(-30deg)
+      transform-origin: bottom left
+      height: 26px // un peu plus grand que les accords
+      border-bottom: 2px solid
+      margin-left: 1px
+      padding-left: 4px
+      width: 80px
+      span.rel
+        display: inline-block
+        height: 16px
+        vertical-align: top
+        &:before
+          content: "("
+          font-size: 12px
+          vertical-align: super
+        &:after
+          content: ")"
+          font-size: 12px
+          vertical-align: super
+    div.vline
+      height: 80px
+      margin-top: -2px
+      border-left: 2px solid black
+
   img.objet-prop-img
     height: 100%
     width: auto

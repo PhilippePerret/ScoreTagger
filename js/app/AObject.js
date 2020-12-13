@@ -187,7 +187,7 @@ build(){
 
   console.debug("DIV = ", div)
 
-  if ( this.data.width ) {
+  if ( ['chord','harmony','pedale'].includes(this.otype) ) {
     div.appendChild(DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`}))
   }
 
