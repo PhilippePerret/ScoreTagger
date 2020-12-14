@@ -16,7 +16,7 @@ class App {
       .then(UI.insert.bind(UI, 'form_preferences', 'div#form_preferences'))
       .then(UI.insert.bind(UI,'panneau-crop', 'div#panneau-crop'))
       .then(UI.insert.bind(UI,'panneau-analyse', 'div#panneau-analyse'))
-      .then(UI.insert.bind(UI,'Objet_Toolbox', 'div#objet-toolbox'))
+      .then(UI.insert.bind(UI,'AObject_Toolbox', 'div#container-aobject-toolbox'))
       .then(UI.insert.bind(UI,'panneau-export', 'div#panneau-export'))
       .then(Score.initialize.bind(Score))
       .then(this.setPanneauCourant.bind(this))

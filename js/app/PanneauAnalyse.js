@@ -25,9 +25,7 @@ onActivate(){
   if ( !this.observed ){
     // Si le panneau n'est pas observé, c'est qu'il n'a pas été préparé
     this.prepare()
-    this.propsAObjectToolbox = new PropsAObjectToolbox()
-    this.propsAObjectToolbox.setInterfaceForType('chord')
-    this.propsAObjectToolbox.observe()
+    AObjectToolbox.init()
     this.observe()
   }
 

@@ -45,9 +45,11 @@ static remove(item){
 // On peut utiliser AObject.selection.add ou AObject.selection.remove pour
 // ajouter ou supprimer des éléments à la sélection
 static get selection(){return this._selection||(this._selection = new Selection(this))}
-static onSelect(item) { item.edit() }
+static onSelect(item) {
+  item.edit()
+}
 static onDeselect(item){
-  AObjectToolbox.reset()
+  item.unedit()
 }
 
 /**
@@ -67,7 +69,7 @@ static getObjetProps(){
 constructor(data) {
   if ( undefined === data.left ) data = this.fromDataSaved(data)
   this.data = data
-  this.id = this.data.id
+  this.id = this.data.id || this.constructor.newId()
   this.system = ASystem.getByMinId(this.data.system)
   this.objetProps = data.objetProps
   this.constructor.add(this)
@@ -88,7 +90,7 @@ showSlowly(){
 ***/
 get data2save(){
   return {
-      id: this.id
+      i: this.id || this.constructor.newId()
       // , system:     this.system.minid
     , s: this.system.minid
     // // , top:        this.top
@@ -117,7 +119,8 @@ get data2save(){
 ***/
 fromDataSaved(data){
   return {
-      system: data.s
+      id: data.i
+    , system: data.s
     , left: data.l
     , width: data.w
     , line: data.p
@@ -125,32 +128,15 @@ fromDataSaved(data){
   }
 }
 
-  /**
-  * Actualisation (après modification dans la boite d'édition)
-  ***/
-  update(what){
-    switch(what){
-      case 'width':
-        if(['chord','harmony','pedale'].includes(this.objetProps.otype)){
-          const condition = this.data.width < MIN_WIDTH_OBJET_WITH_TRAIT
-          UI.addClassIf($(this.obj).find('.trait'), condition, 'hidden')
-        }
-        // On laisse filer pour la suite
-      case 'left':
-      case 'top':
-      case 'height':
-        $(this.obj).css( what, px(this.data[what]) );
-        break;
-      default:
-        switch(this.objetProps.otype){
-          case 'modulation': this.updateAsModulation();break;
-          case 'chord':
-          case 'harmony':
-            this.updateAsWithTrait();break;
-          default: this.obj.innerHTML = this.mark
-        }
-    }
-  }
+/**
+* Actualisation (après modification dans la boite d'édition)
+*
+* Note : on actualise l'intérieur pour ne pas avoir à supprimer et remettre
+*        les observers.
+***/
+update(what){
+  $(this.obj).inner($(this.build()).inner())
+}
 
 /**
 * Construction de l'objet d'analyse
@@ -168,11 +154,10 @@ build(){
   // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
   this.top = top
 
-  console.debug("otype = %s, top: %i, line = %s", oProps.otype, top, this.data.line)
   /**
   * On récupère le DIV qui est renvoyé par le constructeur du texte final
   ***/
-  const div = PropsAObjectToolbox.buildFinalText(oProps)
+  const div = AObjectToolbox.finalTextFor(oProps)
 
   // ID, zoom, position et taille
   const dobj = {
@@ -184,8 +169,6 @@ build(){
   this.data.width   && Object.assign(dobj, {width: this.data.width})
 
   div.setAttribute('style', px(dobj, true))
-
-  console.debug("DIV = ", div)
 
   if ( ['chord','harmony','pedale'].includes(this.otype) ) {
     div.appendChild(DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`}))
@@ -202,19 +185,14 @@ repositionne(){
   this.top = this.system.topPerTypeObjet(this.otype, this.data.line)
 }
 
-updateAsModulation(){
-  this.obj.replaceWith(this.build())
-}
-
-updateAsWithTrait(){
-  $(this.obj).find('.text').html(this.mark)
-}
-
 edit(){
   this.isEdited = true
-  AObjectToolbox.show(this)
+  TableAnalyse.propsAObjectToolbox.edit(this)
 }
-unedit(){ this.isEdited = false }
+unedit(){
+  TableAnalyse.propsAObjectToolbox.unedit(this)
+  this.isEdited = false
+}
 
 observe(){
   // La rendre déplaçable sur l'axe des x

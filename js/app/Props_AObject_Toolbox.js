@@ -2,86 +2,15 @@
 /** ---------------------------------------------------------------------
 *   Class PropsAObjecToolbox
 *   ------------------------
-*
-* Pour la gestion de la boite qui permet de choisir les propriétés
-* de l'objet d'analyse (accord, modulation, etc.)
-*
-*
+
+Pour la gestion de la boite qui permet de choisir les propriétés
+de l'objet d'analyse (accord, modulation, etc.)
+
+Dans l'ordre de héarchie
+
 *** --------------------------------------------------------------------- */
 class PropsAObjectToolbox {
 
-/**
-* Méthode qui construit le texte final en fonction des données choisies
-* ou enregistrées.
-* Cette méthode est utilisée aussi bien pour l'aperçu que pour la construction
-* de l'objet sur la partition.
-***/
-static buildFinalText(objProps){
-  console.debug("-> buildFinalText(data=%s)", JSON.stringify(objProps))
-  var mark ;
-  const otype = objProps.otype
-  const DataButtons = AOBJETS_TOOLBOX_BUTTONS[otype]
-  const DataNature  = AOBJETS_TOOLBOX_BUTTONS.nature
-
-  switch(otype){
-    case 'harmony':
-    case 'chord':
-    case 'cadence':
-      console.debug("otype = %s, objProps = ", otype, objProps)
-      mark = this.getHumanPropValue(otype, objProps[otype])
-      break
-    case 'modulation':
-      mark = this.getHumanPropValue('chord', objProps.chord)
-      break
-    case 'pedale':
-      mark = this.getHumanPropValue('degre', objProps.degre)
-      break
-    case 'segment':
-      mark = ""
-      break
-    default:
-      mark = this.getHumanPropValue(otype, objProps.note /* OK?… */)
-  }
-
-  var alter = objProps.alteration;
-  if ( alter && alter != 'n' ) {
-    mark += this.getHumanPropValue('alteration', alter)
-  }
-
-  if (objProps.nature && objProps.nature != 'Maj') {
-    mark += this.getHumanPropValue('nature', objProps.nature)
-  }
-
-  if (otype == 'modulation' && objProps.harmony != '0') {
-    mark += `<span class="rel">${this.getHumanPropValue('harmony', objProps.harmony)}</span>`
-  }
-
-  if ( otype == 'harmony' && objProps.renv != 0) {
-    const DataRenv = AOBJETS_TOOLBOX_BUTTONS.renv
-    const renv = objProps.renv
-    mark += this.getHumanPropValue('renv', objProps.renv)
-  }
-
-  // Quand c'est une modulation, il faut placer la marque dans un div.mark qui
-  // permettra de la mettre de travers
-  if ( otype == 'modulation' ) {
-    mark = `<div class="mark">${mark}</div>`
-  }
-
-  /**
-  * Le DIV qui sera retourné autant pour l'aperçu que pour l'objet final
-  * sur la partition.
-  ***/
-  let css = ['aobjet', otype]
-  if ( otype == 'segment' ) { css.push(objProps.segment) }
-  const div = DCreate('DIV', {class:`${css.join(' ')}`, text:mark})
-
-  if ( otype == 'modulation' ) {
-    div.appendChild(DCreate('DIV', {class:'vline'}))
-  }
-
-  return div
-}
 
 static setBoutonSegment(){
   const useSegment = true === Score.current.preferences.binary('export.use_segment_line')
@@ -89,10 +18,39 @@ static setBoutonSegment(){
 }
 
 
-constructor(container) {
-  this.container = $(container||document.body)
-}
+// constructor(container) {
+//   this.container = $(container||document.body)
+// }
 
+// /**
+// * Méthode qui permet d'éditer le bouton +aobjet+ (instance AObjet)
+// *
+// * Lorsque c'est une édition, on affiche en plus les boutons de positionnement
+// * qui permettent de définir la largeur, la position x, la ligne de pose, etc.
+// ***/
+// edit(aobjet){
+//   message(`Je dois éditer l'objet ${aobjet.id}`)
+//   this.editedObject = aobjet
+//   // On doit régler la boite pour cet objet
+//   this.setInterfaceForType(aobjet.otype, aobjet.data)
+// }
+
+// unedit(aobjet){
+//   console.debug("-> unedit", aobjet)
+//   // On s'assure que ce soit bien le même objet
+//   if ( this.editedObject && aobjet.id == this.editedObject.id) {
+//     delete this.editedObject
+//     this.setInterfaceForType('chord')
+//     /**
+//     * Il faut mettre editedObject à null seulement ici, sinon la méthode
+//     * setInterfaceForType ne règlerait pas le bouton du type sélectionné
+//     ***/
+//     this.editedObject = null
+//   }
+// }
+// setInferfaceForAObject(aobjet){
+//   this.container.find('#edited-objet-id').html(aobjet.id)
+// }
 
 // Observation de tous les boutons
 observe(){
@@ -123,52 +81,54 @@ onChangeType(ev){
   this.setInterfaceForType(otype)
 }
 
-get noteButtons(){
-  return this._notebuttons || (this._notebuttons = this.container.find('div#objets div#objets-notes'))
-}
-get harmonyButtons(){
-  return this._harmonybuttons || (this._harmonybuttons = this.container.find('div#objets div#objets-harmonies'))
-}
-get alterButtons(){
-  return this._alterbuttons || (this._alterbuttons = this.container.find('div#objets div#objets-alterations'))
-}
-get cadenceButtons(){
-  return this._cadencebuttons || (this._cadencebuttons = this.container.find('div#objets div#objets-cadences'))
-}
-get natureButtons(){
-  return this._naturebuttons || (this._naturebuttons = this.container.find('div#objets div#objets-natures'))
-}
-get renversementButtons(){
-  return this._renvbuttons || (this._renvbuttons = this.container.find('div#objets div#objets-renversements'))
-}
-get segmentButtons(){
-  return this._segmentbuttons || (this._segmentbuttons = this.container.find('div#objets div#objets-segments'))
-}
-
 /**
 * Règle l'interface en fonction du type choisi et parfois de la valeur
 * générale de ce type choisi. Par exemple, si on choisit le type "harmony",
 * seuls les boutons correspondant à l'harmonie sont affichés. Si l'on choisit
 * l'harmonie 'V', la nature '7' (7e de dominante) est sélectionnée.
 ***/
-setInterfaceForType(ot){
+setInterfaceForType(ot, dataEditedObjet = {}){
   // console.debug(`-> setInterfaceForType(ot = ${ot})`)
+
+  /**
+  * On sélectionne le bouton du type car la méthode est appelée aussi bien
+  * quand on clique sur ce bouton justement que lorsqu'on met un objet en
+  * édition.
+  ***/
+  if ( dataEditedObjet.objetProps /* i.e. c'est une édition d'objet */) {
+    this.container.find('button[data-type-aobject="otype"]').removeClass('selected')
+    this.container.find(`button.obb[data-value="${ot}"]`).addClass('selected')
+  }
 
   const DataType = AOBJETS_TOOLBOX_BUTTONS.otype.items[ot]
   // console.debug("DataType: ", DataType)
   // On commence par masquer tous les groupes de boutons (noter que le
   // groupe principal 'otype' ne possède pas cette classe.)
-  $('.grp-buttons-type').addClass('hidden')
+  $('.buttons-grp-type').addClass('hidden')
 
   // Ensuite, on réaffiche seulement les groupes visibles
-  DataType.visible.forEach(type => {
+  DataType.visible.forEach(dtype => {
+    this.setGroupeBoutons(dtype, dataEditedObjet.objetProps)
+    return
     if ( 'string' == typeof(type) ) {
       DGet(`#objets-${type}s`).classList.remove('hidden')
     } else {
-      let [otype, buttonsIds, selectedButtonId] = type
-      // ID du bouton à sélectionner. Soit le bouton spécifié dans :visible,
-      // soit le bouton par défaut
-      selectedButtonId = selectedButtonId || AOBJETS_TOOLBOX_BUTTONS[ot].selected
+      let [otype, buttonsIds, selVisibleButId] = type
+      /**
+      * ID du bouton à sélectionner. On a trois choix possibles, dans l'ordre
+      * de priorité :
+      *   1.  C'est l'édition d'un objet, dataEditedObjet est défini, on prend
+      *       la valeur correspondant.
+      *   2.  Le bouton à sélectionner est défini dans :visible
+      *   3.  Le bouton à sélectionner est celui par défaut pour le titre,
+      *       donc défini dans la propriété :selected
+      ***/
+      var selectedButtonId
+      if ( dataEditedObjet.objetProps /* cas 1. */) {
+        selectedButtonId = dataEditedObjet.objetProps[otype]
+      }
+      selectedButtonId = selectedButtonId || selVisibleButId || AOBJETS_TOOLBOX_BUTTONS[ot].selected
+      console.debug("Pour édition : otype=%s, dataEditedObjet:", otype, dataEditedObjet)
       const buttonsGroup  = $(`#objets-${otype}s`)
       buttonsGroup.removeClass('hidden')
       if ( buttonsIds === null ) {
@@ -207,6 +167,50 @@ setInterfaceForType(ot){
   this.updateOverview()
 }
 
+/**
+* Règle le groupe de boutons du type +otype+ (en fonction de ses données
+* absolues ainsi que de l'objet édité if any).
+*
+* +dtype+   Soit l'identifiant du otype, soit une liste contenant :
+*           [<otype>, [<boutons à afficher>], [selection par défaut]]
+***/
+setGroupeBoutons(dtype, objetSelectedProps){
+  var otype, buttonsVisible, selectionVisible ;
+  if ( 'string' == typeof(dtype) ) {
+    otype = dtype
+  } else {
+    [otype, buttonsVisible, selectionVisible] = dtype
+  }
+  // Les données absolues pour le type +otype+
+  const DataType = AOBJETS_TOOLBOX_BUTTONS.otype.items[otype]
+  const buttonsGroup = $(`#objets-${otype}s`)
+  // On rend le groupe visible
+  buttonsGroup.removeClass('hidden')
+  // On affiche tous ses boutons
+  buttonsGroup.find('button.obb.hidden').removeClass('hidden')
+  // Si une liste de boutons limités est définie (buttonsVisible), on masque
+  // les autres
+  if ( buttonsVisible ) {
+    buttonsGroup.find('button.obb').each((i, btn) => {
+      if ( ! buttonsVisible.includes($(btn).data('value')) ){
+        // console.log("Bouton masqué : ", btn)
+        btn.classList.add('hidden')
+      }
+    })
+  }
+  /**
+  * Le bouton sélectionné
+  ***/
+  var selectedButton
+  if ( objetSelectedProps ) {
+    selectedButton = objetSelectedProps[otype]
+  } else {
+    selectedButton = selectionVisible || AOBJETS_TOOLBOX_BUTTONS[otype].selected
+  }
+  console.debug("Bouton de type %s à sélection = %s", otype, selectedButton)
+
+}
+
 getValues(){
   let d = {otype: this.currentOType}
   const DataOType = AOBJETS_TOOLBOX_BUTTONS.otype.items[this.currentOType]
@@ -238,33 +242,6 @@ updateOverview(){
   $('#aobject_apercu').append(this.constructor.buildFinalText(vals))
 }
 
-/**
-* RETOURNE la valeur "humaine", pour affichage, du bouton de otype +otype+
-* et d'identifiant +id+.
-* Si c'est une image, retourne le code HTML de l'image, si c'est un texte
-* retourne le span contenant le texte.
-*
-* +otype+   {String} Type de l'objet ('harmony', 'chord', etc.)
-* +id+      {String} Identifiant prope au bouton (p.e. 'II', 'c', 'min')
-*
-***/
-static getHumanPropValue(otype, id){
-  try {
-    const dat = AOBJETS_TOOLBOX_BUTTONS[otype].items[id]
-    if ( dat.img ) {
-      return `<img src="img/${dat.img}.png" class="objet-prop-img ${otype}" />`
-    } else {
-      return `<span class="${otype}">${dat.text}</span>`
-    }
-  } catch (e) {
-    console.error("Problème fatal dans PropsAObjectToolbox::getHumanPropValue avec otype=%s, id=%s", otype, id)
-    console.error("ERREUR : ", e)
-    console.error("Pour information, AOBJETS_TOOLBOX_BUTTONS = ", AOBJETS_TOOLBOX_BUTTONS)
-    return '[?]'
-  }
-}
-
-
 
 /**
 * Retourne le otype courant
@@ -287,6 +264,30 @@ deselectAllButton(type){
   DGet(`button[data-type-aobject="${type}"].selected`)
     .classList.remove('selected')
 }
+
+
+get noteButtons(){
+  return this._notebuttons || (this._notebuttons = this.container.find('div#objets div#objets-notes'))
+}
+get harmonyButtons(){
+  return this._harmonybuttons || (this._harmonybuttons = this.container.find('div#objets div#objets-harmonies'))
+}
+get alterButtons(){
+  return this._alterbuttons || (this._alterbuttons = this.container.find('div#objets div#objets-alterations'))
+}
+get cadenceButtons(){
+  return this._cadencebuttons || (this._cadencebuttons = this.container.find('div#objets div#objets-cadences'))
+}
+get natureButtons(){
+  return this._naturebuttons || (this._naturebuttons = this.container.find('div#objets div#objets-natures'))
+}
+get renversementButtons(){
+  return this._renvbuttons || (this._renvbuttons = this.container.find('div#objets div#objets-renversements'))
+}
+get segmentButtons(){
+  return this._segmentbuttons || (this._segmentbuttons = this.container.find('div#objets div#objets-segments'))
+}
+
 
 }// /class
 
