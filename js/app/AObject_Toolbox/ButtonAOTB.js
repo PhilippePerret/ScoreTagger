@@ -7,6 +7,7 @@ class ButtonAOTB {
 
 /**
 * RETOURNE l'instance ButtonAOTB du bouton d'identifiant +buttonId+
+* +buttonId+  Constitué de "<otype>-<id bouton>"
 ***/
 static get(buttonId) { return this.table[buttonId] }
 
@@ -22,7 +23,7 @@ static add(button){
 *** --------------------------------------------------------------------- */
 constructor(buttonsGroup, buttonData) {
   this.buttonsGroup = buttonsGroup
-  this.otype  = buttonsGroup.otype
+  this.gtype  = buttonsGroup.gtype
   this.data   = buttonData
   this.constructor.add(this)
 }
@@ -37,7 +38,7 @@ hide(){ this.obj.classList.add('hidden') }
 * Les références du bouton, pour savoir ce qu'il peut changer dans l'objet
 ***/
 get ref(){
-  return {propName:this.buttonsGroup.otype, propValue:this.data.id}
+  return {propName:this.buttonsGroup.gtype, propValue:this.data.id}
 }
 
 /**
@@ -74,7 +75,7 @@ get buttonAttributes(){
     , class:'obb'
     , text:this.buttonInner
     , 'data-value': (this.data.value||this.data.id)
-    , 'data-type-aobject': this.otype
+    , 'data-type-aobject': this.gtype
   }
 }
 
@@ -90,18 +91,4 @@ deselect(){
 }
 
 
-/** ---------------------------------------------------------------------
-*   Deep Method de construction
-*
-*** --------------------------------------------------------------------- */
-get buttonInner(){
-  return this.data.img
-            ? `<img src="img/${this.data.img}.png" class="aobjet-button-img" />`
-            : this.data.text
-}
-
-/**
-* Properties
-***/
-get buttonId(){return this._butid || (this._butid = `${this.otype}-${this.data.id}`)}
 }// ButtonAOTB

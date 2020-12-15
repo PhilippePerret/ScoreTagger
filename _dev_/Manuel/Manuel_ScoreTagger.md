@@ -177,6 +177,49 @@ Les boutons eux-mêmes			instance 	{ButtonAOTB}
 
 
 
+Un type de bouton (`otype`), par exemple 'chord', définit les groupes de bouton qui lui sont propres. Par exemple, pour le type « chord », on n’a pas besoin des boutons d’harmonie (« I », « II », « V », etc.) ni des boutons de segments ou de degré. On a juste besoin des notes en capitales (`note`), des altérations (`alteration`) et des natures (`nature`) pour « mineur », « majeur », « mineur 7tième », etc.
+
+Une **confusion est déjà possible** entre d’un côté les `otype`, qui peuvent être compris comme les boutons principaux de la boite d’outils, comme donc le type de l’[objet d'analyse][] à créer ou éditer et de l’autre côté les types de groupe de bouton. Pour tenter de les distinguer, deux constantes distinctes ont été créées :
+
+~~~
+AOBJETS_TOOLBOX_OTYPE_BUTTONS				
+		Constantes qui définit les otype(s) possible d'un objet d'analyse et donc les 
+		boutons principaux de la boite d'outils.
+
+AOBJETS_TOOLBOX_BUTTONS_GROUPS					
+		Constantes qui définit les types de groupes de boutons se trouvant sous les 
+		boutons principaux.
+~~~
+
+
+
+L’instance des boutons principaux (otype) peut s’obtenir et se manipuler par :
+
+~~~javascript
+AObjectToolbox.OTypeButtons // => instance OTypeButtonsGroupAOTB 
+														//    (extension de ButtonsGroupAOTB)
+~~~
+
+Par exemple, pour sélectionner un de ses boutons on peut faire :
+
+~~~javascript
+AObjectToolbox.OTypeButtons.select("accord") // => sélectionne 1er bouton
+~~~
+
+
+
+#### Réflexion sur la boite à outils
+
+~~~
+
+
+Groupe des boutons principaux					Hérite de BGroup_AOTB pour construire les boutons,
+																			gérer leur état.
+																			Class : MainButtons_AOTB extends BGroup_AOTB
+~~~
+
+
+
 
 
 ## Production des images

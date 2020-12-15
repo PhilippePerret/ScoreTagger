@@ -10,21 +10,21 @@
 * Pour savoir comment est constitué cette donnée, cf. AOBJETS_TOOLBOX_BUTTONS
 * en annexe du manuel développeur.
 ***/
-const AOBJETS_TOOLBOX_BUTTONS = {
-  'otype': {
-    id: 'otype'
-  , order: ['chord','harmony','modulation','cadence','segment','pedale']
-  , selected: 'chord'
-  , items: {
-        'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
-      , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
-      , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII','0'],'0'],['nature',['Maj','min'],'Maj']]}
-      , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
-      , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
-      , 'pedale':     {id:'pedale',     text: 'Pédale',     visible:['degre','alteration']}
-    }
+const AOBJETS_TOOLBOX_OTYPE_BUTTONS = {
+  id: 'otype'
+, order: ['chord','harmony','modulation','cadence','segment','pedale']
+, selected: 'chord'
+, items: {
+      'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
+    , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
+    , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII','0'],'0'],['nature',['Maj','min'],'Maj']]}
+    , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
+    , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
+    , 'pedale':     {id:'pedale',     text: 'Pédale',     visible:['degre','alteration']}
   }
-  , 'note': {
+}
+const AOBJETS_TOOLBOX_BUTTONS_GROUPS = {
+  'note': {
       id:'note'
     , order: ['c','d','e','f','g','a','b', '0']
     , selected: 'c'

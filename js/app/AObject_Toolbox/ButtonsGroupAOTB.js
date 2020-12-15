@@ -4,7 +4,7 @@
 *   -----------------------
 *   Pour la gestion des groupes de boutons (un groupe de boutons est un
 *   groupe comme les boutons d'harmonie, ou les boutons d'altération, etc.)
-*   Leur instance s'obtiennent grâce à AObjectToolbox.buttonsGroup('<otype>')
+*   Leur instance s'obtiennent grâce à AObjectToolbox.buttonsGroup('<gtype>')
 *
 *   Attention, le groupe de bouton des types, groupe spécial au-dessus des
 *   autres, possède sa propre classe héritée de celle-ci :
@@ -13,30 +13,20 @@
 *** --------------------------------------------------------------------- */
 class ButtonsGroupAOTB {
 
-static get(buttonsOtype) { return this.table[buttonsOtype] }
-
 /**
 * Méthode qui masque tous les groupes de boutons
 ***/
 static maskAllGroups(){
   console.debug("-> maskAllGroups")
-  this.items.forEach( item => item.hide() )
-  // this.items.forEach(item => item.hide())
-}
-
-static add(buttonsGroup){
-  if ( undefined === this.items ) {this.table = {}; this.items = []}
-  this.items.push(buttonsGroup)
-  Object.assign(this.table, {[buttonsGroup.otype]: buttonsGroup})
+  Object.values(AObjectToolbox.BGroups).forEach( item => item.hide() )
 }
 
 /** ---------------------------------------------------------------------
 *   INSTANCE
 *
 *** --------------------------------------------------------------------- */
-constructor(otype) {
-  this.otype = otype
-  otype == 'otype' || this.constructor.add(this)
+constructor(gtype) {
+  this.gtype = gtype
 }
 
 /** ---------------------------------------------------------------------
@@ -55,6 +45,7 @@ hide(){ this.obj.classList.add('hidden') }
 * boutons à afficher. Sinon, on affiche tous les boutons
 ***/
 show(buttons){
+  console.debug("[Groupe de boutons %s]-> show(buttons =)", this.gtype, buttons)
   this.obj.classList.remove('hidden')
   if ( buttons ) {
     this.hideAllButtonsBut(buttons)
@@ -68,7 +59,7 @@ showAllButtons(){
 }
 hideAllButtonsBut(buttons){
   this.buttons.forEach(button => button.hide())
-  buttons.forEach(buttonSId => ButtonAOTD.get(`${this.otype}-${buttonSId}`).show() )
+  buttons.forEach(buttonSId => ButtonAOTD.get(`${this.gtype}-${buttonSId}`).show() )
 }
 
 /**
@@ -77,33 +68,62 @@ hideAllButtonsBut(buttons){
 * +button+ Instance ButtonAOTB
 ***/
 selectButton(button){
+  console.debug("[Groupe de boutons %s]-> selectButton(button=)", this.gtype, button)
   this.selected && this.selected.deselect()
   button.select()
   this.selected = button
 }
 
 /**
-* Méthode appelée quand on clique sur le bouton du type this.otype correspondant
+* Sélectionne le bouton +buttonName+
+***/
+select(buttonName){
+  this.selectButton(ButtonAOTB.get(`${this.gtype}-${buttonName}`))
+}
+
+/**
+* Méthode appelée quand on clique sur le bouton du type this.gtype correspondant
 * à ce groupe de boutons.
-* Elle définit l'interface, c'est-à-dire les boutons à voir et à masquer
+* Elle définit l'interface, c'est-à-dire :
+*   - les groupes de boutons à voir et à masquer
+*   - les boutons de groupe à sélectionner
 *
 * Si +selectedButton+ est défini, on sélectionne ce bouton-là
 ***/
 activate(selectedButton){
-  console.debug("-> activate", this)
+  console.debug("[Groupe boutons %s]-> activate(selectedButton=)", this.gtype, selectedButton)
   this.constructor.maskAllGroups()
-  this.show()
-  this.dataVisible.forEach(dtype => {
-    console.log("Traitement de dtype = ", dtype)
-    var [otype, buttons, selected] = (dt => {
+  this.show(selectedButton)
+  this.buttonsGroups.forEach(group => group.show(/* TODO ici la sélection éventuelle */))
+  console.debug("[Groupe boutons %s]<- activate", this.gtype)
+}
+
+
+/**
+* Retourne les groupes de boutons de ce gtype sous forme de liste Array de
+* d'instances ButtonsGroupAOTB.
+* Cette donnée est défini par la propriété :visible du gtype
+* ATTENTION : contrairement à la version précédente, les groupes de boutons
+* sont bien des instances ButtonsGroupAOTB, mais elles sont propres à ce gtype
+* en particulier et aucun autre, dans le sens où sont définis les seuls
+* boutons à afficher et la sélection en fonction du groupe
+***/
+get buttonsGroups(){
+  return this._btsgrps || ( this._btsgrps = this.getButtonsGroups())
+}
+getButtonsGroups(){
+  var ary = []
+  AOBJETS_TOOLBOX_OTYPE_BUTTONS.items[this.gtype].visible.forEach(dtype => {
+    var [gtype, buttons, selected] = (dt => {
       if ( 'string' == typeof(dt) ) return [dt, null, null]
       else return dt
     })(dtype)
-    const buttonsGroup = ButtonsGroupAOTB.get(otype)
-    selected == null || ButtonAOTB.get(`${otype}-${selected}`)
-    buttonsGroup.show(buttons)
-    buttonsGroup.selectButton(selectedButton || selected || this.defaultButton)
+    const buttonsGroup = new ButtonsGroupAOTB(gtype)
+    selected = selected || AOBJETS_TOOLBOX_BUTTONS_GROUPS[gtype].selected
+    buttonsGroup.defaultSelectedButton = ButtonAOTB.get(`${gtype}-${selected}`)
+    ary.push(buttonsGroup)
   })
+  return ary
 }
 
 /** ---------------------------------------------------------------------
@@ -115,18 +135,17 @@ activate(selectedButton){
 * Méthode pour construire le groupe de bouton
 ***/
 build(){
+  const my = this
   this.tableButtons = {}
   this.buttons = []
-  var css = ['buttons-grp-aotb']
-  this.otype != 'otype' && css.push('buttons-grp-type', 'hidden')
-  this.obj = DCreate('DIV', {id:`buttons-grp-${this.otype}`, class:css.join(' ')})
   AObjectToolbox.container.appendChild(this.obj)
-  for( var butId in this.items ) {
-    const butInstance = new ButtonAOTB(this, this.items[butId])
-    Object.assign(this.tableButtons, {[butId]: butInstance})
-    this.buttons.push(butInstance)
+  // On construit les boutons dans l'ordre défini par data.order
+  this.order.forEach( butId => {
+    const butInstance = new ButtonAOTB(my, my.items[butId])
+    Object.assign(my.tableButtons, {[butId]: butInstance})
+    my.buttons.push(butInstance)
     butInstance.build()
-  }
+  })
 }
 /** ---------------------------------------------------------------------
 *   Buttons Methods
@@ -153,29 +172,21 @@ button(buttonName){
   return this.buttons[buttonName]
 }
 
+// Ordre de classement des boutons
+get order(){return this._order || (this._order = this.data.order)}
 
 /**
-* RETOURNE les données absolues de AOBJETS_TOOLBOX_BUTTONS du otype
+* RETOURNE les données absolues de AOBJETS_TOOLBOX_BUTTONS du gtype
 ***/
 get data(){
-  return AOBJETS_TOOLBOX_BUTTONS[this.otype]
-}
-/**
-* RETOURNE les données de visibilité des éléments
-* C'est-à-dire la donnée :visible quand le type est choisi
-* Cette donnée contient une liste Array ou chaque élément est soi le
-* string du otype dont il faut montrer les boutons, soit une liste Array
-* avec [<otype>, [<boutons ids>], <bouton selected>]
-***/
-get dataVisible(){
-  return AOBJETS_TOOLBOX_BUTTONS.otype.items[this.otype].visible
+  return this._data || (this._data = AOBJETS_TOOLBOX_BUTTONS_GROUPS[this.gtype])
 }
 
 /**
 * Retourne l'identifiant du bouton par défaut
 ***/
 get defaultButton(){
-  return this._defbut || (this._defbut = ButtonAOTB.get(`${this.otype}-${this.data.selected}`))
+  return this._defbut || (this._defbut = ButtonAOTB.get(`${this.gtype}-${this.data.selected}`))
 }
 
 /**

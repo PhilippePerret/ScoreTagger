@@ -29,7 +29,7 @@ onActivate(){
     this.observe()
   }
 
-  if ( !score.isDrawn){
+  if (!score.isDrawn){
     /**
     * Si la partition n'est pas encore dessinée, il faut le faire
     * @rappel : la partition est présentée en un seul tenant maintenant,
@@ -61,33 +61,6 @@ onDesactivate(){
 * Maintenant, tous les boutons sont construits à la volée
 ***/
 prepare(){
-  // Construction de tous les boutons
-  const boiteBoutonsObjet = $('#objets')
-  for(var ktype in AOBJETS_TOOLBOX_BUTTONS) {
-    const dtype = AOBJETS_TOOLBOX_BUTTONS[ktype]
-    const div_id = `objets-${ktype}s`
-    const css = ['objets-prop']
-    if ( ktype != 'otype' ) css.push('grp-buttons-type')
-    const divBoutons = DCreate('DIV', {id:div_id, class:css.join(' ')})
-    boiteBoutonsObjet.append(divBoutons)
-    // On ajoute les boutons
-    dtype.order.forEach( butid => {
-      const dbutton = dtype.items[butid]
-      const mark_selected = dtype.selected == butid ? ' selected' : '' ;
-      const text = dbutton.img ? `<img src="img/${dbutton.img}.png" class="objet-prop-img" />` : dbutton.text ;
-      let attrs = {
-          type:'button'
-        , id:`${ktype}-${dbutton.id}`
-        , class: `obb${mark_selected}`
-        , text: text // soit le texte, soit l'image
-        , 'data-value':(dbutton.value||dbutton.id)
-        , 'data-type-aobject': ktype
-      }
-      const button = DCreate('BUTTON', attrs)
-      divBoutons.append(button)
-    })
-  }
-
   // Mise à la taille de la partition
   const cont = $(this.systemsContainer)
   const newWidth = this.toScaleFactor(cont.width())
