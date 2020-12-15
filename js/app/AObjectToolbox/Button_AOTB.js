@@ -64,6 +64,9 @@ observe(){
   $(this.obj).on('click', this.onActivate.bind(this))
 }
 
+show(){this.obj.classList.remove('hidden')}
+hide(){this.obj.classList.add('hidden')}
+
 select(){this.obj.classList.add('selected')}
 deselect(){this.obj.classList.remove('selected')}
 

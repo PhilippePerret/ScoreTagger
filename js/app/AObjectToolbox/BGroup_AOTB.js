@@ -4,8 +4,31 @@
   (pour "Buttons Group of AObject Toolbox")
 ***/
 class BGroupAOTB {
+/** ---------------------------------------------------------------------
+*   CLASSE
+*
+*** --------------------------------------------------------------------- */
+static hideAllGroups(){
+  this.items.forEach(bgroup => bgroup.hide())
+}
+/**
+* Ajouter le groupe de bouton +bgroup+ (seule le groupe de boutons principaux
+* ne sont pas ajouter)
+* ATTENTION : ne pas produire de table, this.items permet juste de passer en
+* revue tous les groupes, par exemple pour les masquer (cf. 'hideAllGroups'
+* ci-dessus). Pour récupérer un group, utiliser AObjectToolbox.bGroup(<gtype>)
+***/
+static add(bgroup){
+  if ( undefined === this.items ) this.items = []
+  this.items.push(bgroup)
+}
+/** ---------------------------------------------------------------------
+*   INSTANCE
+*
+*** --------------------------------------------------------------------- */
 constructor(gtype) {
   this.gtype = gtype // p.e. 'chord' ou 'alteration' ou 'degre'
+  this.gtype == 'otype' || this.constructor.add(this)
 }
 get ref(){
   return this._ref || (this._ref = `[Groupe boutons '${this.gtype}']`)
@@ -13,9 +36,27 @@ get ref(){
 
 /**
 * Pour masquer ou afficher le groupe de boutons
+* L'argument +options+ permet de définir :
+*   only:       La liste des seuls boutons à afficher (null pour tous)
+*   selected:   L'instance du Bouton à sélectionner
 ***/
-show(){this.obj.classList.remove('hidden')}
+show(options = {}){
+  console.log("options:",options)
+  this.obj.classList.remove('hidden')
+  if ( options.only ) {
+    this.hideAllButtons()
+    options.only.forEach(bId => ButtonAOTB.get(`${this.gtype}-${bId}`).show())
+  }
+  options.selected && this.setSelected(options.selected)
+}
 hide(){this.obj.classList.add('hidden')}
+
+/**
+* Permet de masquer tous les boutons du groupe (pour n'en afficher que certains)
+***/
+hideAllButtons(){
+  $(this.obj).find('button.obb').addClass('hidden')
+}
 
 /**
 * Appelée quand le bouton +button+ du groupe est enclenché (cliqué)

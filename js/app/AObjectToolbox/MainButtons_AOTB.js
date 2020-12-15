@@ -29,8 +29,7 @@ activate(button){
   * avec les instances MainButtonAOTB qui définissent les spécificités visibles
   * de chaque otype d'objet.
   ***/
-  const mainButton = MainGButtonAOTB.get(button.data.id)
-  console.debug("Instance bouton principal ", mainButton)
+  MainGButtonAOTB.get(button.data.id).activate()
 
 }
 
