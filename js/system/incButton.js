@@ -2,11 +2,15 @@
 /** ---------------------------------------------------------------------
   Class incButton
   ---------------
-  version 1.0.2
+  version 1.0.3
 *   Pour la fabrication d'un bouton d'incrémentation, avec
 *   un champ affichant la valeur
 
-
+  # 1.0.3
+    La méthode publique 'set' ne provoque plus l'actualisation du propriétaire
+    (entendu qu'elle permet de régler dans un premier temps les valeurs
+    initiales du propriétaire)
+    
   # 1.0.2
     Ajout des méthodes publiques 'min' et 'max' pour redéfinir de l'extérieur
     les valeurs max et min.
@@ -46,7 +50,7 @@ class IncButton {
   ***/
 
   // Méthode publique
-  set(val){ this.setValue(val) }
+  set(val){ this.setValue(val, /* update = */ false) }
 
   // Pour fixer la valeur supérieure
   set max(v){ this.data.max = v }
@@ -68,10 +72,10 @@ class IncButton {
     // Si une fonction est à appeler au changement, il faut l'appeler
     this.onChange && this.onChange.call(null, this.value)
   }
-  setValue(v){
+  setValue(v, update = true){
     this.value = v
     this.spanValue.innerHTML = this.value
-    this.onChange && this.onChange.call(null, this.value)
+    update && this.onChange && this.onChange.call(null, this.value)
   }
 
   build(){

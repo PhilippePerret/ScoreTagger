@@ -15,11 +15,12 @@ const AOBJETS_TOOLBOX_OTYPE_BUTTONS = {
 , order: ['chord','harmony','modulation','cadence','segment','pedale']
 , selected: 'chord'
 , items: {
-      'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
-    , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
+      /* note : mettre dans l'ordre des lignes, de haut en bas */
+      'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
     , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII','0'],'0'],['nature',['Maj','min'],'Maj']]}
+    , 'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
+    , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
     , 'cadence':    {id:'cadence',    text: 'Cadence',    visible:['cadence']}
-    , 'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
     , 'pedale':     {id:'pedale',     text: 'Pédale',     visible:['degre','alteration']}
   }
 }
@@ -166,3 +167,5 @@ const AOBJETS_TOOLBOX_BUTTONS_GROUPS = {
     } // /items
   }// type 'segment'
 }
+
+const LINES_POSE = Object.keys(AOBJETS_TOOLBOX_OTYPE_BUTTONS.items).reverse()

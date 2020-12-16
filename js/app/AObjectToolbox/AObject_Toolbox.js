@@ -37,10 +37,14 @@ static initFormatters(){
 /**
 * Méthode qui actualise l'aperçu de l'objet qui permet de voir à quoi
 * ressemblera l'objet en fonction des boutons pressés (des paramètres choisis)
+*
+* Si un objet d'analyse est édité, on l'actualise aussi
 ***/
 static updateOverview(){
   this.OverviewContainer.html('')
-  this.OverviewContainer.append(this.finalTextFor(this.getValues()))
+  const newObject = this.finalTextFor(this.getValues())
+  this.OverviewContainer.append(newObject)
+  this.editedObject && this.editedObject.updateAll(newObject, this.getValues())
 }
 
 /**
@@ -79,10 +83,7 @@ static editAObject(aobjet){
 
 static uneditAObject(aobjet){
   this.setInterfaceForType('chord')
-  /**
-  * Il faut mettre editedObject à null seulement ici, sinon la méthode
-  * setInterfaceForType ne règlerait pas le bouton du type sélectionné
-  ***/
+  $(this.container).find('#edited-aobject-id').html('')
   this.editedObject = null
 }
 
@@ -107,17 +108,36 @@ static setInterfaceForAObject(aobjet){
   // Indiquer visuellement l'objet édité
   $(this.container).find('#edited-aobject-id').html(aobjet.id)
   // Préparer les boutons
-  this.setInterfaceForType(aobjet.otype, aobjet.objetProps)
+  this.setInterfaceForType(aobjet.otype, aobjet)
 }
 
 /**
 * Prépare l'interface pour le type d'objet +otype+, peut-être avec les
 * valeurs de l'objet +oData+
 ***/
-static setInterfaceForType(otype, oData){
-  console.debug("-> setInterfaceForType(otype='%s', oData=)", otype, oData)
+static setInterfaceForType(otype, aobjet){
+  // console.debug("-> setInterfaceForType(otype='%s', aobjet=)", otype, aobjet)
   this.OTypeButtons.setSelected(ButtonAOTB.get(`otype-${otype}`))
-  MainGButtonAOTB.get(otype).configureToolbox(oData)
+  MainGButtonAOTB.get(otype).configureToolbox(aobjet && aobjet.objetProps)
+  this.editObjectCoordonnates(aobjet) // oui, même si aobjet n'est pas défini
+}
+
+/**
+* Mise en édition des coordonnées (*) de l'objet +aobjet+ ou masque l'interface
+* de choix des coordonnées
+* (*) Principalement car d'autres propriétés peuvent également être modifiées
+***/
+
+static editObjectCoordonnates(aobjet){
+  $('div#div-coordonates')[aobjet?'removeClass':'addClass']('hidden')
+  if ( aobjet ) {
+    // Coordonnées x, y, w, et h (selon le type)
+    this.buttonPosX.set(aobjet.data.left)
+    this.buttonPosY.set(aobjet.data.top || 0)
+    this.buttonWidth.set( aobjet.data.width || parseInt($(aobjet.obj).width(),10) )
+    // Menu pour placer sur une autre ligne de pose
+    this.menuLignePose.val(aobjet.data.line || LINES_POSE.indexOf(aobjet.otype))
+  }
 }
 
 /** ---------------------------------------------------------------------
@@ -159,8 +179,49 @@ static build(){
     new MainGButtonAOTB(dmainbutton)
   })
 
+  // On prépare les boutons de coordonnées
+  // Les boutons à incrémentation
+  this.buttonPosX = new IncButton({container:'#aobj-pos-x', onchange:this.onChangeX.bind(this)})
+  this.buttonPosX.build()
+  this.buttonPosY = new IncButton({container:'#aobj-pos-y', onchange:this.onChangeY.bind(this)})
+  this.buttonPosY.build()
+  this.buttonWidth = new IncButton({container:'#aobj-pos-w', onchange:this.onChangeW.bind(this)})
+  this.buttonWidth.build()
+
+  // On prépare le menu qui permet de changer de ligne de pose
+  this.menuLignePose = $('select#ligne-pose')
+  for (var iline = 0, len = LINES_POSE.length; iline < len; ++ iline) {
+    var otype = LINES_POSE[iline]
+    var hname = AOBJETS_TOOLBOX_OTYPE_BUTTONS.items[otype].text
+    this.menuLignePose.prepend(DCreate('OPTION', {value:iline, text:hname}))
+  }
+
+  // Le bouton pour détruire l'objet
+  $('#btn-destroy-aobject').on('click', this.removeObjet.bind(this))
+
   // On sélectionne les accords en simulant le clic sur le bouton "Accord"
   $(ButtonAOTB.get('otype-chord').obj).click()
+}
+
+// Pour supprimer l'objet (définitivement)
+static removeObjet(ev){
+  if ( confirm("Es-tu certain de vouloir détruire cet objet d'analyse ?")){
+    AObject.remove(this.editedObject)
+  }
+}
+
+static onChangeX(newValue){
+  this.editedObject.update('left', Number(newValue))
+}
+static onChangeY(newValue){
+  this.editedObject.update('top', Number(newValue))
+}
+static onChangeW(newValue){
+  this.editedObject.update('width', Number(newValue))
+}
+static onChangeLignePose(ev){
+  const newVal = Number($(this.menuLignePose).val())
+  this.editedObject.update('line', newVal)
 }
 
 /**
@@ -186,7 +247,7 @@ static bGroup(gtype) { return this.BGroups[gtype] }
 * Observation de la boite d'outils en général
 ***/
 static observe(){
-
+  $(this.menuLignePose).on('change', this.onChangeLignePose.bind(this))
 }
 
 /** ---------------------------------------------------------------------

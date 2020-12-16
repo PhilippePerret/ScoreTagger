@@ -6,8 +6,6 @@
 ***/
 const MIN_WIDTH_OBJET_WITH_TRAIT = 40
 
-const LINES_POSE = ['pedale','cadence','harmony','chord','modulation','segment']
-
 class AObject {
 
 static newId(){
@@ -129,13 +127,25 @@ fromDataSaved(data){
 }
 
 /**
+* Actualisation de toutes les propriétés de note (accord, degré, etc.)
+***/
+updateAll(newObject, newValues){
+  this.modified = true
+  this.data.objetProps = newValues
+  console.warn("Vérifier les nouvelles valeurs.", newValues)
+  $(this.obj).html(newObject.innerHTML)
+}
+
+/**
 * Actualisation (après modification dans la boite d'édition)
 *
 * Note : on actualise l'intérieur pour ne pas avoir à supprimer et remettre
 *        les observers.
 ***/
-update(what){
-  $(this.obj).inner($(this.build()).inner())
+update(prop, newValue){
+  console.debug("Update propriété '%s' de %s avec la valeur '%s'",prop, this.ref, String(newValue))
+  this.data[prop] = newValue
+  $(this.obj).html(this.build().innerHTML)
 }
 
 /**
