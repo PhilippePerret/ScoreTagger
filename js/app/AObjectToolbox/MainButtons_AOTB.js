@@ -29,7 +29,7 @@ activate(button){
   * avec les instances MainButtonAOTB qui définissent les spécificités visibles
   * de chaque otype d'objet.
   ***/
-  MainGButtonAOTB.get(button.data.id).activate()
+  MainGButtonAOTB.get(button.data.id).configureToolbox()
 
 }
 

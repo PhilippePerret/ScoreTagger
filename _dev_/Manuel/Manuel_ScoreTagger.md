@@ -252,15 +252,56 @@ La classe qui s’occupe de la lecture est la classe `Analyse` et particulièrem
 
 ## Détails de l'implémentation
 
-#### AOBJETS_TOOLBOX_BUTTONS
+#### BOITE D'OUTILS DES OBJETS D'ANALYSE
 
-`AOBJETS_TOOLBOX_BUTTONS` est une constante qui définit tous les boutons de la boite d’outils qui permet de définir un [objet d'analyse][] ainsi que leur comportement.
+La « boite d’outils des [objets d'analyse][] » est un container qui contient tous les boutons permettant de définir et modifier les objets d’analyse placés sur la partition. Cette boite est « intelligente » dans le sens où elle se règle entièrement en fonctionnement des choix. L’utillisateur peut désactiver ce comportement par les préférences.
 
-Les **clés** de cette constante (donc chaque élément racine) se rapportent à un **groupe de boutons**. Les groupes de boutons sont par exemple les altérations ou les chiffrages d’harmonie.
+Deux constantes tables permettent de construire cette boite d’outils :
 
-Ces clés définissent les « objets-type » (`otype`).
+~~~
+AOBJETS_TOOLBOX_OTYPE_BUTTONS
+		Table qui définit les données des boutons principaux qui permettent de
+		choisir le type (otype) d'objet d'analyse à créer (accord, modulation,
+		etc.)
 
-Le premier élément, de clé `otype` est un peu différent puisqu’il définit tous les `otype`s et leur comportement. Nous y reviendrons.
+AOBJETS_TOOLBOX_BUTTONS_GROUPS
+		Table qui définit les données des « groupes de boutons » qui permettent
+		de définir précisément les paramètres d'un objet d'analyse. On trouve
+		par exemple le groupe 'alteration' qui permet d'altérer un accord ou une
+		note, le groupe 'segment' qui permet de choisir un type de segement, etc.
+~~~
+
+Ces deux constantes sont structurées de la même façon afin de permettre une construction identique des boutons.
+
+Les boutons et groupes de boutons sont construits et gérés grâce à quatre (5 en fait) classes :
+
+~~~
+AObjectToolbox (classe)
+		C'est la boite d'outils elle-même. Son 'obj' est le container des boutons.
+		
+MainButtonsAOTB (classe, extention de BGroupAOTB)
+		Classe qui gère les boutons principaux. Chaque instance est un otype par-
+		ticulier, pour les accords ('chord'), les harmonies ('harmony'), les
+		modulations ('modulation') etc.
+		Quand on active un bouton principal, la méthode d'instance 'activate' est
+		invoqué, le bouton se sélectionne et la méthode appelle l'instance 
+		MainGButtonAOTB liée au bouton pressé pour configurer la boite à outils 
+		en fonction du bouton (afficher/masquer les groupes de boutons utiles, 
+		afficher/masquer les boutons utiles de chaque groupe, sélectionner les
+		boutons par défaut).
+
+BGroupAOTB
+		Classe qui gère chaque groupe de boutons (même les boutons principaux, qui
+		on leur propre classe inférieure). Quand on active le bouton d'un groupe de
+		bouton, la méthode d'instance 'activate' est invoquée et les paramètres du
+		bouton (à créer ou édité) changent.
+		
+MainGButtonAOTB
+		Classe attachée à chaque bouton principal qui permet de configurer la boite
+		à outil en fonction du otype du bouton principal.
+~~~
+
+**Constitution des deux constantes de données**
 
 Chaque `otype` (chaque « type d'objet »), donc chaque élément racine de cette constante définit :
 
@@ -276,9 +317,9 @@ items:		La table (Object) des boutons eux-mêmes.
           les deux.
 ~~~
 
-**Particularité du premier élément**
+**Constitution des `items` de AOBJETS_TOOLBOX_OTYPE_BUTTONS**
 
-La définition des boutons (donc de la propriété `items`) du premier élément, de clé `otype`, est plus complexe. Elle possède en plus des autres la propriété `visible` qui va définir l’interface propre pour chaque type d’objet (accord, harmonie, segment, etc.).
+La définition des boutons (donc de la propriété `items`) est plus complexe que dans `AOBJETS_TOOLBOX_BUTTONS_GROUPS`. Elle possède en plus des autres la propriété `visible` qui va définir l’interface propre pour chaque type d’objet (accord, harmonie, segment, etc.).
 
 À la base, `:visible` peut être une liste (Array) de « clé de type » (c’est-à-dire les clés racine de la constante, à savoir `note`, `chord`, `alteration`, etc.). La donnée :
 
@@ -313,6 +354,20 @@ Si on doit garder tous les boutons et définir celui qui doit être sélectionn�
 ~~~javascript
 visible: ['note',   ['alteration', null, 'b'],   'nature']
 ~~~
+
+
+
+### Création d’un nouveau type d’objet d'analyse
+
+Pour créer un nouveau type d’[objet d’analyse][], il faut :
+
+* ajouter le type dans les `items` de `AOBJETS_TOOLBOX_OTYPE_BUTTONS` (fichier `js/AObjets_constants`),
+* définir le type dans `AOBJETS_TOOLBOX_BUTTONS_GROUPS` (fichier `js/AObjets_constants`),
+* créer son formateur dans le dossier `js/ObjectFormatters/` avec pour nom de classe `<Type capitalisé>Formatter` (et définir ses méthodes propres en s’inspirant des autres formateurs,
+* instancier ce formateur dans la méthode `AObjectToolbox::initFormatters`,
+* That’s it!
+
+---
 
 
 

@@ -44,7 +44,26 @@ get ref(){
 onActivate(ev){
   const my = this
   this.bgroup.activate(my)
+  /**
+  * Dans tous les cas, quand on choisit un bouton, on doit actualiser l'aperçu
+  * de l'objet
+  ***/
+  AObjectToolbox.updateOverview()
+  // Si un objet est édité, il faut actualiser ses données
+  if ( AObjectToolbox.editedObject ) {
+    // TODO
+  }
   return stopEvent(ev)
+}
+
+/**
+* Retourne la valeur du bouton (pour la définition finale de l'objet
+* d'analyse)
+* La valeur est définie soit explicitement dans les données, soit par
+* l'identifiant (le plus souvent)
+***/
+get value(){
+  return this._value || (this._value = this.data.value||this.data.id)
 }
 
 /**
@@ -81,8 +100,8 @@ get buttonAttributes(){
     , type: 'button'
     , class:'obb'
     , text: this.buttonInner
-    , 'data-value': (this.data.value||this.id)
-    , 'data-type-aobject': this.bgroup.gtype
+    , 'data-value': this.value // n'est plus utile
+    , 'data-type-aobject': this.bgroup.gtype // n'est plus vraiment utile (je crois)
   }
 }
 

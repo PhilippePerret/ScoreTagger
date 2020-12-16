@@ -27,12 +27,26 @@ constructor(data) {
   this.constructor.add(this)
 }
 
-activate(withObjet){
+/**
+* Méthode principale, appelée lorsque l'on clique sur un bouton principal
+* pour choisir un otype et qui agence la boite d'outils pour présenter les
+* seuls boutons utiles.
+***/
+configureToolbox(withObjet){
   console.debug("Je dois activer le mainGButton:", this)
   BGroupAOTB.hideAllGroups()
   this.bGroupsData.forEach(dbgroup => dbgroup[0].show({only:dbgroup[1], selected:dbgroup[2]}))
 }
 
+/**
+* Retourne la table des valeurs à considérer pour le type d'objet d'analyse
+* donné.
+***/
+getValues(){
+  var d = {otype: this.otype}
+  this.bGroups.forEach(bgroup => Object.assign(d, {[bgroup.gtype]: bgroup.selected.value}))
+  return d
+}
 
 /**
 * Retourne les données BGroups du bouton principal
@@ -44,16 +58,31 @@ activate(withObjet){
 *   ]
 ***/
 get bGroupsData(){
-  return this._bgroups || (this.bgroups = this.getBGroups())
+  return this._bgroups || (this.bgroups = this.getBGroupsData())
 }
 
+get bGroups(){
+  return this._bgroups || (this._bgroups = this.getBGroups())
+}
 
 /**
 * Private methods
 ***/
 
-
+/**
+* Retourne les instances des groupes de boutons pour le type d'objet
+***/
 getBGroups(){
+  var ary = []
+  this.bGroupsData.forEach(dgroup => ary.push(dgroup[0]))
+  return ary
+}
+
+/**
+* Retourne les données absolues pour les groupes de boutons du type d'objet
+* courant
+***/
+getBGroupsData(){
   var aryBGroups = []
   this.data.visible.forEach(dvis => {
     let [gtype, onlyButtons, selected] = (dt => {

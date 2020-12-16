@@ -41,7 +41,6 @@ get ref(){
 *   selected:   L'instance du Bouton à sélectionner
 ***/
 show(options = {}){
-  console.log("options:",options)
   this.obj.classList.remove('hidden')
   if ( options.only ) {
     this.hideAllButtons()
