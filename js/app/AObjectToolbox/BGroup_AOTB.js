@@ -45,14 +45,17 @@ show(options = {}){
   if ( options.only ) {
     this.hideAllButtons()
     options.only.forEach(bId => ButtonAOTB.get(`${this.gtype}-${bId}`).show())
-  }
+  } else this.showAllButtons()
   options.selected && this.setSelected(options.selected)
 }
 hide(){this.obj.classList.add('hidden')}
 
 /**
-* Permet de masquer tous les boutons du groupe (pour n'en afficher que certains)
+* Permet de masquer/afficher tous les boutons du groupe (pour n'en afficher que certains)
 ***/
+showAllButtons(){
+  $(this.obj).find('button.obb').removeClass('hidden')
+}
 hideAllButtons(){
   $(this.obj).find('button.obb').addClass('hidden')
 }
@@ -74,11 +77,22 @@ activate(button){
 
 /**
 * Définit le bouton du groupe qui est sélectionné
+* Contrairement à 'select', cette méthode attend une instance de bouton
 ***/
 setSelected(button){
   this.selected && this.selected.deselect()
   button.select()
   this.selected = button
+}
+
+/**
+* Sélection le bouton de valeur +vbutton+
+* Contrairement à la méthode setSelected qui attend une instance de bouton,
+* cette méthode permet de sélectionner un bouton du groupe en donnant seulement
+* sa valeur.
+***/
+select(vbutton){
+  this.setSelected(ButtonAOTB.get(`${this.gtype}-${vbutton}`))
 }
 
 /**

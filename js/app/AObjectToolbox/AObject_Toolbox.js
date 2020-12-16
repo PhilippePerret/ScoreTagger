@@ -19,7 +19,6 @@ static init(){
   console.debug("-> Initialisation de AObjectToolbox")
   this.initFormatters()
   this.build()
-  this.initInterface()
 }
 
 /**
@@ -98,22 +97,7 @@ static uneditAObject(aobjet){
 * groupe de boutons (boutons principaux compris).
 ***/
 static getValues(){
-  /**
-  * On récupère l'instance MainGButton du type d'objet courant pour pouvoir
-  * lui demander de relever les données.
-  * On passe par lui car il connait tous les groupes qu'il faut relever.
-  ***/
-  const otype = this.OTypeButtons.selected.value
-  const mainGButton = MainGButtonAOTB.get(otype)
-  console.log("mainGButton.getValues() = ", mainGButton.getValues())
-  return mainGButton.getValues()
-}
-
-/**
-* Méthode qui prépare l'interface pour le type +otype+ ('chord', 'modulation',…)
-***/
-static initInterface(){
-  console.warn("On doit initier la boite à outils des objets d'analyse")
+  return MainGButtonAOTB.get(this.OTypeButtons.selected.value).getValues()
 }
 
 /**
@@ -121,19 +105,19 @@ static initInterface(){
 ***/
 static setInterfaceForAObject(aobjet){
   // Indiquer visuellement l'objet édité
-  // TODO
-  this.container.find('#edited-objet-id').html(aobjet.id)
-  // On prépare l'interface de façon générale
-  this.setInterface()
+  $(this.container).find('#edited-aobject-id').html(aobjet.id)
   // Préparer les boutons
-  this.setInterfaceForType(aobjet.otype, aobjet.data)
+  this.setInterfaceForType(aobjet.otype, aobjet.objetProps)
 }
 
-static setInterface(){
-  /**
-  * Si la ligne "segment" ne doit pas être utilisée, on masque son bouton
-  ***/
-  this.BGroup('segment').prepare()
+/**
+* Prépare l'interface pour le type d'objet +otype+, peut-être avec les
+* valeurs de l'objet +oData+
+***/
+static setInterfaceForType(otype, oData){
+  console.debug("-> setInterfaceForType(otype='%s', oData=)", otype, oData)
+  this.OTypeButtons.setSelected(ButtonAOTB.get(`otype-${otype}`))
+  MainGButtonAOTB.get(otype).configureToolbox(oData)
 }
 
 /** ---------------------------------------------------------------------

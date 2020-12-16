@@ -31,11 +31,14 @@ constructor(data) {
 * Méthode principale, appelée lorsque l'on clique sur un bouton principal
 * pour choisir un otype et qui agence la boite d'outils pour présenter les
 * seuls boutons utiles.
+*
+* Si +oData+ est défini, ce sont les données de l'objet d'analyse qui doit
+* être édité.
 ***/
-configureToolbox(withObjet){
-  console.debug("Je dois activer le mainGButton:", this)
+configureToolbox(oData){
   BGroupAOTB.hideAllGroups()
   this.bGroupsData.forEach(dbgroup => dbgroup[0].show({only:dbgroup[1], selected:dbgroup[2]}))
+  oData && this.setValues(oData)
 }
 
 /**
@@ -49,6 +52,16 @@ getValues(){
 }
 
 /**
+* Règle les boutons visibles avec les données +oData+
+***/
+setValues(oData){
+  console.debug("-> setValues(oData=)", oData)
+  this.bGroups.forEach(bgroup => {
+    bgroup.select(oData[bgroup.gtype])
+  })
+}
+
+/**
 * Retourne les données BGroups du bouton principal
 * C'est un Array où chaque élément, inspiré de la propriété :visible, contient :
 *   [
@@ -58,7 +71,7 @@ getValues(){
 *   ]
 ***/
 get bGroupsData(){
-  return this._bgroups || (this.bgroups = this.getBGroupsData())
+  return this._bgroupsdata || (this._bgroupsdata = this.getBGroupsData())
 }
 
 get bGroups(){

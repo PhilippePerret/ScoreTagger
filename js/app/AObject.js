@@ -53,11 +53,11 @@ static onDeselect(item){
 }
 
 /**
-  * Retourne les propriétés de l'objet
+* Retourne les propriétés de l'objet
+* Ici, la méthode sert pour la création du nouvel objet. Elle doit aussi servir
+* pour son actualisation.
 ***/
-static getObjetProps(){
-  return Panneau.get('analyse').propsAObjectToolbox.getValues()
-}
+static getObjetProps() { return AObjectToolbox.getValues() }
 
 /**
 * Data:
@@ -187,26 +187,19 @@ repositionne(){
 
 edit(){
   this.isEdited = true
-  TableAnalyse.propsAObjectToolbox.edit(this)
+  AObjectToolbox.editAObject(this)
 }
 unedit(){
-  TableAnalyse.propsAObjectToolbox.unedit(this)
+  AObjectToolbox.uneditAObject(this)
   this.isEdited = false
 }
 
 observe(){
-  // La rendre déplaçable sur l'axe des x
   const my = this
-  // $(this.obj).draggable({
-  //   axis:'x',
-  //   stop: my.onChangeXByDrag.bind(my)
-  // })
 
   // Attention à ce qu'elles ne vienne pas en conflit avec le menu contextuel
   $(this.obj).on('mousedown', this.onMouseDown.bind(this))
 
-
-  this.obj.style.position = 'absolute' //draggable ajoute 'relative'
   // Menu context
   const dataCMenu = [
     {name: 'Mettre sur la ligne de pose supérieure', method: this.onChangeLignePose.bind(this, 1)}
