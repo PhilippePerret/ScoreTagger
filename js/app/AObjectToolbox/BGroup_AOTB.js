@@ -103,7 +103,7 @@ select(vbutton){
 ***/
 build(){
   const my = this
-  console.debug("%s -> build()", my.ref)
+  __in(`${my.ref}#build`)
 
   // On place le conteneur du groupe de bouton dans l'interface (car on en
   // a besoin pour placer les boutons)

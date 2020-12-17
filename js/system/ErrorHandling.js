@@ -4,6 +4,7 @@
 *
 *** --------------------------------------------------------------------- */
 window.onerror = function(){
+  __d()
   console.error(arguments)
   erreur("Une erreur est survenue. Merci de consulter la console.")
 }

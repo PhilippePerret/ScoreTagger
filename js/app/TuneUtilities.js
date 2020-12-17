@@ -28,7 +28,6 @@ class Tune {
 ***/
 constructor(mark) {
   this.mark = mark
-  console.debug("Instanciation d'un Tune à l'aide de l'empreinte '%s'", mark)
   this.parseEmpreinte(this.mark)
 }
 
@@ -83,7 +82,6 @@ parseEmpreinte(mark){
     }
     if (!this._mode) this._mode  = dtune[1] == 'm' ? 'm' : 'M'
   }
-  console.debug("Résultat parsing : note='%s', alter=%s, mode='%s', isTonMajeur ? %s", this.note, this.alter, this.mode, this.isTonMajeur ? 'oui' : 'non')
 }
 
 /**
@@ -140,7 +138,7 @@ calcRelative(){
     }
   }
   const empRel = `${noteRel}${alterRel||''}${modeRel}`
-  console.debug("Relatif trouvé : %s", empRel)
+  __add(`Relatif trouvé : ${empRel}`,"Tune#calcRelative")
   return new Tune(empRel)
 } //calcRelative
 
@@ -151,7 +149,6 @@ calcRelative(){
 
 calcSousDominante(){
   var vprov = this.indiceTon + 3
-  console.log("vprov = ", vprov)
   const noteSDom = INDICE_TON_TO_TUNE[vprov < 7 ? vprov : vprov - 7]
   const modeSDom = String(this.mode)
   const alterSDom = (my => {
@@ -163,7 +160,7 @@ calcSousDominante(){
   })(this)
 
   const empSDom = `${noteSDom}${alterSDom||''}${modeSDom}`
-  console.debug("Sous-dominante = %s", empSDom)
+  __add(`Sous-dominante : ${empSDom}`,"Tune#calcSousDominante")
   return new Tune(empSDom)
 } //calcSousDominante
 
@@ -183,7 +180,7 @@ calcDominante(){
   })(this)
 
   const empDom = `${noteDom}${alterDom||''}${modeDom}`
-  console.debug("Dominante = %s", empDom)
+  __add(`Dominante : ${empDom}`,"Tune#calcDominante")
   return new Tune(empDom)
 } //calcDominante
 

@@ -70,9 +70,10 @@ get value(){
 * Construction et observation du bouton, une fois pour toutes
 ***/
 build_and_observe(){
-  console.debug("%s -> build_and_observe", this.ref)
+  __in(`${this.ref}#build_and_observe`)
   this.build()
   this.observe()
+  __out(`${this.ref}#build_and_observe`)
 }
 
 build(){

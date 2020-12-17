@@ -55,10 +55,8 @@ getValues(){
 * Règle les boutons visibles avec les données +oData+
 ***/
 setValues(oData){
-  console.debug("-> setValues(oData=)", oData)
-  this.bGroups.forEach(bgroup => {
-    bgroup.select(oData[bgroup.gtype])
-  })
+  __in("MainGButtonAOTB#setValues()", oData)
+  this.bGroups.forEach(bgroup => bgroup.select(oData[bgroup.gtype]))
 }
 
 /**

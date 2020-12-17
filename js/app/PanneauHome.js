@@ -9,12 +9,13 @@ constructor() {
 }
 
 onActivate(){
-  console.debug("Home activé")
+  __in(`${this.ref}#onActivate`)
   if (!this.observed){
     this.prepare()
     this.observe()
   }
   document.body.style.width = '1040px'
+  __out(`${this.ref}#onActivate`)
 }
 
 /**
@@ -167,7 +168,6 @@ onStopMoveScoreProp(prop, ev){
   // Ajustement du left
   const left = pos.left
   let newCss = {}
-  console.log("Placement de la propriété %s à %i", prop, left)
   SCORE_ANALYZE_PROPS.forEach(cprop => {
     if (cprop == prop) return ;
     const cleft = $(`div#pref-${cprop}`).position().left
@@ -238,7 +238,6 @@ onClickSavePreferences(ev){
     const valPref = Prefs.ligne(otype)
     let valCur  = $(`div#pref-line-${otype}`).position().top
     if ( valCur >= 0 ) valCur -= imgHeight ;
-    console.debug("Comparaison de %i (ancienne) et %i (nouvelle)", valPref, valCur)
     if ( valCur == valPref ) {
       scorePrefs.lignes[otype] = null
     } else {
@@ -253,7 +252,7 @@ onClickSavePreferences(ev){
   * Modifications immédiates à faire en cas de changement de préférences
   ***/
   if ( oldUseSegmentLine != newUseSegmentLine ) {
-    PropsAObjectToolbox.setBoutonSegment()
+    AObjectToolbox.setBoutonSegment()
     Score.current.repositionneAllSystems()
   }
 

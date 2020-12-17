@@ -6,19 +6,19 @@ class PanneauCrop extends Panneau {
   }
 
   onActivate(){
-    console.debug("-> PanneauCrop#onActivate")
+    __in(`${this.ref}#onActivate`)
     this.isObserved || this.observe()
     document.body.style.width = null ;
     const score = Score.current
     this.show_score_ini()
-    console.debug("<- PanneauCrop#onActivate")
+    __out(`${this.ref}#onActivate`)
   }
 
   onDesactivate(){
-    console.debug("-> PanneauCrop#onDesactivate")
+    __in(`${this.ref}#onDesactivate`)
     this.removeAllCutLines()
     this.unobserveBody()
-    console.debug("<- PanneauCrop#onDesactivate")
+    __out(`${this.ref}#onDesactivate`)
   }
 
 /**
@@ -64,7 +64,7 @@ onCrop(ev){
 }
 
   confirmCrop(retour){
-    console.debug(retour)
+    __in(`${this.ref}#confirmCrop`, {retour: retour})
     message("La partition a été découpée avec succès.")
     message("Tu peux activer l'onglet “Analyse” pour procéder à son analyse.")
   }
@@ -73,9 +73,9 @@ onCrop(ev){
     * Méthode évènement appelée quand on clique sur le body, avec la
     * partition originale affichée
   ***/
-
   onClickScore(ev){
-    console.debug("-> onClickScore")
+    __start("Click sur la partition du système", {system: this})
+    __in(`${this.ref}#onClickScore`)
     if ( ev.target.id != 'score-ini' ) return false
     this.drawCutLine({top: ev.offsetY})
   }
@@ -127,7 +127,7 @@ onCrop(ev){
 * Pour "dessiner" vraiment la page sur la table de coupe
 ***/
 drawPage(ipage, ret){
-  console.debug("-> drawPage. Retour d'ajax pour la page %i : ", ipage, ret)
+  __in(`${this.ref}#drawPage`, {page:ipage, retour:ret})
   this.removeAllCutLines()
   $('img#score-ini')[0].src = `_score_/${CURRENT_ANALYSE}/score/images/pages/page-${ipage}.jpg`
   $('img#score-ini').on('load', ev => {
@@ -140,6 +140,7 @@ drawPage(ipage, ret){
     ret.data_page && this.positionneVLines(ret.data_page.vlines)
   })
   ret.data_page && this.drawCutLines(ret.data_page.all_cutlines || ret.data_page.cutlines)
+  __out(`${this.ref}#drawPage`)
 }
 
   get vlineLeft(){
@@ -164,7 +165,6 @@ removeAllCutLines(){
 }
 
 positionneVLines(vlines){
-  console.debug("-> positionneVLines avec", vlines)
   this.vlineLeft.css('left', `${vlines.left}px`)
   this.vlineRight.css('left', `${vlines.right - 20}px`)
 }

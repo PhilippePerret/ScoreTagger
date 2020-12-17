@@ -18,7 +18,7 @@ constructor() {
 * contraire, doit afficher tous les boutons nécessaires.
 ***/
 activate(button){
-  console.debug("Je dois activer le groupe de boutons '%s' correspondant à", button.data.id, button)
+  __in(`MainButtonsAOTB#activate`, {otype: button.data.id})
   // Dans tous les cas où sélectionne le bouton et on déselectionne celui
   // actuellement sélectionné (if any)
   this.setSelected(button)
@@ -31,6 +31,7 @@ activate(button){
   ***/
   MainGButtonAOTB.get(button.data.id).configureToolbox()
 
+  __out(`MainButtonsAOTB#activate`, {otype: button.data.id})
 }
 
 /**

@@ -20,7 +20,7 @@ affichage=>inputoutput: Affichage de l'analyse:>#affichage_analyse
 condScorePrepared=>condition: Partition préparée ?
 drawParition=>operation: Dessin de la partition:>#dessin_partition
 condAutosave=>condition: Autosave?
-startAutosave=>operation: Mise en route de 
+startAutosave=>operation: Mise en route de
 la sauvegarde
 automatique
 e=>end: Attente utilisateur
@@ -42,7 +42,7 @@ affichage->e
 ~~~flow
 go=>start: Préparation du panneau
 prepare=>subroutine: PanneauAnalyse#prepare
-inittoolbox=>subroutine: AObjectToolbox::init() 
+inittoolbox=>subroutine: AObjectToolbox::init()
 (initialisation de la boite d'outils)
 observation=>subroutine: PanneauAnalyse#observe
 (observation du panneau)
@@ -58,7 +58,7 @@ go->prepare->inittoolbox->observation->e
 
 ~~~flow
 l10n process!
-go=>start: Dessin de 
+go=>start: Dessin de
 la partition
 e=>end: La partition
 est dessinée
@@ -97,8 +97,8 @@ C'est la méthode `Score#draw` qui s'occupe du dessin du score complet.
 l10n process!
 go=>start: Dessin complet du score
 drawmeth=>subroutine: Score#draw()
-condSystPrepared(align-next=no)=>condition: Les systèmes 
-sont-ils 
+condSystPrepared(align-next=no)=>condition: Les systèmes
+sont-ils
 préparés
 opSystPrepared=>operation: Chargement des systèmes préparés
 opSysNotPrepared=>operation: Chargement des systèmes non préparés
@@ -303,7 +303,7 @@ Mais pour ne pas tourner en boucle indéfiniment lorsque rien ne se passe, on po
 
 ### Requête Ajax
 
-À toute requête ajax on ajoute automatiquement (dans `ajax.js`) la propriété `current_analyse` qui définit le dossier de l’analyse dans `_score_`. 
+À toute requête ajax on ajoute automatiquement (dans `ajax.js`) la propriété `current_analyse` qui définit le dossier de l’analyse dans `_score_`.
 
 Noter que dans la nouvelle version de la classe `Ajax` les retours avec erreur sont traités, inutile de faire `if (ret.error) ...`.
 
@@ -321,16 +321,16 @@ La [partition préparée][]  est affichée de façon intégrale sur la table d�
 
 
 
-### Boite d’outils des objets d’analyse (`PropsAObjectToolbox`)
+### Boite d’outils des objets d’analyse (`AObjectToolbox`)
 
-La boite d’outils se trouve sur le panneau de l’analyse et permet de définir les [objets d’analyse][]. On obtient cette instance de `PropsAObjectToolbox` par la propriété : `TableAnalyse.propsAObjectToolbox`.
+La boite d’outils se trouve sur le panneau de l’analyse et permet de définir les [objets d’analyse][].
 
 Cette boite permet aussi bien de créer un nouvel [objet d'analyse][] que de l’éditer pour le modifier.
 
 Elle fonctionne avec trois niveaux d’abstraction :
 
 ~~~
-La boite 									instance 	{AObjectToolbox (= AOTB)} 
+La boite 									instance 	{AObjectToolbox (= AOTB)}
 Les groupes de boutons 		instances {ButtonsGroupAOTB}
 Les boutons eux-mêmes			instance 	{ButtonAOTB}
 ~~~
@@ -343,11 +343,11 @@ Une **confusion est déjà possible** entre d’un côté les `otype`, qui peuve
 
 ~~~
 AOBJETS_TOOLBOX_OTYPE_BUTTONS				
-		Constantes qui définit les otype(s) possible d'un objet d'analyse et donc les 
+		Constantes qui définit les otype(s) possible d'un objet d'analyse et donc les
 		boutons principaux de la boite d'outils.
 
 AOBJETS_TOOLBOX_BUTTONS_GROUPS					
-		Constantes qui définit les types de groupes de boutons se trouvant sous les 
+		Constantes qui définit les types de groupes de boutons se trouvant sous les
 		boutons principaux.
 ~~~
 
@@ -356,7 +356,7 @@ AOBJETS_TOOLBOX_BUTTONS_GROUPS
 L’instance des boutons principaux (otype) peut s’obtenir et se manipuler par :
 
 ~~~javascript
-AObjectToolbox.OTypeButtons // => instance OTypeButtonsGroupAOTB 
+AObjectToolbox.OTypeButtons // => instance OTypeButtonsGroupAOTB
 														//    (extension de ButtonsGroupAOTB)
 ~~~
 
@@ -438,15 +438,15 @@ Les boutons et groupes de boutons sont construits et gérés grâce à quatre (5
 ~~~
 AObjectToolbox (classe)
 		C'est la boite d'outils elle-même. Son 'obj' est le container des boutons.
-		
+
 MainButtonsAOTB (classe, extention de BGroupAOTB)
 		Classe qui gère les boutons principaux. Chaque instance est un otype par-
 		ticulier, pour les accords ('chord'), les harmonies ('harmony'), les
 		modulations ('modulation') etc.
 		Quand on active un bouton principal, la méthode d'instance 'activate' est
-		invoqué, le bouton se sélectionne et la méthode appelle l'instance 
-		MainGButtonAOTB liée au bouton pressé pour configurer la boite à outils 
-		en fonction du bouton (afficher/masquer les groupes de boutons utiles, 
+		invoqué, le bouton se sélectionne et la méthode appelle l'instance
+		MainGButtonAOTB liée au bouton pressé pour configurer la boite à outils
+		en fonction du bouton (afficher/masquer les groupes de boutons utiles,
 		afficher/masquer les boutons utiles de chaque groupe, sélectionner les
 		boutons par défaut).
 
@@ -455,7 +455,7 @@ BGroupAOTB
 		on leur propre classe inférieure). Quand on active le bouton d'un groupe de
 		bouton, la méthode d'instance 'activate' est invoquée et les paramètres du
 		bouton (à créer ou édité) changent.
-		
+
 MainGButtonAOTB
 		Classe attachée à chaque bouton principal qui permet de configurer la boite
 		à outil en fonction du otype du bouton principal.

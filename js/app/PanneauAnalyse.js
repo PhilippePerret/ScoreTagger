@@ -19,14 +19,14 @@ resetAll(){
 }
 
 onActivate(){
+  __in(`${this.ref}#onActivate`)
   const score = Score.current
   const my = this
-  console.debug("-> PanneauAnalyse#onActivate")
   document.body.style.width = null
+  AObjectToolbox.inited || AObjectToolbox.init()
   if ( !this.observed ){
     // Si le panneau n'est pas observé, c'est qu'il n'a pas été préparé
     this.prepare()
-    AObjectToolbox.init()
     this.observe()
   }
 
@@ -46,7 +46,7 @@ onActivate(){
 
   this.pref_auto_save && score.startAutosave()
 
-  console.debug("<- PanneauAnalyse#onActivate")
+  __out(`${this.ref}#onActivate`)
 }
 
 onDesactivate(){
@@ -99,7 +99,7 @@ get ScoreScale(){
 * des préférences
 ***/
 drawFirstPage(){
-  console.log("-> PanneauAnalyse#drawFirstPage")
+  __in(`${this.ref}#drawFirstPage`)
   const score = Score.current
   let divHeight = 0
   SCORE_ANALYZE_PROPS.forEach(prop => {
@@ -117,6 +117,7 @@ drawFirstPage(){
       $(dome).css(px(score.preferences.first_page(prop)))
     }
   })
+  __out(`${this.ref}#drawFirstPage`)
 }
 
 /**
@@ -124,9 +125,8 @@ drawFirstPage(){
 * complète de l'analyse
 ***/
 drawPageDelimitors(){
-  console.debug("-> drawPageDelimitors")
+  __in(`${this.ref}#drawPageDelimitors`)
   const heightContainer = $(this.systemsContainer).height()
-  console.debug("heightContainer = %i", heightContainer)
   var top = 0
   var ipage = 0
   while ( top < heightContainer ) {
@@ -136,9 +136,9 @@ drawPageDelimitors(){
       DCreate('SPAN', {class:'page_number', text: String(ipage)})
     ]})
     this.systemsContainer.appendChild(line)
-    console.debug("Dessin d'un séparateur de page à %i", top)
   }
   this.topLastPage = top
+  __out(`${this.ref}#drawPageDelimitors`, {topLastPage: this.topLastPage})
 }
 
 /**
@@ -146,7 +146,7 @@ drawPageDelimitors(){
 * aperçu tonal, avec les tons voisins et les accidents
 ***/
 drawApercuTonal(){
-  console.debug("-> drawApercuTonal")
+  __in(`${this.ref}#drawApercuTonal`)
   const score = Score.current
   let tuneStr ;
   var vprov ; // pour mettre une valeur provisoire
@@ -168,7 +168,7 @@ drawApercuTonal(){
     DGet('img#ton-dominante-gamme').src = iTune.Dominante.imageScalePath
     // Bien placer l'annexe à la fin
     $('#annexe').css('top', this.topLastPage)
-    console.debug("<- drawApercuTonal")
+    __out(`${this.ref}#drawApercuTonal`)
   })
 }
 
@@ -205,12 +205,11 @@ onClickOnTableAnalyse(ev){
 * Note : en plus, la méthode donne des indications sur les données
 ***/
 repositionneAll(ev){
-  console.debug("-> repositionneAll")
+  __in(`${this.ref}#repositionneAll`)
   var prevSys = null
   Score.current.systems.forEach(system => {
     system.prevSystem = prevSys
     system.top || this.calcSystemPos(system, /* debug = */ true)
-    console.debug("Système #%i mis à top: %ipx", system.index, system.top)
     system.positionne()
     prevSys = system
   })
@@ -220,7 +219,7 @@ repositionneAll(ev){
   // On repositionne l'annexe
   $('#annexe').css('top', this.topLastPage)
 
-  console.debug("<- repositionneAll")
+  __out(`${this.ref}#repositionneAll`)
 }
 
 /**
@@ -229,6 +228,7 @@ repositionneAll(ev){
 * de système, etc.)
 ***/
 calcSystemPos(system, debug = false){
+  __in(`${this.ref}#calcSystemPos`, {system:system, debug:debug})
   const score = system.score || Score.current
   debug && console.debug("\n=== CALCUL TOP DU SYSTÈME %s ===", system.minid)
   var fromY ;
@@ -287,6 +287,7 @@ calcSystemPos(system, debug = false){
     debug && console.debug("this.top final = %i", system.top)
 
   }
+  __out(`${this.ref}#calcSystemPos`)
 }
 
 /**

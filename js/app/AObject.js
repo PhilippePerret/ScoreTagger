@@ -118,7 +118,6 @@ fromDataSaved(data){
 updateAll(newObject, newValues){
   this.modified = true
   this.data.objetProps = newValues
-  console.warn("Vérifier les nouvelles valeurs.", newValues)
   $(this.obj).html(newObject.innerHTML)
 }
 
@@ -129,9 +128,10 @@ updateAll(newObject, newValues){
 *        les observers.
 ***/
 update(prop, newValue){
-  console.debug("Update propriété '%s' de %s avec la valeur '%s'",prop, this.ref, String(newValue))
+  __in(`${this.ref}#update`, {prop: prop, value: newValue})
   this.data[prop] = newValue
   $(this.obj).html(this.build().innerHTML)
+  __out(`${this.ref}#update`)
 }
 
 /**
@@ -238,11 +238,12 @@ onMouseUp(ev){
 * +which+ 1: ligne supérieure, -1: ligne inférieur
 ***/
 onChangeLignePose(newLignePose, ev){
-  console.debug("-> onChangeLignePose(newLignePose=%i)", newLignePose)
+  __in(`${this.ref}#onChangeLignePose`, {line: newLignePose})
   const naturalLignePose = LINES_POSE.indexOf(this.otype)
   this.data.line = newLignePose != naturalLignePose ? newLignePose : null
-  console.debug("Nouvelle ligne de pose : ", this.data.line, LINES_POSE[this.data.line])
+  __add("Nouvelle ligne de pose : ", {line:this.data.line, natural: LINES_POSE[this.data.line]})
   this.repositionne()
+  __out(`${this.ref}#onChangeLignePose`)
 }
 
 onChangeXByDrag(ev, ui){

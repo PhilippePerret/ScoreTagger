@@ -6,25 +6,27 @@
 *** --------------------------------------------------------------------- */
 class AObjectToolbox {
 
-/***
-* Public methods
-*
-***/
+/** ---------------------------------------------------------------------
+  *   PUBLIC METHODS
+  *
+*** --------------------------------------------------------------------- */
 
 /**
 * Initialisation de la boite, à l'ouverture de la table d'analyse
 ***/
 static init(){
-  console.clear()
-  console.debug("-> Initialisation de AObjectToolbox")
+  __in('AObjectToolbox::init()')
   this.initFormatters()
   this.build()
+  this.inited = true
+  __out('AObjectToolbox::init()', {inited: AObjectToolbox.inited})
 }
 
 /**
 * Initialisation de tous les formateurs d'objet
 ***/
 static initFormatters(){
+  __in('AObjectToolbox::initFormatters')
   this.ObjectFormatters = {
       'chord':      new ChordFormatter()
     , 'harmony':    new HarmonyFormatter()
@@ -33,6 +35,7 @@ static initFormatters(){
     , 'segment':    new SegmentFormatter()
     , 'pedale':     new PedaleFormatter()
   }
+  __out('AObjectToolbox::initFormatters')
 }
 /**
 * Méthode qui actualise l'aperçu de l'objet qui permet de voir à quoi
@@ -41,10 +44,12 @@ static initFormatters(){
 * Si un objet d'analyse est édité, on l'actualise aussi
 ***/
 static updateOverview(){
+  __in('AObjectToolbox::updateOverview')
   this.OverviewContainer.html('')
   const newObject = this.finalTextFor(this.getValues())
   this.OverviewContainer.append(newObject)
   this.editedObject && this.editedObject.updateAll(newObject, this.getValues())
+  __out('AObjectToolbox::updateOverview')
 }
 
 /**
@@ -66,7 +71,7 @@ static get OverviewContainer(){
 * +objProps+  Propriétés pour construire l'objet
 ***/
 static finalTextFor(objProps){
-  console.debug("-> finalTextFor(data=%s)", JSON.stringify(objProps))
+  __in('AObjectToolbox::finalTextFor', objProps)
   return this.ObjectFormatters[objProps.otype].format(objProps)
 }
 
@@ -160,9 +165,8 @@ static editObjectCoordonnates(aobjet){
 *                         gtype.
 ***/
 static build(){
+  __in('AObjectToolbox::build()')
   const my = this
-  console.clear()
-  console.debug("-> AObjectToolbox.build()")
   // On construit le groupe des boutons principaux d'otype
   this.OTypeButtons = new MainButtonsAOTB()
   this.OTypeButtons.build()
@@ -201,6 +205,8 @@ static build(){
 
   // On sélectionne les accords en simulant le clic sur le bouton "Accord"
   $(ButtonAOTB.get('otype-chord').obj).click()
+
+  __out('AObjectToolbox::build()')
 }
 
 // Pour supprimer l'objet (définitivement)

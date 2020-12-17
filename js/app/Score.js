@@ -26,6 +26,7 @@ static resetForm(){
 * valeurs de préférences — pour le moment)
 ***/
 static getAllValuesInHomePage(){
+  __in('Score::getAllValuesInHomePage')
   const d = {}
   Object.assign(d, {
       folder_name: $('input#analyse_folder_name').val().trim()
@@ -35,6 +36,7 @@ static getAllValuesInHomePage(){
   SCORE_ANALYZE_PROPS.forEach(prop => {
     Object.assign(d, {[prop]: $(`#score-${prop}`).val().trim()})
   })
+  __out('Score::getAllValuesInHomePage')
   return d
 }
 
@@ -52,12 +54,13 @@ static initialize(){
 }
 
 static initializeWithData(ret){
-  console.log("ret:", ret)
+  __in('Score::initializeWithData', {data: ret})
   CURRENT_ANALYSE = ret.data.folder_name
   $('#analyse_folder_name').val(CURRENT_ANALYSE)
   this.current = new Score(ret.data)
   this.current.dispatchData()
   UI.setInterface()
+  __out('Score::initializeWithData')
 }
 
 /** ---------------------------------------------------------------------
@@ -90,9 +93,10 @@ save(callback){
 * Cette méthode est déclenchée quand on active le panneau d'analyse
 ***/
 startAutosave(){
-  console.log("-> Score#startAutosave")
+  __in("Score#startAutosave")
   this.saveTimer = setInterval(this.autosave.bind(this), 10 * 1000)
   message("Sauvegarde automatique enclenchée.")
+  __out("Score#startAutosave")
 }
 /**
 * Pour arrêter la sauvegarde automatique des données d'analyse,
@@ -100,11 +104,12 @@ startAutosave(){
 * Cette méthode est déclenchée quand on quitte le panneau de sauvegarde.
 ***/
 stopAutosave(){
-  console.log("-> Score#stopAutosave")
+  __in("Score#stopAutosave")
   clearInterval(this.saveTimer)
   delete this.saveTimer
   this.saveTimer = null
   message("Sauvegarde automatique arrêtée.")
+  __out("Score#stopAutosave")
 }
 
 /**
@@ -114,11 +119,13 @@ stopAutosave(){
 * qui ont été modifiés.
 ***/
 autosave(){
+  __in("Score#autosave")
   const my = this
   if ( ASystem.items ) {
     Object.values(ASystem.items).forEach(system => system.modified && system.save() )
     my.modified = false
   }
+  __out("Score#autosave")
 }
 
 /**
@@ -193,7 +200,6 @@ getData(){
   Ajax.send('get_data.rb').then(ret => {
     if ( ret.error ) { ret.data = {} }
     this._data = ret.data
-    console.debug("Data score: ", this.data)
     this.preferences.data = ret.data.preferences
     // console.debug("this.preferences.data:", this.preferences.data)
   })
@@ -225,8 +231,7 @@ sur la table d'analyse
 *
 ***/
 draw(){
-  console.debug("-> Score#draw / isDrawn est %s", this.isDrawn?'true':'false')
-  console.debug("   Score#score_is_prepared ? %s", this.score_is_prepared?'oui':'non')
+  __in("Score#draw", {isDraw: this.isDraw, score_is_prepared:this.score_is_prepared})
   const loadingMethod = this.score_is_prepared
                     ? this.loadSystemsPrepared.bind(this)
                     : this.loadSystemsNonPrepared.bind(this) ;
@@ -247,6 +252,7 @@ draw(){
 * par défaut)
 ***/
 setNumerosFirstMesures(){
+  __in('Score#setNumerosFirstMesures')
   if ( this.preferences.binary('score.numero_mesure')) {
     var num = 1
     let showAlert = false
@@ -269,6 +275,7 @@ setNumerosFirstMesures(){
       $(system.obj).find('.numero-mesure').addClass('hidden')
     })
   }
+  __out('Score#setNumerosFirstMesures')
 }
 
 /**
@@ -278,7 +285,7 @@ setNumerosFirstMesures(){
 * @note   Dans tous les cas (partition préparée ou non), il faut le faire
 ***/
 instanciateAndPoseAllSystems(ret){
-  console.log("-> instanciateAndPoseAllSystems")
+  __in('Score#instanciateAndPoseAllSystems')
   const my = this
   const dataSystems = ret.data
   return new Promise((ok,ko) => {
@@ -298,16 +305,15 @@ instanciateAndPoseAllSystems(ret){
 * position et on les dessine, c'est-à-dire qu'on crée leurs objets
 ***/
 positionneAndDrawSystems(){
-  console.debug("-> positionneAndDrawSystems")
+  __in('Score#positionneAndDrawSystems')
   if ( ! this.score_is_prepared ) {
-    console.log("On doit calculer la position de tous les systèmes.")
     this.calcPositionAllSystems()
   }
   this.systems.forEach(system => {
     system.positionne()
     system.draw()
   })
-  console.debug("<- positionneAndDrawSystems")
+  __out('Score#positionneAndDrawSystems')
 }
 
 /**
@@ -317,29 +323,31 @@ positionneAndDrawSystems(){
 * au niveau des lignes à prendre en compte
 ***/
 repositionneAllSystems(){
-  console.debug("Repositionnement de tous les systèmes.")
+  __in('Score#repositionneAllSystems')
   this.calcPositionAllSystems()
   this.systems.forEach(system => system.repositionne())
+  __out('Score#repositionneAllSystems')
 }
 
 calcPositionAllSystems(){
-  console.debug("Calcul de la position de chaque système…")
+  __in('Score#calcPositionAllSystems')
   for(var isys in this.systems){
     const system = this.systems[isys]
     if ( isys > 0 ) system.prevSystem = this.systems[isys - 1]
     TableAnalyse.calcSystemPos(system)
     system.modified = true
   }
+  __out('Score#calcPositionAllSystems')
 }
 
 /**
 * Toutes les secondes on va checker pour voir si les images sont chargées
 ***/
 checkImagesLoading(ok){
+  __in('Score#checkImagesLoading')
   if ( ! this.loadingTimer ) {
     this.loadingTimer = setInterval(this.checkImagesLoading.bind(this, ok), 500)
   } else {
-    console.log("Vérification du chargement des images…")
     var imagesLoading = false // un a priori
     this.systems.forEach( system => {
       if ( imagesLoading ) return ; // pour accélérer
@@ -349,48 +357,18 @@ checkImagesLoading(ok){
       // Les images sont toutes chargées
       clearInterval(this.loadingTimer)
       this.loadingTimer = null
-      console.log("Les images sont toutes chargées.")
-      console.log("<- instanciateAndPoseAllSystems")//parce que ça met fin à ça
+      __add("Images toutes chargées", "Score#checkImagesLoading")
+      __out("Score#instanciateAndPoseAllSystems")//parce que ça met fin à ça
       ok()
     }
   }
 }
 
-//
-// /**
-// * Cette méthode calcule la position des systèmes avant de les afficher
-// * Elle fonctionne en deux temps :
-// *   Temps #1 :  Affichage de tous les systèmes dans la page (pour pouvoir
-// *               mesurer leur hauteur sur la table d'analyse)
-// *   Temps #2 :  Calcul des valeurs minimales
-// ***/
-// calculateDataSystems(data){
-//   console.log("-> Score#calculateDataSystems")
-//   return this.afficheAllSystems().then( data => {
-//     return new Promise((ok,ko) => {
-//       const dataSystems = []
-//       const data_pages = data.data_pages
-//       var index = 0
-//       for ( var ipage in data_pages ){
-//         const dpage = data_pages[ipage]
-//         const data_cutlines = dpage.cutlines
-//         // console.log("data_cutlines:", data_cutlines)
-//         for ( var isys = 0, len = data_cutlines.length - 1; isys < len ; ++ isys  ) {
-//           const dcut = data_cutlines[isys]
-//           const prevSystemData = isys > 0 ? dataSystems[isys - 1] : null
-//           Object.assign(dcut, {score: this, ipage: ipage, isystem: (1 + Number(isys)), index: index++, prevSystemData: prevSystemData})
-//           dataSystems.push(TableAnalyse.calcSystemPos(dcut))
-//         }
-//       }
-//       ok()
-//     })
-//   })
-// }
-
 finDrawing(ret){
+  __in("Score#finDrawing")
   this.setNumerosFirstMesures()
-  console.debug("<- Score.draw")
   this.isDrawn = true
+  __out("Score#finDrawing")
 }
 
 /**
@@ -400,6 +378,7 @@ finDrawing(ret){
 * que les systèmes contiendront lorsqu'ils seront préparés)
 ***/
 loadSystemsNonPrepared(){
+  __in("Score#loadSystemsNonPrepared")
   return Ajax.send('get_data_cutlines.rb')
 }
 
@@ -407,6 +386,7 @@ loadSystemsNonPrepared(){
 * Si la partition est préparée, on charge les données complètes des systèmes
 ***/
 loadSystemsPrepared(){
+  __in("Score#loadSystemsPrepared")
   return Ajax.send('load_all_systems.rb')
 }
 

@@ -210,6 +210,117 @@ Si `<message>` est un objet qui répond à `message`, l’erreur est écrite en 
 
 
 
+---
+
+
+
+## Smart Debug
+
+C’est un système de débuggage intelligent. En fait, il est très simple à la base et fonctionne sur deux principes :
+
+* chaque passage dans une méthode peut être enregistré dans le suivi, avec ses données intéressantes/sensibles
+* à tout moment dans une méthode on peut sortir ce suivi.
+
+Imaginons qu’un bouton permette de sauver le document courant par Ajax. Le programme ressemble à ça :
+
+~~~javascript
+function onClickButton(ev){
+  saveDocument()
+}
+
+function saveDocument(){
+	var text = getDocument()
+  Ajax.send("save_document.rb", {document: text})
+  .then(window.displayRetour.bind(window))
+}
+
+function displayRetour(retour){
+  message(retour.message)
+}
+
+function getDocument(){
+  return $('#document').val()
+}
+~~~
+
+
+
+Si on veut suivre cette opération, on ajoute ce code :
+
+~~~javascript
+function onClickButton(ev){
+  __start("Un clic sur le bouton “Enregistrer le document”") // <======== init
+  __in('onClickButton', {x: ev.clientX}) // pour conserver la valeur x du clic
+  var res = saveDocument()
+  __out('onClickButton', {res: res})
+}
+
+function saveDocument(){
+  __in('saveDocument')
+	var text = getDocument()
+  Ajax.send("save_document.rb", {document: text})
+  .then(window.displayRetour.bind(window))
+  __out('saveDocument', {text: text})
+  return true
+}
+
+function displayRetour(retour){
+  __in('displayRetour', arguments)
+  message(retour.message)
+  __out('displayRetour')
+  __end("C'est la fin du click sur le bouton “Enregistrer le document”")
+}
+
+function getDocument(){
+  __in('getDocument')
+  var text = $('#document').val()
+  __out('getDocument', {text: text})
+  return text
+}
+~~~
+
+
+
+Si maintenant on veut obtenir l’état du programme dans une des méthodes données, il suffit d’utiliser la méthode `__d` avec les options voulues (cf. ci-dessous). Par exemple :
+
+~~~javascript
+function saveDocument(){
+  __in('saveDocument')
+	var text = getDocument()
+  __d() // <============== écrira tout le suivi en console
+  Ajax.send("save_document.rb", {document: text})
+  .then(window.displayRetour.bind(window))
+  __out('saveDocument', {text: text})
+  return true
+}
+~~~
+
+
+
+Concrètement, pour tester efficacement le problème en cas d'erreur, il suffit de placer ce `__d()` juste avant la ligne où cette erreur se produit.
+
+> Noter que si le module `ErrorHandling` est utilisé — qui définit `window.onerror`, la méthode `__d()` est appelée automatiquement, donc on peut suivre le programme jusqu’à cette erreur.
+>
+> Mais pour un lecture optimale, il faut bien placer les `__start` et les `__end` qui délimitent des segments de programme. Sinon, le backtrace contiendra d’autres segments que le segment seul ayant provoqué l’erreur.
+
+
+
+La méthode `__d` peut recevoir en premier argument les options, à savoir une table (`Object`) contenant :
+
+~~~
+no_out			Si true, on ne marque pas les sorties de méthode (les "__out")
+no_in				Si true, on ne renvoie pas les entrées dans les méthodes (les "__in")
+no_args			Si true, on ne marque pas les arguments passés (deuxième paramètres de __in et __out)
+~~~
+
+
+
+
+
+---
+
+
+
 ## Méthodes pratiques
 
 Ces méthodes sont définies dans `./js/Handies.js`.

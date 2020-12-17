@@ -51,6 +51,8 @@ constructor(data) {
   this.constructor.add(this)
 }
 
+get ref(){return this._ref || (this._ref = `ASystem[minid=${this.minid}]`)}
+
 /**
 * Méthode de sauvegarde du system
 *
@@ -59,10 +61,11 @@ constructor(data) {
 ***/
 save(){
   const my = this
-  console.info("Sauvegarde du système %s…", this.minid)
+  __in(`${this.ref}#save`)
   Ajax.send('save_system.rb', {data: this.data2save}).then(ret => {
     console.info("Système %s sauvé avec succès.", this.minid)
     my.modified = false
+    __out(`${this.ref}#save`, {modified: this.modified})
   })
 }
 
@@ -80,7 +83,7 @@ get modified(){ return this._modified }
 set modified(v){
   this._modified = v
   if ( v == true ) {
-    console.log("Système %s marqué modifié", this.minid)
+    __add(`${this.ref} marqué modifié`)
     Score.current.modified = v ;
   }
 }
@@ -116,7 +119,7 @@ onClickNumeroMesure(ev){
 * On en profite aussi pour les ajouter à la liste this.aobjets
 ***/
 draw(){
-  console.debug("Dessin du système %s, avec les données objets :", this.minid, this.data.aobjects)
+  __in(`${this.ref}#draw`, {aobjets: this.data.aobjects})
   if ( !this.data.aobjects || this.data.aobjects.length == 0) return ;
   this.data.aobjects.forEach(dobjet => {
     // Object.assign(dobjet, {})
@@ -131,6 +134,7 @@ draw(){
       AObject.lastId = dobjet.id
     }
   })
+  __out(`${this.ref}#draw`)
 }
 
 /**
@@ -259,12 +263,6 @@ onWantToMoveSystem(ev){
   message("Tu peux déplacer le système.")
 }
 
-
-  /**
-  * Position des lignes du système
-  * Chaque propriété retourne la position en pixel
-  ***/
-
 /**
 * Retourne le top de l'objet d'analyse dans le conteneur du système en
 * fonction de son type +otype+.
@@ -280,14 +278,13 @@ onWantToMoveSystem(ev){
 *           commençant à 1 (pour 'pedale')
 ***/
 topPerTypeObjet(otype, line){
-  console.debug("-> topPerTypeObjet(otype=%s, line=%s)", otype, line)
+  __in(`${this.ref}#topPerTypeObjet`, {otype:otype, line:line})
   if ( undefined != line ) { otype = LINES_POSE[line - 1] }
-  console.debug("[topPerTypeObjet] otype = %s", otype)
   let tpto = Score.current.preferences.ligne(otype)
-  console.debug("[topPerTypeObjet] tpto = %i", tpto)
   // Si c'est une valeur positive, donc en dessous du système, il faut
   // ajouter la hauteur du système pour connaitre son vrai 'top'
   if ( tpto >= 0 ) tpto += this.rHeight
+  __out(`${this.ref}#topPerTypeObjet`, {tpto:tpto})
   return tpto
 }
 
