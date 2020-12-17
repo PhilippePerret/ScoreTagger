@@ -89,24 +89,10 @@ showSlowly(){
 get data2save(){
   return {
       i: this.id || this.constructor.newId()
-      // , system:     this.system.minid
     , s: this.system.minid
-    // // , top:        this.top
-    // NON : maintenant, on ne mémorise plus la valeur top de l'objet, car
-    // il doit se placer sur la "ligne de pose" normale pour son otype ou
-    // celle rectifiée définie dans this.data.line
-    // , t: this.top
-    // , line:       this.data.line // si on a changé l'objet de ligne de pose
-    , p: this.data.line // si on a changé l'objet de ligne de pose
-    // , left:       this.data.left
+    , p: this.data.line // ligne de pose (si changement)
     , l: this.data.left
-    // , width:      this.data.width
     , w: this.data.width
-    // NON :  comme pour le top ci-dessus, on essaie d'enregistrer le minium
-    //        de valeur pour utiliser au maximum les valeurs conventionnelles.
-    // // , height:     this.data.height
-    // , h: this.data.height
-    // , objetProps: this.objetProps
     , o: this.objetProps
   }
 }
@@ -176,7 +162,7 @@ build(){
     , left: left
     , zoom: `${TableAnalyse.ScoreScale}%;`
   }
-  this.data.width   && Object.assign(dobj, {width: this.data.width})
+  this.data.width && Object.assign(dobj, {width: this.data.width})
 
   div.setAttribute('style', px(dobj, true))
 
@@ -251,10 +237,10 @@ onMouseUp(ev){
 * de pose, exceptionnellement
 * +which+ 1: ligne supérieure, -1: ligne inférieur
 ***/
-onChangeLignePose(which, ev){
-  console.debug("-> onChangeLignePose(which=%i)", which)
-  if ( !this.data.line ) this.data.line = LINES_POSE.indexOf(this.otype) + 1
-  this.data.line += which
+onChangeLignePose(newLignePose, ev){
+  console.debug("-> onChangeLignePose(newLignePose=%i)", newLignePose)
+  const naturalLignePose = LINES_POSE.indexOf(this.otype)
+  this.data.line = newLignePose != naturalLignePose ? newLignePose : null
   console.debug("Nouvelle ligne de pose : ", this.data.line, LINES_POSE[this.data.line])
   this.repositionne()
 }

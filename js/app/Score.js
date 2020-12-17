@@ -299,7 +299,7 @@ instanciateAndPoseAllSystems(ret){
 ***/
 positionneAndDrawSystems(){
   console.debug("-> positionneAndDrawSystems")
-  if ( true /*!this.score_is_prepared*/ ) {
+  if ( ! this.score_is_prepared ) {
     console.log("On doit calculer la position de tous les systèmes.")
     this.calcPositionAllSystems()
   }
@@ -356,36 +356,36 @@ checkImagesLoading(ok){
   }
 }
 
-
-/**
-* Cette méthode calcule la position des systèmes avant de les afficher
-* Elle fonctionne en deux temps :
-*   Temps #1 :  Affichage de tous les systèmes dans la page (pour pouvoir
-*               mesurer leur hauteur sur la table d'analyse)
-*   Temps #2 :  Calcul des valeurs minimales
-***/
-calculateDataSystems(data){
-  console.log("-> Score#calculateDataSystems")
-  return this.afficheAllSystems().then( data => {
-    return new Promise((ok,ko) => {
-      const dataSystems = []
-      const data_pages = data.data_pages
-      var index = 0
-      for ( var ipage in data_pages ){
-        const dpage = data_pages[ipage]
-        const data_cutlines = dpage.cutlines
-        // console.log("data_cutlines:", data_cutlines)
-        for ( var isys = 0, len = data_cutlines.length - 1; isys < len ; ++ isys  ) {
-          const dcut = data_cutlines[isys]
-          const prevSystemData = isys > 0 ? dataSystems[isys - 1] : null
-          Object.assign(dcut, {score: this, ipage: ipage, isystem: (1 + Number(isys)), index: index++, prevSystemData: prevSystemData})
-          dataSystems.push(TableAnalyse.calcSystemPos(dcut))
-        }
-      }
-      ok()
-    })
-  })
-}
+//
+// /**
+// * Cette méthode calcule la position des systèmes avant de les afficher
+// * Elle fonctionne en deux temps :
+// *   Temps #1 :  Affichage de tous les systèmes dans la page (pour pouvoir
+// *               mesurer leur hauteur sur la table d'analyse)
+// *   Temps #2 :  Calcul des valeurs minimales
+// ***/
+// calculateDataSystems(data){
+//   console.log("-> Score#calculateDataSystems")
+//   return this.afficheAllSystems().then( data => {
+//     return new Promise((ok,ko) => {
+//       const dataSystems = []
+//       const data_pages = data.data_pages
+//       var index = 0
+//       for ( var ipage in data_pages ){
+//         const dpage = data_pages[ipage]
+//         const data_cutlines = dpage.cutlines
+//         // console.log("data_cutlines:", data_cutlines)
+//         for ( var isys = 0, len = data_cutlines.length - 1; isys < len ; ++ isys  ) {
+//           const dcut = data_cutlines[isys]
+//           const prevSystemData = isys > 0 ? dataSystems[isys - 1] : null
+//           Object.assign(dcut, {score: this, ipage: ipage, isystem: (1 + Number(isys)), index: index++, prevSystemData: prevSystemData})
+//           dataSystems.push(TableAnalyse.calcSystemPos(dcut))
+//         }
+//       }
+//       ok()
+//     })
+//   })
+// }
 
 finDrawing(ret){
   this.setNumerosFirstMesures()

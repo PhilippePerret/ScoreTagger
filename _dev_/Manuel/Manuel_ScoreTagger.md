@@ -2,6 +2,147 @@
 
 
 
+## Synopsis
+
+
+
+### Synopsis d’affichage de l'analyse
+
+
+
+~~~flow
+st=>start: Démarrage
+op=>operation: Click sur l'onglet "Analyse":>#onglet_analyse
+sub1=>subroutine: PanneauAnalyse#onActivate
+condPrepared=>condition: Panneau préparé ?
+subPrepa=>operation: Préparation du panneau:>#preparation_panneau_analyse  
+affichage=>inputoutput: Affichage de l'analyse:>#affichage_analyse
+condScorePrepared=>condition: Partition préparée ?
+drawParition=>operation: Dessin de la partition:>#dessin_partition
+condAutosave=>condition: Autosave?
+startAutosave=>operation: Mise en route de 
+la sauvegarde
+automatique
+e=>end: Attente utilisateur
+
+st->op->sub1->condPrepared
+condPrepared(no, left)->subPrepa->condScorePrepared
+condPrepared(yes)->condScorePrepared
+condScorePrepared(yes)->condAutosave
+condScorePrepared(no, left)->drawParition->condAutosave
+condAutosave(no)->affichage
+condAutosave(yes)->startAutosave->affichage
+affichage->e
+~~~
+
+<a id="preparation_panneau_analyse"></a>
+
+### Préparation du panneau d'analyse
+
+~~~flow
+go=>start: Préparation du panneau
+prepare=>subroutine: PanneauAnalyse#prepare
+inittoolbox=>subroutine: AObjectToolbox::init() 
+(initialisation de la boite d'outils)
+observation=>subroutine: PanneauAnalyse#observe
+(observation du panneau)
+e=>end: Le panneau est préparé
+
+go->prepare->inittoolbox->observation->e
+~~~
+
+<a id="dessin_partition"></a>
+
+### Dessin de la partition
+
+
+~~~flow
+l10n process!
+go=>start: Dessin de 
+la partition
+e=>end: La partition
+est dessinée
+reset=>operation: Réinitialisation
+resetall=>subroutine: TableAnalyse#resetAll
+(Réinitialisation complète)
+- Nettoie le container des systèmes
+- Initialise les variables courantes
+drawfirstpage=>inputoutput: Dessin first page
+subfirstpage=>subroutine: TableAnalyse#drawFirstPage
+- Écriture des titres, compositeur, etc.
+- Positionnement des titres, compositeur, etc.
+score=>inputoutput: Dessin du score complet:>#dessin_score_complet
+drawscore=>subroutine: Score.draw()
+subpagelines=>subroutine: TableAnalyse#drawPageDelimitors
+pagelines=>inputoutput: Délimiteurs de pages
+condTonal=>condition: Aperçu tonal ?
+(préférences)
+drawApercuTonal=>inputoutput: Aperçu tonal
+
+go->resetall
+resetall->reset->subfirstpage->drawfirstpage
+drawfirstpage->drawscore->score->subpagelines->pagelines
+pagelines->condTonal
+condTonal(yes)->drawApercuTonal->e
+condTonal(no)->e
+~~~
+
+<a id="dessin_score_complet"></a>
+
+### Dessin du score complet
+
+C'est la méthode `Score#draw` qui s'occupe du dessin du score complet.
+
+~~~flow
+l10n process!
+go=>start: Dessin complet du score
+drawmeth=>subroutine: Score#draw()
+condSystPrepared(align-next=no)=>condition: Les systèmes 
+sont-ils 
+préparés
+opSystPrepared=>operation: Chargement des systèmes préparés
+opSysNotPrepared=>operation: Chargement des systèmes non préparés
+subPoseSyst=>subroutine: Score#instanciateAndPoseAllSystems()
+poseSyst=>inputoutput: - Instanciation des systèmes
+- Pose des systèmes dans le container
+attenteImages=>operation: Attente du chargement
+des images
+condImageLoaded=>condition: Images chargées ?
+subPositionne=>subroutine: Score#positionneAndDrawSystems()
+posNdrawSyst=>inputoutput: - Positionnement des systèmes
+- Objets d'analyse sur les systèmes
+subfindraw=>subroutine: Score#finDrawing()
+endDrawing=>inputoutput: Fin du dessin
+- Pose des numéros de mesure
+- Marquer la partition dessinée
+calculPositions=>subroutine: Score#calcPositionAllSystems()
+(calcul des positions de tous les systèmes)
+en=>end: Score affiché
+
+go->drawmeth->condSystPrepared
+condSystPrepared(yes)->opSystPrepared->subPoseSyst
+condSystPrepared(no)->opSysNotPrepared->subPoseSyst
+subPoseSyst->poseSyst->attenteImages->condImageLoaded
+condImageLoaded(yes)->subPositionne
+condImageLoaded(no)->attenteImages
+subPositionne->condSystPrepared
+condSystPrepared(no)->calculPositions->posNdrawSyst
+condSystPrepared(yes)->posNdrawSyst
+posNdrawSyst->subfindraw->endDrawing->en
+~~~
+
+
+
+<a id="affichage_analyse"></a>
+
+### Affichage de l'analyse
+
+
+
+---
+
+
+
 ## Hiérarchie des éléments de programmation
 
 ~~~tex
@@ -74,7 +215,7 @@ I    V							Harmonie							ligne_harmony
 ___|CP							Cadence								ligne_cadence
 
 	|_________|				Pédale / Seg. inf.		ligne_pedale
-						
+
 ~~~
 
 
@@ -88,6 +229,25 @@ h = <system>.top - Score.current.preferences.lignes.ligne_modulation
 ~~~
 
 
+
+---
+
+## Onglets
+
+<a id="onglet_home"></a>
+
+### Onglet Home
+
+Onglet principal pour définir la partition étudiée.
+
+
+<a id="onglet_analyse"></a>
+
+### Onglet analyse
+
+Comme son nom l'indique, il permet de procéder à l'analyse de la partition définie dans l'[onglet Home][]
+
+---
 
 
 
@@ -333,7 +493,7 @@ Mais on peut définir les choses encore plus précisément en indiquant les seul
 
 Par exemple, avec :
 
-~~~javascript
+​~~~javascript
 visible: ['note',   ['alteration',['n','b','d']],   'nature']
 ~~~
 
@@ -429,3 +589,6 @@ Pour faciliter la gestion de l’aspect de l’analyse, des *lignes de pose* per
 [objets d’analyse]: #objetsanalyse
 [objet d’analyse]: #objetsanalyse
 [ligne de pose]: #lignepose
+
+[onglet Home]: #onglet_home
+[onglet Analyse]: #onglet_analyse

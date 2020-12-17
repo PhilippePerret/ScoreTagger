@@ -15,6 +15,7 @@ class PanneauAnalyse extends Panneau {
 ***/
 resetAll(){
   $(this.systemsContainer).html('')
+  this.currentNote = 'c'
 }
 
 onActivate(){
