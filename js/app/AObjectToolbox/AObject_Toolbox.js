@@ -65,9 +65,6 @@ static get OverviewContainer(){
 * Cette méthode est utilisée aussi bien pour l'aperçu que pour la construction
 * de l'objet sur la partition.
 *
-* TODO Dans la version finale, faire que chaque type construise lui-même
-* son texte final. Il y aura moins de conditions ici.
-*
 * +objProps+  Propriétés pour construire l'objet
 ***/
 static finalTextFor(objProps){
@@ -82,14 +79,18 @@ static finalTextFor(objProps){
 * qui permettent de définir la largeur, la position x, la ligne de pose, etc.
 ***/
 static editAObject(aobjet){
+  __in('AObjectToolbox::editAObject', {objet: aobjet})
   this.editedObject = aobjet
   this.setInterfaceForAObject(aobjet)
+  __out('AObjectToolbox::editAObject')
 }
 
 static uneditAObject(aobjet){
+  __in('AObjectToolbox::uneditAObject', {objet: aobjet})
   this.setInterfaceForType('chord')
   $(this.container).find('#edited-aobject-id').html('')
   this.editedObject = null
+  __out('AObjectToolbox::uneditAObject')
 }
 
 // /Fin des méthodes publiques
@@ -110,10 +111,12 @@ static getValues(){
 * Méthode qui prépare l'interface pour l'objet +aobjet+
 ***/
 static setInterfaceForAObject(aobjet){
+  __in('AObjectToolbox::setInterfaceForAObject', {objet:aobjet})
   // Indiquer visuellement l'objet édité
   $(this.container).find('#edited-aobject-id').html(aobjet.id)
   // Préparer les boutons
   this.setInterfaceForType(aobjet.otype, aobjet)
+  __out('AObjectToolbox::setInterfaceForAObject')
 }
 
 /**
@@ -121,10 +124,12 @@ static setInterfaceForAObject(aobjet){
 * valeurs de l'objet +oData+
 ***/
 static setInterfaceForType(otype, aobjet){
+  __in('AObjectToolbox::setInterfaceForType', {otype:otype, objet:aobjet})
   // console.debug("-> setInterfaceForType(otype='%s', aobjet=)", otype, aobjet)
   this.OTypeButtons.setSelected(ButtonAOTB.get(`otype-${otype}`))
   MainGButtonAOTB.get(otype).configureToolbox(aobjet && aobjet.objetProps)
   this.editObjectCoordonnates(aobjet) // oui, même si aobjet n'est pas défini
+  __out('AObjectToolbox::setInterfaceForType')
 }
 
 /**
@@ -253,7 +258,9 @@ static bGroup(gtype) { return this.BGroups[gtype] }
 * Observation de la boite d'outils en général
 ***/
 static observe(){
+  __in('AObjectToolbox::observe')
   $(this.menuLignePose).on('change', this.onChangeLignePose.bind(this))
+  __out('AObjectToolbox::observe')
 }
 
 /** ---------------------------------------------------------------------

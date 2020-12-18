@@ -103,7 +103,7 @@ select(vbutton){
 ***/
 build(){
   const my = this
-  __in(`${my.ref}#build`)
+  __in(`${my.ref}#build`, {skip: true})
 
   // On place le conteneur du groupe de bouton dans l'interface (car on en
   // a besoin pour placer les boutons)
@@ -115,6 +115,7 @@ build(){
     const but = new ButtonAOTB(my, my.data.items[btnId])
     but.build_and_observe()
   })
+  __out(`${my.ref}#build`, {skip: true})
 }
 
 /**

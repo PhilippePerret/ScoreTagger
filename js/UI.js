@@ -5,11 +5,25 @@ const TABS = ['home','crop','analyse','export'];
 class UI {
 
 static init(){
-  this.prepare()
-  this.observe()
+  return new Promise((ok,ko)=>{
+    ok()
+  })
 }
 
-static prepare(){
+/**
+* Insertion des éléments HTML (briques)
+***/
+static insertHTMLElements(){
+  __in("UI::insertHTMLElements")
+  return UI.insert('panneau-home','div#panneau-home')
+  .then(UI.insert.bind(UI, 'form_data_analyse', 'div#form_data_analyse'))
+  .then(UI.insert.bind(UI, 'form_infos_score_analyse', 'div#form_infos_score_analyse'))
+  .then(UI.insert.bind(UI, 'form_preferences', 'div#form_preferences'))
+  .then(UI.insert.bind(UI,'panneau-crop', 'div#panneau-crop'))
+  .then(UI.insert.bind(UI,'panneau-analyse', 'div#panneau-analyse'))
+  .then(UI.insert.bind(UI,'AObject_Toolbox', 'div#container-aobject-toolbox'))
+  .then(UI.insert.bind(UI,'panneau-export', 'div#panneau-export'))
+  .then(ASync_out("UI::insertHTMLElements"))
 }
 
 /**
@@ -18,19 +32,26 @@ static prepare(){
 * d'analyse n'est choisi.
 ***/
 static setInterface(){
-  const noOnglets = (!Score.current) || (Score.current.folder_name == '') || (Score.current.score_ini_path == '')
-  if ( noOnglets ) {
-    DGet('button#btn-panneau-crop').disabled = true
-    DGet('button#btn-panneau-analyse').disabled = true
-    DGet('button#btn-panneau-export').disabled = true
-  }
+  __in("UI::setInterface")
+  return new Promise((ok,ko) => {
+    const noOnglets = (!Score.current) || (Score.current.folder_name == '') || (Score.current.score_ini_path == '')
+    if ( noOnglets ) {
+      DGet('button#btn-panneau-crop').disabled = true
+      DGet('button#btn-panneau-analyse').disabled = true
+      DGet('button#btn-panneau-export').disabled = true
+    }
+    __out("UI::setInterface")
+    ok({noOnglets: noOnglets})
+  })
 }
 
-  static observe(){
-    TABS.forEach(tab => Panneau.get(tab))
-    // On observe les boutons d'onglet
-    // $('button.tabbutton').on('click', Panneau.onClickOnglet.bind(Panneau))
-  }
+static observe(){
+  __in("UI::observe")
+  return new Promise((ok,ko)=>{
+    __out("UI::observe")
+    ok()
+  })
+}
 
   // Pour faire des tests en ruby
   static run_script_essai(){

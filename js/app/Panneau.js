@@ -13,15 +13,15 @@ class Panneau {
   *
 *** --------------------------------------------------------------------- */
 static init(){
+  __in('Panneau::init')
   const my = this
-  // return new Promise((ok,ko) => {
-    PANNEAU_NAMES.forEach(pName => my.get(pName).observe())
-    const Prefs = Score.current.preferences
-    const panneau = Prefs.binary('startup.analyse_on_startup') ? 'analyse' : 'home'
-    my.current = my.get(panneau)
-    my.current.open()
-    // ok()
-  // })
+  PANNEAU_NAMES.forEach(pName => my.get(pName).observe())
+  const Prefs = Score.current.preferences
+  const panneau = Prefs.binary('startup.analyse_on_startup') ? 'analyse' : 'home'
+  __add(`Panneau à afficher (préférences) : ${panneau}`, 'Panneau::init')
+  my.current = my.get(panneau)
+  my.current.open()
+  __out('Panneau::init')
 }
 
 static get(tabName){
@@ -54,6 +54,8 @@ static setCurrent(panneau){
   this.current.open()
   __out(`Panneau::setCurrent(${panneau.name})`)
 }
+// alias de setCurrent
+static show(panneau){return this.setCurrent(panneau)}
 
 static onClickOnglet(ev){
   const ongletId = $(ev.target).data('id')
@@ -86,7 +88,9 @@ static onClickOnglet(ev){
   }
 
   observe(){
+    __in(`${this.ref}#observe (super)`)
     $(`aside#tabs-buttons button#btn-panneau-${this.name}.tabbutton`).on('click', this.onClick.bind(this))
+    __out(`${this.ref}#observe (super)`)
   }
 
   onClick(ev){

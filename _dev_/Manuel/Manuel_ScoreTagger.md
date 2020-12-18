@@ -2,6 +2,65 @@
 
 
 
+## Réflexion
+
+Et si on concevait le programme en concevant d’un côté des fonctions très explicites qui seraient forcément au niveau `window` :
+
+~~~javascript
+function demarreApplication(){
+  //...
+}
+~~~
+
+… et qu’à l’intérieur on définisse très exactement la suite des opérations qui devront être exécutées séquentiellement :
+
+~~~javascript
+function demarreApplication(){
+  UI.prepare()
+  Onglet.choisir()
+  Score.affiche()
+  //...
+}
+~~~
+
+Pour ne pas être bloqué par l’asynchronicité, on utiliserait toujours, par défaut, des promesses. Donc on aurait :
+
+~~~javascript
+function async demarreApplication(){
+  await UI.prepare()
+  await Onglet.choisir()
+  await Score.affiche()
+}
+~~~
+
+… ou alors on partirait du principe qu’une méthode précédente peut toujours envoyer des données à la méthode suivante et donc :
+
+~~~javascript
+function demarreApplication(){
+  UI.prepare()
+  .then(Onglet.choisir.bind(Onglet))
+  .then(Score.afficher.bind(Score))
+  .catch(window.erreur.bind(window))
+}
+~~~
+
+… avec la possibilité d’avoir par exemple :
+
+~~~javascript
+class UI {
+  static prepare(){
+    return new Promise((ok,ko) => {
+      //... exécution du code
+      ok({<data à retourner à Onglet.choisir>})
+    })
+  }
+}
+~~~
+
+
+
+
+
 ## Synopsis
 
 
@@ -493,7 +552,7 @@ Mais on peut définir les choses encore plus précisément en indiquant les seul
 
 Par exemple, avec :
 
-​~~~javascript
+~~~javascript
 visible: ['note',   ['alteration',['n','b','d']],   'nature']
 ~~~
 
@@ -511,7 +570,7 @@ visible: ['note',   ['alteration',['n','b','d'], 'b'],   'nature']
 
 Si on doit garder tous les boutons et définir celui qui doit être sélectionné (si ce n’est pas celui par défaut), alors on met le deuxième élément à `null` :
 
-~~~javascript
+​~~~javascript
 visible: ['note',   ['alteration', null, 'b'],   'nature']
 ~~~
 

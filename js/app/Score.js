@@ -45,21 +45,28 @@ static getAllValuesInHomePage(){
 ***/
 static initialize(){
   const my = this
+  __in("Score::initialize")
   if (CURRENT_ANALYSE){
+    __add("CURRENT_ANALYSE = " + CURRENT_ANALYSE)
     return Ajax.send('get_data.rb')
     .then(this.initializeWithData.bind(this))
+    .then(ASync_out("Score::initialize"))
   } else {
-    return new Promise((ok,ko) => {ok()})
+    return new Promise((ok,ko) => {
+      __add("CURRENT_ANALYSE est indéfini")
+      Panneau.show('home')
+      __out("Score::initialize")
+      ok()
+    })
   }
 }
 
 static initializeWithData(ret){
-  __in('Score::initializeWithData', {data: ret})
+  __in('Score::initializeWithData', {data: ret.data})
   CURRENT_ANALYSE = ret.data.folder_name
   $('#analyse_folder_name').val(CURRENT_ANALYSE)
   this.current = new Score(ret.data)
   this.current.dispatchData()
-  UI.setInterface()
   __out('Score::initializeWithData')
 }
 

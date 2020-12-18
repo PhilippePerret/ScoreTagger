@@ -182,6 +182,8 @@ end
 
 ## Suivi du programme
 
+OBSOLÈTE. Utiliser plutôt [SmartDebug](#smartdebug)
+
 On peut utiliser la méthode `suivi(<message>, <niveau debug>)` pour afficher des messages de suivi en console en fonction du niveau de débuggage.
 
 Ce niveau de débuggage se définit dans le fichier `js/_config.js` par la constante `DEBUG_LEVEL`.
@@ -212,14 +214,34 @@ Si `<message>` est un objet qui répond à `message`, l’erreur est écrite en 
 
 ---
 
-
+<a id="smartdebug"></a>
 
 ## Smart Debug
 
 C’est un système de débuggage intelligent. En fait, il est très simple à la base et fonctionne sur deux principes :
 
-* chaque passage dans une méthode peut être enregistré dans le suivi, avec ses données intéressantes/sensibles
+* chaque passage dans une méthode peut être enregistré dans la trace, avec ses données intéressantes/sensibles
 * à tout moment dans une méthode on peut sortir ce suivi.
+
+#### Lexique
+
+Avant toute chose, un lexique des termes employés.
+
+<dl markdown="1">
+<dt>trace</dt>
+	<dd>On appelle "trace" tous les messages qui sont enregistrés dans SmartDebug, principalement les entrées et sorties de méthode, avec des arguments ou des valeurs.</dd>
+  <dd>On peut aussi l'appeler "collecteur de trace".</dd>
+<dt>Ligne de trace</dt>
+	<dd markdown="1">Une "ligne de trace" est une ligne qui est enregistrée par une des méthodes __out, __in, __add.</dd>
+<dt>segment de programme</dt>
+	<dd>Un "segment de programme" est une suite continue et cohérente de fonctions qui sont exécutées dans le but d'un objectif déterminé. On part d'une fonction A pour aller jusqu'à une fonction Z qui marque la fin de l'exécution.</dd>
+	<dd>Le démarrage de l'application, par exemple, peut débuter dans `main.js` quand le document est prêt et se terminer lorsque l'interface est prête et attend une action de l'utilisateur</dd>
+	<dd>Un "segment de programme" peut commencer lorsque l'utilisateur clique un bouton de l'interface et se terminer lorsque l'action demandée est achevée.</dd>
+</dl>
+
+
+
+#### Exemple
 
 Imaginons qu’un bouton permette de sauver le document courant par Ajax. Le programme ressemble à ça :
 
@@ -295,7 +317,7 @@ function saveDocument(){
 }
 ~~~
 
-
+#### Placement de la méthode de sortie `__d`
 
 Concrètement, pour tester efficacement le problème en cas d'erreur, il suffit de placer ce `__d()` juste avant la ligne où cette erreur se produit.
 
@@ -303,7 +325,108 @@ Concrètement, pour tester efficacement le problème en cas d'erreur, il suffit 
 >
 > Mais pour un lecture optimale, il faut bien placer les `__start` et les `__end` qui délimitent des segments de programme. Sinon, le backtrace contiendra d’autres segments que le segment seul ayant provoqué l’erreur.
 
+#### Utilisation classique de SmartDebug
 
+L’utilisation la plus utile de `SmartDebug` peut consister à repérer par ses méthodes tous les « segments de programme » (cf. plus haut ce terme) de l’application. On commence avec `__start("<description>")` par marquer le début du segment et on termine en utilisant `__end("<description>")` pour marquer la fin du segment (quand l’action demandée est achevée).
+
+Ensuite, en cours de débuggage, il suffit d’ajouter `output: true` à la méthode `__end` pour afficher le segment de programme en question.
+
+#### Utilisation dans les méthodes asynchrones
+
+Exemple d’utilisation dans les méthodes asynchrone :
+
+~~~javascript
+__start("Démarrage du segment de programme : mon action")
+maMethode()
+.then(o.monAutreMethode.bind(o))
+.then(b.autreAction.bind(b))
+.then(window.__end.bind(window, "Fin du segment 'mon action'", "main.js"))
+~~~
+
+Pour une sortie de méthode en fin du suite de then, utiliser :
+
+~~~javascript
+function main(){
+	__in("main")
+	maMethode
+	.then(o.autre.bind(o))
+	.then(b.encore.bind(b))
+	.then(ASync_out("maMethode" /* on peut mettre des paramètres aussi */))  
+}
+~~~
+
+
+
+#### Sortie dans les méthodes in, out et end
+
+Dans le deuxième paramètre des méthodes `__in`, `__out` et `__end`, on peut définir la propriété `:output` à true pour provoquer l’affichage de la trace. Par exemple :
+
+~~~javascript
+function maMethode(){
+  __in("maMethode")
+  // elle fait quelque chose
+  __out("maMethode", {output: true})
+}
+~~~
+
+> Bien sûr, si on laisse cette propriété à true, un affichage se fera toujours à ce niveau.
+
+#### Reset à partir d’un point
+
+Si on veut effacer la trace avant un certain point pour se concentrer sur une portion du segment de programme, on peut ajouter la propriété `reset` à `true` provisoirement. Par exemple :
+
+~~~javascript
+function maMethode(indata){
+  __in("maMathode", {args:indata, reset:true})
+  // elle fait quelque chose
+  autreMethode()
+  __out("maMathode")
+}
+
+function autreMethode(){
+  __in("autreMethode")
+  // elle fait quelque chose
+  __out("autreMethode", {output:true})
+}
+~~~
+
+Dans l’exemple ci-dessus, à l’entrée de la méthode `maMethode`, la trace sera remise à zéro et sera affichée à la fin de `autreMethode`. Le traceur renvoyé ne contiendra donc que :
+
+~~~
+ -i-> maMathode
+>{args}
+<-o- maMathode
+ -i-> autreMethode
+<-o- autreMethode
+~~~
+
+#### Sauter une ligne de trace
+
+Pour sauter des lignes de trace, on ajoute la propriété `skip: true` à ces lignes. Par exemple :
+
+~~~javascript
+function maMethode(){
+  __in("maMethode")
+  // ce qu'elle fait
+  __out("maMethode", {skip: true})
+}
+~~~
+
+Dans l’exemple ci-dessus, la ligne de trace `__out` ne sera pas écrite dans le rapport.
+
+En revanche, elle est quand même mémorisée et peut être visualisée avec l’option `force: true`, par exemple si l’on tape dans la console :
+
+~~~javascript
+SmartDebug.output({force: true})
+~~~
+
+> Noter cependant que si un `__end` a été utilisé (ou un `reset: true` en paramètres), il n’y aura rien dans le collecteur de ligne de trace.
+
+
+
+---
+
+### Méthode(s) d’affichage de la trace
 
 La méthode `__d` peut recevoir en premier argument les options, à savoir une table (`Object`) contenant :
 
@@ -311,6 +434,18 @@ La méthode `__d` peut recevoir en premier argument les options, à savoir une t
 no_out			Si true, on ne marque pas les sorties de méthode (les "__out")
 no_in				Si true, on ne renvoie pas les entrées dans les méthodes (les "__in")
 no_args			Si true, on ne marque pas les arguments passés (deuxième paramètres de __in et __out)
+~~~
+
+> Comme nous l’avons vu plus haut, il est aussi possible d’obtenir la trace à l’aide de la propriété `{output: true}` placé dans une des méthodes `__in`, `__out` ou `__end`.
+
+
+
+#### Affichage après l’exécution du programme
+
+Noter qu’on peut afficher le contenu actuel de la trace en jouant en console :
+
+~~~javascript
+SmartDebug.output()
 ~~~
 
 

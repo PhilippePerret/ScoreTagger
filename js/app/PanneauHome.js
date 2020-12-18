@@ -11,6 +11,7 @@ constructor() {
 onActivate(){
   __in(`${this.ref}#onActivate`)
   if (!this.observed){
+    __d()
     this.prepare()
     this.observe()
   }
@@ -26,6 +27,7 @@ onActivate(){
 * et des éléments comme les titres, etc.
 ***/
 prepare(){
+  __in(`${this.ref}#prepare`)
   const score   = Score.current
   const cPrefs  = score.preferences
 
@@ -117,10 +119,12 @@ prepare(){
     })
   })
 
+  __out(`${this.ref}#prepare`)
 }// prepare
 
 get buttonsSaveData(){ return $('.btn-save-analyse-data') }
 observe(){
+  __in(`${this.ref}#observe`)
   super.observe()
   this.buttonsSaveData.on('click', this.onClickSaveButton.bind(this))
   $('.btn-reset-data').on('click', Score.resetForm.bind(Score))
@@ -136,6 +140,7 @@ observe(){
   // Quand on choisit une analyse dans le menu des analyses
   $('#analyses').on('change', this.onChooseAnalyse.bind(this))
   this.observed = true
+  __out(`${this.ref}#observe`, {panneau:this.name, observed: this.observed})
 }
 
 /**

@@ -1,8 +1,10 @@
 'use strict';
 
 $(document).ready(function(){
-  // Prefs.load() // chargement des préférences
-  App.initialisation()
-  .then(App.start.bind(App))
-  .catch(onError)
+  demarrerApplication()
+  // __start("Démarrage de l'application", "main.js")
+  // App.initialisation()
+  // .then(App.start.bind(App))
+  // .then(window.__end.bind(window, "Fin démarrage application", "main.js", {output:true}))
+  // .catch(onError)
 })
