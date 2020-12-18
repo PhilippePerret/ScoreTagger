@@ -142,3 +142,13 @@ window.__end    = SmartDebug.end.bind(SmartDebug)
 window.__in     = SmartDebug.addEntry.bind(SmartDebug)
 window.__out    = SmartDebug.addExit.bind(SmartDebug)
 window.__d      = SmartDebug.output.bind(SmartDebug)
+
+/**
+* Pour finir une chaine de .then en affichant le segment :
+* methode()
+*   .then(method)
+*   .then(method)
+*   .then(output)
+*   .catch(onError)
+***/
+window.output = SmartDebug.output.bind(SmartDebug)

@@ -10,13 +10,33 @@ constructor() {
 
 onActivate(){
   __in(`${this.ref}#onActivate`)
-  if (!this.observed){
-    __d()
+  return this.ObserveOnFirstActivation()
+    .then(this.setInterface.bind(this))
+    .then(ASync_out(`${this.ref}#onActivate`))
+}
+
+setInterface(){
+  return new Promise((ok,ko) => {
+    document.body.style.width = '1040px'
+    ok()
+  })
+}
+
+async ObserveOnFirstActivation(){
+  __in(`${this.ref}#ObserveOnFirstActivation`)
+  if ( ! this.observed ) {
+    await this.prepareAndObserve()
+  }
+}
+
+prepareAndObserve(){
+  __in(`${this.ref}#prepareAndObserve`)
+  return new Promise((ok,ko) => {
     this.prepare()
     this.observe()
-  }
-  document.body.style.width = '1040px'
-  __out(`${this.ref}#onActivate`)
+    __out(`${this.ref}#prepareAndObserve`)
+    ok()
+  })
 }
 
 /**
@@ -26,34 +46,24 @@ onActivate(){
 * page témoin pour pouvoir définir les positions des lignes
 * et des éléments comme les titres, etc.
 ***/
-prepare(){
+async prepare(){
   __in(`${this.ref}#prepare`)
-  const score   = Score.current
-  const cPrefs  = score.preferences
 
-  // Les titres, auteurs, etc.
+  if ( Score.current ) {
+    await this.preparePanneauForCurrentScore()
+  }
+
   /**
-  * Les titre, compositeurs, etc.
-  *   1. On place les valeurs qui sont peut-être déjà connues
-  *   2. On positionne les éléments suivant les dimensions données ou par
-  *      défaut.
+  * On positionne les éléments de première page suivant les valeurs par
+  * défaut. Ils seront rectifiés ensuite s'il y a une partition courante
   ***/
-  SCORE_ANALYZE_PROPS.forEach(prop => {
-    score.data[prop] && $(`.oeuvre-${prop} span.value`).html(score.data[prop])
-  })
   Object.keys(PREFS_DEFAULT_VALUES.first_page).forEach(prop => {
-    const dprop = cPrefs.first_page(prop)
-    let dcss = {}
-    ROSE_DES_VENTS.forEach(pos => {
-      dprop[pos] && Object.assign(dcss, { [pos]: dprop[pos]})
-    })
     $(`div#pref-${prop}`)
-      .css(dcss)
       .draggable({stop: this.onStopMoveScoreProp.bind(this, prop)})
   })
 
   /**
-  * Toutes les préférences checkbox (binary)
+  * Toutes les préférences checkbox (binary) avec les valeurs par défaut
   ***/
   for(var k in PREFS_DEFAULT_VALUES.binary){
     const section = PREFS_DEFAULT_VALUES.binary[k]
@@ -61,9 +71,9 @@ prepare(){
     const titre = DCreate('DIV', {text:section.titre, class:"prefs-section-checkbox-titre"})
     div.appendChild(titre)
     for ( var kp in section.items ) {
-      const ditem = section.items[kp]
-      const dinput = {type:'checkbox', id:`cb-${kp}`}
-      const value = score.preferences.binary(`${k}.${kp}`)
+      const ditem   = section.items[kp]
+      const dinput  = {type:'checkbox', id:`cb-${kp}`}
+      const value   = Preferences.getBinaryDefault(`${k}.${kp}`)
       value && Object.assign(dinput, {checked: true})
       const cb = DCreate('DIV', {class:'prefs-checkbox-container', inner:[
           DCreate('INPUT', dinput)
@@ -78,11 +88,12 @@ prepare(){
   * Toutes les préférences diverses
   ***/
   for (var k in PREFS_DEFAULT_VALUES.divers){
-    const dpref = PREFS_DEFAULT_VALUES.divers[k]
+    const dpref   = PREFS_DEFAULT_VALUES.divers[k]
+    const defVal  = Preferences.getDiversDefault(k)
     const div = DCreate('DIV', {id: `div-pref-${k}`, class:'row pref-divers', inner:[
         DCreate('SPAN', {class:'libelle', text: dpref.name})
       , DCreate('SPAN', {class:'value', inner: [
-          DCreate('INPUT', {type:'text', id:`pref-divers-${k}`, value: cPrefs.divers(k)})
+          DCreate('INPUT', {type:'text', id:`pref-divers-${k}`, value:defVal})
         ]})
       , DCreate('SPAN', {class:'unity', text: (dpref.unity || '')})
     ]})
@@ -90,21 +101,19 @@ prepare(){
   }
 
   // Position du premier système
-  $('#temoin-first-system').css('top', `${cPrefs.first_page('first_system_top')}px`)
+  $('#temoin-first-system').css(
+    'top', px(PREFS_DEFAULT_VALUES.first_page.first_system_top))
   $('img#img-system-temoin')[0].src = 'img/system-exemple.jpg'
   $('img#img-system-temoin').on('load', ev => {
 
     // On prend la hauteur de l'image
     const imgHeight = $('img#img-system-temoin').height()
-    console.debug("Hauteur de l'image du système témoin = %ipx", imgHeight)
-
+    __add(`Hauteur de l'image du système témoin = ${imgHeight}px`)
     // On définit le top des lignes d'objets d'analyse
     for ( var otype in PREFS_DEFAULT_VALUES.lignes) {
-      let top = cPrefs.ligne(otype)
+      var top = PREFS_DEFAULT_VALUES.lignes[otype]
       if ( top >= 0 ) top += imgHeight
-      $(`div#pref-line-${otype}`)
-        .css('top', `${top}px`)
-        .draggable({axis:'y'})
+      $(`div#pref-line-${otype}`).css('top', `${top}px`).draggable({axis:'y'})
     }
   })
 
@@ -121,6 +130,63 @@ prepare(){
 
   __out(`${this.ref}#prepare`)
 }// prepare
+
+/**
+* Préparation du panneau pour une partition donnée
+***/
+async preparePanneauForCurrentScore(){
+  const score   = Score.current
+  const cPrefs  = score && score.preferences
+
+  /**
+  * Les titre, compositeurs, etc. (seulement si )
+  * On renseigne leur valeur si elles sont définies
+  ***/
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    score.data[prop] && $(`.oeuvre-${prop} span.value`).html(score.data[prop])
+  })
+
+  /**
+  * On repositionne les titres, compositeurs, etc. en fonction des
+  * préférence du score
+  ***/
+  Object.keys(PREFS_DEFAULT_VALUES.first_page).forEach(prop => {
+    const dprop = cPrefs.first_page(prop)
+    let dcss = {}
+    ROSE_DES_VENTS.forEach(pos => {dprop[pos] && Object.assign(dcss, { [pos]: dprop[pos]})})
+    $(`div#pref-${prop}`).css(dcss)
+  })
+
+  /**
+  * Toutes les préférences checkbox (binary) avec les valeurs par défaut
+  ***/
+  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
+    const section = PREFS_DEFAULT_VALUES.binary[k]
+    for ( var kp in section.items ) {
+      const checked = score.preferences.binary(`${k}.${kp}`)
+      document.querySelector(`input[type="checkbox"]#cb-${kp}`).checked = checked
+    }
+  }
+
+  /**
+  * Réglages des préférences "divers"
+  ***/
+  for (var k in PREFS_DEFAULT_VALUES.divers){
+    document.querySelector(`pref-divers-${k}`).checked = cPrefs.divers(k)
+  }
+
+  // Position du premier système
+  $('#temoin-first-system').css('top', `${cPrefs.first_page('first_system_top')}px`)
+
+  // On définit le top des lignes d'objets d'analyse
+  for ( var otype in PREFS_DEFAULT_VALUES.lignes) {
+    let top = cPrefs.ligne(otype)
+    if ( top >= 0 ) top += imgHeight
+    $(`div#pref-line-${otype}`).css('top', `${top}px`)
+  }
+
+  return true
+}
 
 get buttonsSaveData(){ return $('.btn-save-analyse-data') }
 observe(){

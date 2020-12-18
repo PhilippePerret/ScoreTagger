@@ -45,31 +45,34 @@ static get(tabName){
   }
 }
 static get current(){return this._current}
-static set current(v){this._current = v}
 static setCurrent(panneau){
-  __in(`Panneau::setCurrent(${panneau.ref})`)
   if ( 'string' == typeof(panneau)) panneau = this.get(panneau)
-  if (this.current) this.current.close()
-  this.current = panneau
-  this.current.open()
-  __out(`Panneau::setCurrent(${panneau.name})`)
+  __in(`Panneau::setCurrent('${panneau.ref}')`)
+  return new Promise((ok,ko) => {
+    if (this.current) this.current.close()
+    this._current = panneau
+    this.current.open()
+    __out(`Panneau::setCurrent(${panneau.name})`)
+    ok()
+  })
 }
 // alias de setCurrent
-static show(panneau){return this.setCurrent(panneau)}
+static show(panneau){ return this.setCurrent(panneau) }
 
 static onClickOnglet(ev){
   const ongletId = $(ev.target).data('id')
   this.setCurrent(this.get(ongletId))
 }
 
-  /**
-    * Instance *
-  ***/
+/** ---------------------------------------------------------------------
+  *   INSTANCE PANNEAU
+  *
+*** --------------------------------------------------------------------- */
+constructor(tabName) {
+  this.name = tabName
+}
 
-  constructor(tabName) {
-    this.name = tabName
-  }
-  get ref(){return this._ref || (this._ref = `panneau[name=${this.name}]`)}
+get ref(){return this._ref || (this._ref = `panneau[name=${this.name}]`)}
 
   open(){
     __in(`${this.ref}#open`)

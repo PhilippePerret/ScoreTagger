@@ -2,12 +2,16 @@
 
 
 
-## Réflexion
+## Fonctionnement par « segments de programme »
 
-Et si on concevait le programme en concevant d’un côté des fonctions très explicites qui seraient forcément au niveau `window` :
+Cette application tente une approche différente dans sa programmation qui s’intitule **Programmation par segment de programme**. Elle consiste à définir clairement les « segments de programme » qui constituent l’application et à y rassembler toutes les opérations, quels que soient les objets qu’ils utilisent, pour un meilleur contrôle de ce qui se passe.
+
+Pour le moment, c’est le fichier `__operations__.js` qui définit ces segments de programme.
+
+On commence par y définir le démarrage de l’application (jusqu’à la fin de la préparation de l’interface pour l’utilisateur) dans une unique méthode/fonction appelé `demarrerApplication()` :
 
 ~~~javascript
-function demarreApplication(){
+function demarrerApplication(){
   //...
 }
 ~~~
@@ -15,7 +19,7 @@ function demarreApplication(){
 … et qu’à l’intérieur on définisse très exactement la suite des opérations qui devront être exécutées séquentiellement :
 
 ~~~javascript
-function demarreApplication(){
+function demarrerApplication(){
   UI.prepare()
   Onglet.choisir()
   Score.affiche()
@@ -26,7 +30,7 @@ function demarreApplication(){
 Pour ne pas être bloqué par l’asynchronicité, on utiliserait toujours, par défaut, des promesses. Donc on aurait :
 
 ~~~javascript
-function async demarreApplication(){
+function async demarrerApplication(){
   await UI.prepare()
   await Onglet.choisir()
   await Score.affiche()
@@ -36,11 +40,11 @@ function async demarreApplication(){
 … ou alors on partirait du principe qu’une méthode précédente peut toujours envoyer des données à la méthode suivante et donc :
 
 ~~~javascript
-function demarreApplication(){
+function demarrerApplication(){
   UI.prepare()
   .then(Onglet.choisir.bind(Onglet))
   .then(Score.afficher.bind(Score))
-  .catch(window.erreur.bind(window))
+  .catch(onError)
 }
 ~~~
 

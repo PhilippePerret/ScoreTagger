@@ -6,8 +6,8 @@ const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 
 class Score {
 
-static get current(){ return this._current || (this._current = new Score())}
-static set current(v){ this._current = v }
+static get current(){ return this._current }
+static setCurrent(score){ this._current = score }
 
 /**
 * Réinitialise toutes les valeurs de la page d'accueil, en vue d'une
@@ -46,28 +46,32 @@ static getAllValuesInHomePage(){
 static initialize(){
   const my = this
   __in("Score::initialize")
-  if (CURRENT_ANALYSE){
-    __add("CURRENT_ANALYSE = " + CURRENT_ANALYSE)
-    return Ajax.send('get_data.rb')
-    .then(this.initializeWithData.bind(this))
-    .then(ASync_out("Score::initialize"))
+  __add("CURRENT_ANALYSE = " + (CURRENT_ANALYSE?CURRENT_ANALYSE:"-non définie-"))
+  if ( CURRENT_ANALYSE ){
+    return loadAndPrepareScore(CURRENT_ANALYSE)
+      .then(ASync_out("Score::initialize"))
   } else {
-    return new Promise((ok,ko) => {
-      __add("CURRENT_ANALYSE est indéfini")
-      Panneau.show('home')
-      __out("Score::initialize")
-      ok()
-    })
+    return Panneau.show('home')
+      .then(ASync_out("Score::initialize"))
   }
 }
 
+/**
+* On initialise la classe avec les données qui sont remontée. Mais il se
+* peut que ces données n'existe pas quand CURRENT_ANALYSE est défini avec
+* une partition qui n'existe plus. MAIS dans la nouvelle version, il y a
+* toujours une analyse remontée.
+***/
 static initializeWithData(ret){
   __in('Score::initializeWithData', {data: ret.data})
-  CURRENT_ANALYSE = ret.data.folder_name
-  $('#analyse_folder_name').val(CURRENT_ANALYSE)
-  this.current = new Score(ret.data)
-  this.current.dispatchData()
-  __out('Score::initializeWithData')
+  const my = this
+  return new Promise((ok,ko) => {
+    CURRENT_ANALYSE = ret.data.folder_name // dans le cas où celle demandée n'aurait pas été trouvée
+    my.setCurrent(new Score({name:ret.data.folder_name}))
+    my.current.dispatchData(ret.data)
+      .then(ASync_out('Score::initializeWithData'))
+      .then(ok)
+  })
 }
 
 /** ---------------------------------------------------------------------
@@ -80,6 +84,8 @@ constructor(data) {
   this._data = data || {}
 }
 
+
+get ref(){ return this._ref || (this._ref = `Score[${this.name}]`)}
 get modified(){return this._modified}
 set modified(v){
   this._modified = v
@@ -190,14 +196,26 @@ getValuesInFields(){
 /**
 * Méthode qui place les données dans les fenêtres/onglets
 ***/
-dispatchData(){
-  this.score_is_prepared = this.data.score_is_prepared
+dispatchData(data){
+  __in(`${this.ref}#dispatchData`)
+  return new Promise((ok,ko) => {
+    this._data = data
+    this.score_is_prepared = this.data.score_is_prepared
+    // Valeurs panneau Home
+    this.dispatchDataOnPanneauHome()
+    // Préférences
+    this.preferences.setData(this.data.preferences)
+    __out(`${this.ref}#dispatchData`)
+    ok()
+  })
+}
+
+dispatchDataOnPanneauHome(){
+  __in(`${this.ref}#dispatchDataOnPanneauHome`)
   $('input#analyse_folder_name').val(CURRENT_ANALYSE)
   $('input#analyse_partition_path').val(this.data.score_ini_path)
-  // Les valeurs optionnelles des titre, compositeur, etc.
   SCORE_ANALYZE_PROPS.forEach(prop => $(`#score-${prop}`).val(this.data[prop]))
-  // Préférences
-  this.preferences.data = this.data.preferences
+  __out(`${this.ref}#dispatchDataOnPanneauHome`)
 }
 
 
@@ -395,6 +413,10 @@ loadSystemsNonPrepared(){
 loadSystemsPrepared(){
   __in("Score#loadSystemsPrepared")
   return Ajax.send('load_all_systems.rb')
+}
+
+get name(){
+  return this._name || (this._name = this.data.name || this.data.folder_name)
 }
 
 }//class Score

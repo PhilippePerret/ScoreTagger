@@ -91,7 +91,7 @@ get data(){
 /**
 * Pour définir les données de la partition courante
 ***/
-set data(h){
+setData(h){
   this._data = h
 }
 
@@ -122,7 +122,7 @@ first_page(prop){
 ***/
 binary(key){
   if ( undefined === this.data.binary[key] ) {
-    return this.getBinaryDefault(key)
+    return this.constructor.getBinaryDefault(key)
   } else {
     return this.data.binary[key]
   }
@@ -132,12 +132,12 @@ binary(key){
 * Pour obtenir une des valeurs 'divers', souvent une valeur nombrale
 ***/
 divers(key){
-  return this.data.divers[key] || this.getDiversDefault(key)
+  return this.data.divers[key] || this.constructor.getDiversDefault(key)
 }
 
 
 
-getBinaryDefault(key){
+static getBinaryDefault(key){
   const [mainkey, subkey] = key.split('.')
   try {
     return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
@@ -146,7 +146,7 @@ getBinaryDefault(key){
     return false
   }
 }
-getDiversDefault(key){
+static getDiversDefault(key){
   return PREFS_DEFAULT_VALUES.divers[key].value
 }
 

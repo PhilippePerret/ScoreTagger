@@ -11,30 +11,30 @@ class App {
       ok()
     })
   }
-  // Quand tout est prêt
-  static start(){
-    return new Promise((ok,ko) => {
-      __in("App::start")
-      // console.clear()
-
-      // On règle l'interface en fonction des données
-      UI.setInterface()
-
-      // Préparation des panneaux
-      Panneau.init()
-
-      __add("On peut commencer !", "App::start")
-
-      // Pour lancer des procédures directement au cours de l'implémentation
-
-      // Pour essai du code ruby (_scripts_/_essai_.rb)
-      // UI.run_script_essai()
-
-      __out('App::start')
-
-      ok()
-    })
-  }
+  // // Quand tout est prêt
+  // static start(){
+  //   return new Promise((ok,ko) => {
+  //     __in("App::start")
+  //     // console.clear()
+  //
+  //     // On règle l'interface en fonction des données
+  //     UI.setInterface()
+  //
+  //     // Préparation des panneaux
+  //     Panneau.init()
+  //
+  //     __add("On peut commencer !", "App::start")
+  //
+  //     // Pour lancer des procédures directement au cours de l'implémentation
+  //
+  //     // Pour essai du code ruby (_scripts_/_essai_.rb)
+  //     // UI.run_script_essai()
+  //
+  //     __out('App::start')
+  //
+  //     ok()
+  //   })
+  // }
 
 static onEndStartup(){
   return new Promise((ok,ko)=>{

@@ -33,15 +33,17 @@ static insertHTMLElements(){
 ***/
 static setInterface(){
   __in("UI::setInterface")
+  const score = Score.current
   return new Promise((ok,ko) => {
-    const noOnglets = (!Score.current) || (Score.current.folder_name == '') || (Score.current.score_ini_path == '')
-    if ( noOnglets ) {
-      DGet('button#btn-panneau-crop').disabled = true
-      DGet('button#btn-panneau-analyse').disabled = true
-      DGet('button#btn-panneau-export').disabled = true
-    }
-    __out("UI::setInterface")
-    ok({noOnglets: noOnglets})
+    DGet('button#btn-panneau-crop')   .disabled = !score
+    DGet('button#btn-panneau-analyse').disabled = !score
+    DGet('button#btn-panneau-export') .disabled = !score
+    const ShowAnalyse = score && score.preferences.binary('startup.analyse_on_startup')
+    const panneauName = ShowAnalyse ? 'analyse' : 'home'
+    __add("Il faut afficher le panneau " + panneauName)
+    Panneau.show(panneauName)
+      .then(ASync_out("UI::setInterface"))
+      .then(ok)
   })
 }
 
