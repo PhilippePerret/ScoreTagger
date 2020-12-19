@@ -88,7 +88,7 @@ static output(options){
     const TypeOUT = lined.type == 'OUT'
     if ( TypeOUT && options.no_out ) return ;
     if ( TypeIN  && options.no_in  ) return ;
-    if ( lined.skip && !options.force ) return ;
+    if ( lined.pms && lined.pms.skip && !options.force ) return ;
     var m = []
     if ( TypeIN) m.push('o->')
     else if ( TypeOUT) m.push('<-o')

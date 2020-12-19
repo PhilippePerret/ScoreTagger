@@ -111,7 +111,7 @@ def data
       YAML.load_file(data_file_path)
     else
       {}
-    end.merge(score_is_prepared: is_prepared?)
+    end.merge(isPrepared: is_prepared?)
   end
 end #/ data
 

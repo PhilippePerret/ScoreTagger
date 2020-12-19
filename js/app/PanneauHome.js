@@ -8,6 +8,38 @@ constructor() {
   super('home')
 }
 
+/**
+* Réinitialise toutes les valeurs de la page d'accueil, en vue d'une
+* création d'analyse, et désactive les boutons d'enregistrement (tant qu'on
+* n'a pas défini une nouvelle analyse)
+***/
+resetForm(){
+  __in(`${this.ref}#resetForm`)
+  SCORE_ANALYZE_FULL_PROPS.forEach(id => $(`#score-${id}`).val(''))
+  // On désactive les boutons qui permettent d'enregistrer
+  Panneau.get('home').buttonsSaveData.each((i,o) => o.disabled = true)
+  __out(`${this.ref}#resetForm`)
+}
+
+/**
+* Retourne toutes les valeurs présentes sur la page d'accueil (sauf les
+* valeurs de préférences — pour le moment)
+***/
+getAllValuesInHomePane(){
+  __in(`${this.ref}#getAllValuesInHomePane`)
+  const d = {}
+  SCORE_ANALYZE_FULL_PROPS.forEach(prop => {
+    Object.assign(d, {[prop]: $(`#score-${prop}`).val().trim()})
+  })
+  __out(`${this.ref}#getAllValuesInHomePane`, {return: d})
+  return d
+}
+setAllValuesInHomePane(data){
+  __in(`${this.ref}#setAllValuesInHomePane`, {data:data})
+  SCORE_ANALYZE_FULL_PROPS.forEach(prop => $(`#score-${prop}`).val(data[prop]))
+  __out(`${this.ref}#setAllValuesInHomePane`)
+}
+
 async onActivate(){
   __in(`${this.ref}#onActivate`)
   await this.ObserveOnFirstActivation()
@@ -217,7 +249,7 @@ observe(){
   __in(`${this.ref}#observe`)
   super.observe()
   this.buttonsSaveData.on('click', this.onClickSaveButton.bind(this))
-  $('.btn-reset-data').on('click', Score.resetForm.bind(Score))
+  $('.btn-reset-data').on('click', this.resetForm.bind(Score))
   $('#btn-load-analyse-data').on('click', this.onClickLoadButton.bind(this))
   $('#btn-prepare-score').on('click', this.onClickPrepareButton.bind(this))
 
@@ -234,7 +266,7 @@ observe(){
 }
 
 getScoreName(){
-  const AnalyseFolder = $('input#analyse_folder_name').val()
+  const AnalyseFolder = $('input#score-folder_name').val()
   if ( AnalyseFolder == '' ) return erreur("Il faut définir le nom du dossier d'analyse ! (même s'il n'existe pas encore)")
   else return AnalyseFolder
 }
@@ -256,15 +288,13 @@ méthode 'on click' des boutons du panneau d'accueil (infos du score)
 async onChooseAnalyse(ev){
   __start("Choix d'une analyse dans le menu", 'onChooseAnalyse')
   const folder = $('#analyses').val()
+  const score = Score.current
   $('#analyses').val('none')
-  if ( Score.current && folder == Score.current.folder_name ) {
-    message("C'est l'analyse courante !")
-  } else {
-    // Score.resetForm()
-    await openAnalyse(folder, {setCurrent: true})
-  }
+  if (score && folder == score.folder_name){return message("C'est l'analyse courante !")}
+  await openAnalyse(folder, {setCurrent: true})
   __end("Fin du choix de l'analyse à voir", 'onChooseAnalyse', {output:true})
 }
+
 /**
 Méthode appelée quand on finit de déplacer un élément comme
 le titre, le compositeur, etc.
@@ -386,7 +416,7 @@ onClickRevenirPrefsDefault(ev){
 * fichier original qui vient peut-être d'être défini.
 ***/
 onClickPrepareButton(ev){
-  const score_path = $('#analyse_partition_path').val().trim()
+  const score_path = $('#score-score_ini_path').val().trim()
   if ( score_path == "" ) return erreur("Il faut définir le chemin d'accès à la partition ou au dossier contenant les pages classées de la partition.")
   message("Préparation de la partition…")
   Ajax.send('prepare_score.rb', {score_path: score_path})

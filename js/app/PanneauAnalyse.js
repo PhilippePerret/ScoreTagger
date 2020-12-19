@@ -18,58 +18,55 @@ resetAll(){
   this.currentNote = 'c'
 }
 
-onActivate(){
+async onActivate(){
   __in(`${this.ref}#onActivate`)
   const score = Score.current
-  const my = this
-  document.body.style.width = null
-  AObjectToolbox.inited || AObjectToolbox.init()
-  if ( !this.observed ){
-    // Si le panneau n'est pas observé, c'est qu'il n'a pas été préparé
-    this.prepare()
-    this.observe()
-  }
-
-  if (!score.isDrawn){
-    /**
-    * Si la partition n'est pas encore dessinée, il faut le faire
-    * @rappel : la partition est présentée en un seul tenant maintenant,
-    * quelle que soit sa longueur.
-    ***/
-    this.resetAll()
-    this.drawFirstPage()
-    score.draw().then(() => {
-      my.drawPageDelimitors.call(my)
-      this.pref_apercu_tonal && my.drawApercuTonal.call(my)
-    })
-  }
-
-  this.pref_auto_save && score.startAutosave()
-
+  await prepareTableAnalyse()
+  score.isDrawn || (await drawAnalyse(score))
+  score.pref_auto_save && score.startAutosave()
   __out(`${this.ref}#onActivate`)
 }
 
 onDesactivate(){
-  if ( this.pref_auto_save ) {
+  if ( Score.current.pref_auto_save ) {
     Score.current.autosave() // une dernière fois
     Score.current.stopAutosave()
   }
 }
 
+prepareAndObserve(){
+  this.prepare()
+  this.observe()
+}
 /**
 * Préparation du panneau d'analyse
 *
 * Maintenant, tous les boutons sont construits à la volée
 ***/
 prepare(){
-  // Mise à la taille de la partition
-  const cont = $(this.systemsContainer)
-  const newWidth = this.toScaleFactor(cont.width())
-  cont.css('width', px(newWidth))
+  const newWidth = this.toScaleFactor($(this.systemsContainer).width())
+  $(this.systemsContainer).css('width', px(newWidth))
 }
 
-get pref_auto_save(){return Score.current.preferences.binary('analyse.autosave') }
-get pref_apercu_tonal(){return Score.current.preferences.binary('export.apercu_tonal') }
+
+observe(){
+  const score = Score.current
+  super.observe()
+  // Pour appeler la méthode onClickOnTableAnalyse, notamment pour désélection-
+  // ner tous les objets sélectionnés
+  $(this.systemsContainer).on('click', this.onClickOnTableAnalyse.bind(this))
+  this.observed = true
+
+  // Pour jouer l'analyse
+  $('button#btn-play-analyse').on('click', score.analyse.play.bind(Score.current.analyse))
+
+  // Pour repositionner tous les éléments
+  $('button#btn-repositionne-systems').on('click', this.repositionneAll.bind(this))
+
+  // Pour sauver les systèmes de force (en cliquant sur le voyant)
+  this.voyantSave.on('click', score.autosave.bind(score))
+}
+
 
 /**
 * Retourne la valeur réelle de la position (x, y, h ou w) +v+ en fonction
@@ -92,32 +89,6 @@ get ScaleFactor(){
 }
 get ScoreScale(){
   return Score.current.preferences.divers('score_scale')
-}
-
-/**
-* Construction des titre, compositeur, etc. en fonction des données et
-* des préférences
-***/
-drawFirstPage(){
-  __in(`${this.ref}#drawFirstPage`)
-  const score = Score.current
-  let divHeight = 0
-  SCORE_ANALYZE_PROPS.forEach(prop => {
-    if ( ! score.data[prop] ) return ;
-    else {
-      var elements = []
-      if (['analyst','analyze_year'].includes(prop)){
-        const libelle = prop == 'analyst' ? 'analyste' : 'année'
-        elements.push(DCreate('SPAN', {class:'libelle', text:libelle}))
-      }
-      elements.push(DCreate('SPAN', {class:'value', text:score.data[prop]}))
-      const dome = DCreate('DIV', {id: `score-${prop}`, class:`oeuvre-${prop}`,
-        inner:elements})
-      this.systemsContainer.append(dome)
-      $(dome).css(px(score.preferences.first_page(prop)))
-    }
-  })
-  __out(`${this.ref}#drawFirstPage`)
 }
 
 /**
@@ -172,24 +143,6 @@ drawApercuTonal(){
   })
 }
 
-
-observe(){
-  const score = Score.current
-  super.observe()
-  // Pour appeler la méthode onClickOnTableAnalyse, notamment pour désélection-
-  // ner tous les objets sélectionnés
-  $(this.systemsContainer).on('click', this.onClickOnTableAnalyse.bind(this))
-  this.observed = true
-
-  // Pour jouer l'analyse
-  $('button#btn-play-analyse').on('click', Score.current.analyse.play.bind(Score.current.analyse))
-
-  // Pour repositionner tous les éléments
-  $('button#btn-repositionne-systems').on('click', this.repositionneAll.bind(this))
-
-  // Pour sauver les systèmes de force (en cliquant sur le voyant)
-  this.voyantSave.on('click', score.autosave.bind(score))
-}
 
 /**
 * Quand on clique sur la table d'analyse (conteneur de systèmes)
@@ -295,10 +248,6 @@ calcSystemPos(system, debug = false){
 ***/
 get firstTopLineType(){
   return this.pref_no_ligne_segment ? 'modulation' : 'segment'
-}
-
-get pref_no_ligne_segment(){
-  return false === Score.current.preferences.binary('export.use_segment_line')
 }
 
 get systemsContainer(){

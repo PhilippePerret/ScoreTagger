@@ -119,7 +119,7 @@ onClickNumeroMesure(ev){
 * On en profite aussi pour les ajouter à la liste this.aobjets
 ***/
 draw(){
-  __in(`${this.ref}#draw`, {aobjets: this.data.aobjects})
+  __in(`${this.ref}#draw`, {aobjets: this.data.aobjects, skip:true})
   if ( !this.data.aobjects || this.data.aobjects.length == 0) return ;
   this.data.aobjects.forEach(dobjet => {
     // Object.assign(dobjet, {})
@@ -134,7 +134,7 @@ draw(){
       AObject.lastId = dobjet.id
     }
   })
-  __out(`${this.ref}#draw`)
+  __out(`${this.ref}#draw`, {skip:true})
 }
 
 /**
@@ -204,6 +204,16 @@ build(){
   })
   this.obj = div
   this.observe()
+}
+
+/**
+* Positionne le système sur la table d'analyse et dessine ses objets
+*
+* C'est la méthode utilisée par le premier affichage de la partition.
+***/
+positionneAndDraw(){
+  this.positionne()
+  this.draw()
 }
 
 /**
@@ -278,13 +288,13 @@ onWantToMoveSystem(ev){
 *           commençant à 1 (pour 'pedale')
 ***/
 topPerTypeObjet(otype, line){
-  __in(`${this.ref}#topPerTypeObjet`, {otype:otype, line:line})
+  __in(`${this.ref}#topPerTypeObjet`, {otype:otype, line:line, skip:true})
   if ( undefined != line ) { otype = LINES_POSE[line - 1] }
   let tpto = Score.current.preferences.ligne(otype)
   // Si c'est une valeur positive, donc en dessous du système, il faut
   // ajouter la hauteur du système pour connaitre son vrai 'top'
   if ( tpto >= 0 ) tpto += this.rHeight
-  __out(`${this.ref}#topPerTypeObjet`, {tpto:tpto})
+  __out(`${this.ref}#topPerTypeObjet`, {tpto:tpto, skip:true})
   return tpto
 }
 

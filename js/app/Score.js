@@ -1,6 +1,10 @@
 'use strict';
 
 const SCORE_ANALYZE_PROPS = ['title', 'composer','composing_year','analyze_year', 'analyst', 'tune', 'incipit']
+
+const SCORE_ANALYZE_FULL_PROPS = [...SCORE_ANALYZE_PROPS]
+SCORE_ANALYZE_FULL_PROPS.push('folder_name','score_ini_path')
+
 // Hauteur exacte d'une page
 const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
 
@@ -9,62 +13,21 @@ class Score {
 static get current(){ return this._current }
 static setCurrent(score){ this._current = score }
 
-/**
-* Réinitialise toutes les valeurs de la page d'accueil, en vue d'une
-* création d'analyse.
-***/
-static resetForm(){
-  const l = ['analyse_folder_name', 'analyse_partition_path']
-  l.forEach(id => $(`#${id}`).val(''))
-  SCORE_ANALYZE_PROPS.forEach(id => $(`#score-${id}`).val(''))
-  // On désactive les boutons qui permettent d'enregistrer
-  Panneau.get('home').buttonsSaveData.each((i,o) => o.disabled = true)
-}
-
-/**
-* Retourne toutes les valeurs présentes sur la page d'accueil (sauf les
-* valeurs de préférences — pour le moment)
-***/
-static getAllValuesInHomePage(){
-  __in('Score::getAllValuesInHomePage')
-  const d = {}
-  Object.assign(d, {
-      folder_name: $('input#analyse_folder_name').val().trim()
-    , score_ini_path: $('input#analyse_partition_path').val().trim()
-  })
-  // Les valeurs options des titre, compositeur, etc.
-  SCORE_ANALYZE_PROPS.forEach(prop => {
-    Object.assign(d, {[prop]: $(`#score-${prop}`).val().trim()})
-  })
-  __out('Score::getAllValuesInHomePage')
-  return d
-}
-
-/**
-* Initialisation de la partition (au chargement de l'application)
-***/
-static initialize(){
-  const my = this
-  __in("Score::initialize")
-  // __add("CURRENT_ANALYSE = " + (CURRENT_ANALYSE?CURRENT_ANALYSE:"-non définie-"))
-}
 
 /**
 * On initialise la classe avec les données qui sont remontée. Mais il se
 * peut que ces données n'existe pas quand CURRENT_ANALYSE est défini avec
 * une partition qui n'existe plus. MAIS dans la nouvelle version, il y a
 * toujours une analyse remontée.
+* Retourne l'instance du score (mais il pourrait être récupéré par Score.current)
 ***/
-static initializeWithData(ret){
-  __in('Score::initializeWithData', {data: ret.data})
-  const my = this
-  return new Promise((ok,ko) => {
-    CURRENT_ANALYSE = ret.data.folder_name // dans le cas où celle demandée n'aurait pas été trouvée
-    my.setCurrent(new Score({name:ret.data.folder_name}))
-    my.current.dispatchData(ret.data)
-      .then(ASync_out('Score::initializeWithData'))
-      .then(ok)
-  })
+static async initCurrentWithData(data){
+  __in('Score::initCurrentWithData', {data: data})
+  CURRENT_ANALYSE = data.folder_name
+  await this.setCurrent(new Score({name:CURRENT_ANALYSE}))
+  await this.current.dispatchData(data)
+  __out('Score::initCurrentWithData')
+  return this.current
 }
 
 /** ---------------------------------------------------------------------
@@ -135,17 +98,6 @@ autosave(){
 }
 
 /**
-* Analyse (classe Analyse)
-* Pour le moment, ne sert que pour jouer l'analyse
-***/
-get analyse(){return this._analyse || (this._analyse = new Analyse(this))}
-
-/**
-* Préférences (objet de type Preferences)
-***/
-get preferences(){return this._prefs || (this._prefs = new Preferences(this))}
-
-/**
 * Méthode pour imprimer la partition analysée
 *
 * @rappel : il y a deux modes d'impression :
@@ -171,15 +123,12 @@ getValuesAndSave(){
   }
 }
 
-get folder_name(){ return $('input#analyse_folder_name').val().trim() }
-get score_ini_path(){ return $('input#analyse_partition_path').val().trim() }
-
 /**
 * Retourne les valeurs des champs de données de la page principale
 * (normalement : en vue de leur enregistrement)
 ***/
 getValuesInFields(){
-  this._data = this.constructor.getAllValuesInHomePage()
+  this._data = Panneau.get('home').getAllValuesInHomePane()
   // On ajoute les préférences actuelles
   this._data.preferences = this.preferences.data
   // Pour poursuivre
@@ -187,40 +136,14 @@ getValuesInFields(){
 }
 
 /**
-* Méthode qui place les données dans les fenêtres/onglets
+* Dispatche les données du score (à son instanciation)
 ***/
-dispatchData(data){
+async dispatchData(data){
   __in(`${this.ref}#dispatchData`)
-  return new Promise((ok,ko) => {
-    this._data = data
-    this.score_is_prepared = this.data.score_is_prepared
-    // Valeurs panneau Home
-    this.dispatchDataOnPanneauHome()
-    // Préférences
-    this.preferences.setData(this.data.preferences)
-    __out(`${this.ref}#dispatchData`)
-    ok()
-  })
-}
-
-dispatchDataOnPanneauHome(){
-  __in(`${this.ref}#dispatchDataOnPanneauHome`)
-  $('input#analyse_folder_name').val(CURRENT_ANALYSE)
-  $('input#analyse_partition_path').val(this.data.score_ini_path)
-  SCORE_ANALYZE_PROPS.forEach(prop => $(`#score-${prop}`).val(this.data[prop]))
-  __out(`${this.ref}#dispatchDataOnPanneauHome`)
-}
-
-
-get data(){ return this._data }
-
-getData(){
-  Ajax.send('get_data.rb').then(ret => {
-    if ( ret.error ) { ret.data = {} }
-    this._data = ret.data
-    this.preferences.data = ret.data.preferences
-    // console.debug("this.preferences.data:", this.preferences.data)
-  })
+  this._data = data
+  this.isPrepared = this.data.isPrepared
+  this.preferences.setData(this.data.preferences)
+  __out(`${this.ref}#dispatchData`)
 }
 
 /**
@@ -237,29 +160,78 @@ cutPage(numPage, cropLinesData, cutLinesTops, vlines, callback){
 ========== DESSIN DE LA PARTITION SUR LA TABLE D'ANALYSE ==========
 
 Les méthodes suivantes permettent de dessiner la partition et son analyse
-sur la table d'analyse
+sur la table d'analyse.
+
 ***/
 
 /**
-* Méthode générale qui dessine la partition analysée.
+* @révisée
 *
-* @note : il existe deux instances possibles :
-*   1. la partition a déjà été préparée (systèmes séparés et enregistrés)
-*   2. la partition vient d'être découpée (systèmes non séparés/préparés)
+* Si la partition est préparée, on charge les données complètes des systèmes
 *
+* Retourne les données de tous les systèmes
 ***/
-draw(){
-  __in("Score#draw", {isDraw: this.isDraw, score_is_prepared:this.score_is_prepared})
-  const loadingMethod = this.score_is_prepared
-                    ? this.loadSystemsPrepared.bind(this)
-                    : this.loadSystemsNonPrepared.bind(this) ;
+async loadSystemsPrepared(){
+  __in("Score#loadSystemsPrepared")
+  const retour = await Ajax.send('load_all_systems.rb')
+  __out("Score#loadSystemsPrepared", {data_systems: retour.data})
+  return retour.data
+}
 
 
-  return loadingMethod.call()
-    .then(this.instanciateAndPoseAllSystems.bind(this))
-    .then(this.positionneAndDrawSystems.bind(this))
-    .then(this.finDrawing.bind(this))
-    .catch(window.erreur.bind(window))
+/**
+* Construction des titre, compositeur, etc. en fonction des données et
+* des préférences
+***/
+drawFirstPage(){
+  __in(`${this.ref}#drawFirstPage`)
+  let divHeight = 0
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    if ( ! this.data[prop] ) return ;
+    var elements = []
+    if (['analyst','analyze_year'].includes(prop)){
+      const libelle = prop == 'analyst' ? 'analyste' : 'année'
+      elements.push(DCreate('SPAN', {class:'libelle', text:libelle}))
+    }
+    elements.push(DCreate('SPAN', {class:'value', text:this.data[prop]}))
+    const dome = DCreate('DIV', {id: `score-${prop}`, class:`oeuvre-${prop}`,
+      inner:elements})
+    TableAnalyse.systemsContainer.append(dome)
+    $(dome).css(px(this.preferences.first_page(prop)))
+  })
+  __out(`${this.ref}#drawFirstPage`)
+}
+
+/**
+* @révisée
+*
+* Méthode procédant à l'instanciation de tous les systèmes de la partition
+* et leur affichage dans la page, pour le moment, sans les positionner et sans
+* créer leurs objets (s'ils en ont)
+* @note   Dans tous les cas (partition préparée ou non), il faut le faire
+***/
+async instanciateAndPoseAllSystems(dataSystems){
+  __in(`${this.ref}#instanciateAndPoseAllSystems`)
+  this.systems = []
+  dataSystems.forEach(dsys => {
+    const system = new ASystem(dsys)
+    system.build()
+    this.systems.push(system)
+  })
+  await this.checkImagesLoading()
+  __out(`${this.ref}#instanciateAndPoseAllSystems`)
+}
+
+/**
+* @révisée
+*
+* Quand on a posé les systèmes sur la table d'analyse, ensuite, on les
+* position et on les dessine, c'est-à-dire qu'on crée leurs objets
+***/
+async positionneAndDrawSystems(){
+  __in(`${this.ref}#positionneAndDrawSystems`)
+  this.systems.forEach(system => system.positionneAndDraw())
+  __out(`${this.ref}#positionneAndDrawSystems`)
 }
 
 /**
@@ -289,49 +261,15 @@ setNumerosFirstMesures(){
   } else {
     // Si les préférences déterminent qu'il ne faut pas de numéro,
     // on les masques
-    this.systems.forEach(system => {
-      $(system.obj).find('.numero-mesure').addClass('hidden')
-    })
+    this.systems.forEach(system => $(system.obj).find('.numero-mesure').addClass('hidden'))
   }
   __out('Score#setNumerosFirstMesures')
 }
 
-/**
-* Méthode procédant à l'instanciation de tous les systèmes de la partition
-* et leur affichage dans la page, pour le moment, sans les positionner et sans
-* créer leurs objets (s'ils en ont)
-* @note   Dans tous les cas (partition préparée ou non), il faut le faire
-***/
-instanciateAndPoseAllSystems(ret){
-  __in('Score#instanciateAndPoseAllSystems')
-  const my = this
-  const dataSystems = ret.data
-  return new Promise((ok,ko) => {
-    // console.log("dataSystems: ", dataSystems)
-    my.systems = []
-    dataSystems.forEach(dsys => {
-      const system = new ASystem(dsys)
-      system.build()
-      my.systems.push(system)
-    })
-    my.checkImagesLoading(ok)
-  })
-}
-
-/**
-* Quand on a posé les systèmes sur la table d'analyse, ensuite, on les
-* position et on les dessine, c'est-à-dire qu'on crée leurs objets
-***/
-positionneAndDrawSystems(){
-  __in('Score#positionneAndDrawSystems')
-  if ( ! this.score_is_prepared ) {
-    this.calcPositionAllSystems()
-  }
-  this.systems.forEach(system => {
-    system.positionne()
-    system.draw()
-  })
-  __out('Score#positionneAndDrawSystems')
+finDrawing(ret){
+  __in("Score#finDrawing")
+  this.isDrawn = true
+  __out("Score#finDrawing")
 }
 
 /**
@@ -359,34 +297,27 @@ calcPositionAllSystems(){
 }
 
 /**
-* Toutes les secondes on va checker pour voir si les images sont chargées
+* Méthode qui se charge d'attendre que toutes les images soient chargées
+*
 ***/
-checkImagesLoading(ok){
+async checkImagesLoading(){
   __in('Score#checkImagesLoading')
   if ( ! this.loadingTimer ) {
-    this.loadingTimer = setInterval(this.checkImagesLoading.bind(this, ok), 500)
+    this.loadingTimer = setInterval(this.checkImagesLoading.bind(this), 500)
   } else {
     var imagesLoading = false // un a priori
     this.systems.forEach( system => {
       if ( imagesLoading ) return ; // pour accélérer
       if ( false == system.imageLoaded ) imagesLoading = true
     })
-    if ( !imagesLoading ) {
+    if ( ! imagesLoading ) {
       // Les images sont toutes chargées
       clearInterval(this.loadingTimer)
       this.loadingTimer = null
       __add("Images toutes chargées", "Score#checkImagesLoading")
-      __out("Score#instanciateAndPoseAllSystems")//parce que ça met fin à ça
-      ok()
+      __out('Score#checkImagesLoading')
     }
   }
-}
-
-finDrawing(ret){
-  __in("Score#finDrawing")
-  this.setNumerosFirstMesures()
-  this.isDrawn = true
-  __out("Score#finDrawing")
 }
 
 /**
@@ -400,16 +331,35 @@ loadSystemsNonPrepared(){
   return Ajax.send('get_data_cutlines.rb')
 }
 
-/**
-* Si la partition est préparée, on charge les données complètes des systèmes
-***/
-loadSystemsPrepared(){
-  __in("Score#loadSystemsPrepared")
-  return Ajax.send('load_all_systems.rb')
-}
 
 get name(){
   return this._name || (this._name = this.data.name || this.data.folder_name)
 }
+
+/**
+* Les données générales enregistrées
+***/
+get data(){ return this._data }
+
+/**
+* Analyse (classe Analyse)
+* Pour le moment, ne sert que pour jouer l'analyse
+***/
+get analyse(){return this._analyse || (this._analyse = new Analyse(this))}
+
+get pref_auto_save(){
+  return this.preferences.binary('analyse.autosave')
+}
+get pref_apercu_tonal(){
+  return this.preferences.binary('export.apercu_tonal')
+}
+get pref_no_ligne_segment(){
+  return false === this.preferences.binary('export.use_segment_line')
+}
+
+/**
+* Préférences (objet de type Preferences)
+***/
+get preferences(){return this._prefs || (this._prefs = new Preferences(this))}
 
 }//class Score

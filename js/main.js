@@ -2,9 +2,9 @@
 
 $(document).ready(function(){
   demarrerApplication()
-  // __start("Démarrage de l'application", "main.js")
-  // App.initialisation()
-  // .then(App.start.bind(App))
-  // .then(window.__end.bind(window, "Fin démarrage application", "main.js", {output:true}))
-  // .catch(onError)
+  if ( CURRENT_ANALYSE ) {
+    // <= Une analyse courante est définie
+    // => Il faut l'ouvrir avec le segment adéquat
+    // openAnalyse(CURRENT_ANALYSE)
+  }
 })

@@ -68,8 +68,12 @@ static get OverviewContainer(){
 * +objProps+  Propriétés pour construire l'objet
 ***/
 static finalTextFor(objProps){
-  __in('AObjectToolbox::finalTextFor', objProps)
-  return this.ObjectFormatters[objProps.otype].format(objProps)
+  const smd = {} // pour SmartDebug
+  Object.assign(smd, objProps)
+  __in('AObjectToolbox::finalTextFor', Object.assign(smd, {skip: true}))
+  const formed = this.ObjectFormatters[objProps.otype].format(objProps)
+  __out('AObjectToolbox::finalTextFor', {skip: true})
+  return formed
 }
 
 /**

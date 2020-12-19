@@ -10,11 +10,16 @@
   Script qui retourne les données du score courant
 =end
 begin
-  DATA = Ajax.param(:data).to_sym
-  log("DATA: #{DATA.inspect}")
-  CURRENT_ANALYSE = DATA[:folder_name]
+  DATA = (Ajax.param(:data)||{}).to_sym
+  CURRENT_ANALYSE = if DATA.empty?
+                      Ajax.param(:current_analyse)
+                    else
+                      log("DATA: #{DATA.inspect}")
+                      DATA[:folder_name]
+                    end
+  # Instance pour la partition à mettre en courante
   score = Score.new(CURRENT_ANALYSE)
-  if not score.exists?
+  if not(score.exists?) && not(DATA.empty?)
     score.create(DATA)
     score_ini_path = DATA[:score_ini_path]
     if score_ini_path
