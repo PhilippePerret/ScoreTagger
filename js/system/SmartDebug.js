@@ -74,8 +74,7 @@ static addExit(mname, pms){
 }
 // Ne sert à rien pour le moment
 static end(msg, nmeth, pms = {}){
-  msg = msg || ""
-  nmeth && (msg = `${msg} [in ${nmeth}]`.trim())
+  nmeth && this.add('OUT', nmeth, pms)
   this.add('END', msg, pms)
 }
 /**
@@ -85,23 +84,27 @@ static output(options){
   // console.clear()
   options = options || {}
   this.items.forEach(lined => {
-    if ( lined.type == 'OUT' && options.no_out ) return ;
-    if ( lined.type == 'IN'  && options.no_in  ) return ;
+    const TypeIN  = lined.type == 'IN'
+    const TypeOUT = lined.type == 'OUT'
+    if ( TypeOUT && options.no_out ) return ;
+    if ( TypeIN  && options.no_in  ) return ;
     if ( lined.skip && !options.force ) return ;
     var m = []
-    if ( lined.type == 'IN') m.push(' -i->')
-    else if ( lined.type == 'OUT') m.push('<-o- ')
-    else if ( lined.type == 'ARGS') m.push(' -=-')
+    if ( TypeIN) m.push('o->')
+    else if ( TypeOUT) m.push('<-o')
+    else if ( lined.type == 'ARGS') m.push('=-')
     m.push(lined.content)
     m = m.join(' ')
 
+    const ShowParams = false == (lined.no_args === true || null === lined.pms)
+
     // --- Écritude ---
-    if ( lined.type == 'IN' ) console.group()
+    TypeIN && console.group()
+    ShowParams && TypeOUT && console.debug(lined.pms)
     console.debug(m)
-    if ( false == (lined.no_args === true || null === lined.pms) ) {
-      console.debug(lined.pms)
-    }
-    if ( lined.type == 'OUT') console.groupEnd()
+    ShowParams && TypeIN && console.debug(lined.pms)
+    TypeOUT && console.groupEnd()
+    // --- /fin écriture
   })
   // console.trace()
 }

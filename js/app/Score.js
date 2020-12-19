@@ -46,14 +46,7 @@ static getAllValuesInHomePage(){
 static initialize(){
   const my = this
   __in("Score::initialize")
-  __add("CURRENT_ANALYSE = " + (CURRENT_ANALYSE?CURRENT_ANALYSE:"-non définie-"))
-  if ( CURRENT_ANALYSE ){
-    return loadAndPrepareScore(CURRENT_ANALYSE)
-      .then(ASync_out("Score::initialize"))
-  } else {
-    return Panneau.show('home')
-      .then(ASync_out("Score::initialize"))
-  }
+  // __add("CURRENT_ANALYSE = " + (CURRENT_ANALYSE?CURRENT_ANALYSE:"-non définie-"))
 }
 
 /**

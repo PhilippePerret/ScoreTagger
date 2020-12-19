@@ -31,20 +31,17 @@ static insertHTMLElements(){
 * Par exemple, les onglets ne seront pas accessibles si aucun dossier
 * d'analyse n'est choisi.
 ***/
-static setInterface(){
+static async setInterface(){
   __in("UI::setInterface")
   const score = Score.current
-  return new Promise((ok,ko) => {
-    DGet('button#btn-panneau-crop')   .disabled = !score
-    DGet('button#btn-panneau-analyse').disabled = !score
-    DGet('button#btn-panneau-export') .disabled = !score
-    const ShowAnalyse = score && score.preferences.binary('startup.analyse_on_startup')
-    const panneauName = ShowAnalyse ? 'analyse' : 'home'
-    __add("Il faut afficher le panneau " + panneauName)
-    Panneau.show(panneauName)
-      .then(ASync_out("UI::setInterface"))
-      .then(ok)
-  })
+  DGet('button#btn-panneau-crop')   .disabled = !score
+  DGet('button#btn-panneau-analyse').disabled = !score
+  DGet('button#btn-panneau-export') .disabled = !score
+  const ShowAnalyse = score && score.preferences.binary('startup.analyse_on_startup')
+  const panneauName = ShowAnalyse ? 'analyse' : 'home'
+  __add("Il faut afficher le panneau " + panneauName)
+  await Panneau.show(panneauName)
+  __out("UI::setInterface")
 }
 
 static observe(){

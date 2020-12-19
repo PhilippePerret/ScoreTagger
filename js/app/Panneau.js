@@ -45,16 +45,13 @@ static get(tabName){
   }
 }
 static get current(){return this._current}
-static setCurrent(panneau){
+static async setCurrent(panneau){
   if ( 'string' == typeof(panneau)) panneau = this.get(panneau)
   __in(`Panneau::setCurrent('${panneau.ref}')`)
-  return new Promise((ok,ko) => {
-    if (this.current) this.current.close()
-    this._current = panneau
-    this.current.open()
-    __out(`Panneau::setCurrent(${panneau.name})`)
-    ok()
-  })
+  this.current && (await this.current.close())
+  this._current = panneau
+  await this.current.open()
+  __out(`Panneau::setCurrent(${panneau.name})`)
 }
 // alias de setCurrent
 static show(panneau){ return this.setCurrent(panneau) }
@@ -74,21 +71,21 @@ constructor(tabName) {
 
 get ref(){return this._ref || (this._ref = `panneau[name=${this.name}]`)}
 
-  open(){
-    __in(`${this.ref}#open`)
-    this.obj.removeClass('hidden')
-    this.onglet.addClass('activated')
-    this.onActivate && this.onActivate()
-    __out(`${this.ref}#open`)
-  }
+async open(){
+  __in(`${this.ref}#open`)
+  this.obj.removeClass('hidden')
+  this.onglet.addClass('activated')
+  this.onActivate && (await this.onActivate())
+  __out(`${this.ref}#open`)
+}
 
-  close(){
-    __in(`${this.ref}#close`)
-    this.onDesactivate && this.onDesactivate()
-    this.obj.addClass('hidden')
-    this.onglet.removeClass('activated')
-    __out(`${this.ref}#close`)
-  }
+async close(){
+  __in(`${this.ref}#close`)
+  this.onDesactivate && (await this.onDesactivate())
+  this.obj.addClass('hidden')
+  this.onglet.removeClass('activated')
+  __out(`${this.ref}#close`)
+}
 
   observe(){
     __in(`${this.ref}#observe (super)`)

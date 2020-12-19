@@ -8,35 +8,28 @@ constructor() {
   super('home')
 }
 
-onActivate(){
+async onActivate(){
   __in(`${this.ref}#onActivate`)
-  return this.ObserveOnFirstActivation()
-    .then(this.setInterface.bind(this))
-    .then(ASync_out(`${this.ref}#onActivate`))
+  await this.ObserveOnFirstActivation()
+  await this.setInterface.bind(this)
+  __out(`${this.ref}#onActivate`)
 }
 
 setInterface(){
-  return new Promise((ok,ko) => {
-    document.body.style.width = '1040px'
-    ok()
-  })
+  document.body.style.width = '1040px'
 }
 
 async ObserveOnFirstActivation(){
   __in(`${this.ref}#ObserveOnFirstActivation`)
-  if ( ! this.observed ) {
-    await this.prepareAndObserve()
-  }
+  this.observed || (await this.prepareAndObserve());
+  __out(`${this.ref}#ObserveOnFirstActivation`)
 }
 
-prepareAndObserve(){
+async prepareAndObserve(){
   __in(`${this.ref}#prepareAndObserve`)
-  return new Promise((ok,ko) => {
-    this.prepare()
-    this.observe()
-    __out(`${this.ref}#prepareAndObserve`)
-    ok()
-  })
+  await this.prepare()
+  this.observe()
+  __out(`${this.ref}#prepareAndObserve`)
 }
 
 /**
@@ -48,20 +41,34 @@ prepareAndObserve(){
 ***/
 async prepare(){
   __in(`${this.ref}#prepare`)
+  const my = this
 
-  if ( Score.current ) {
-    await this.preparePanneauForCurrentScore()
-  }
+  this.preparePreferencesFirstPage()
 
-  /**
-  * On positionne les éléments de première page suivant les valeurs par
-  * défaut. Ils seront rectifiés ensuite s'il y a une partition courante
-  ***/
+  this.preparePreferencesCheckboxes()
+
+  this.preparePreferencesDiverses()
+
+  await this.prepareFirstSystemTemoin()
+
+  await this.prepareMenuAnalyses()
+
+  __out(`${this.ref}#prepare`)
+}// prepare
+
+/**
+* On positionne les éléments de première page suivant les valeurs par
+* défaut en les rendant déplaçable.
+***/
+preparePreferencesFirstPage(){
+  const my = this
   Object.keys(PREFS_DEFAULT_VALUES.first_page).forEach(prop => {
     $(`div#pref-${prop}`)
-      .draggable({stop: this.onStopMoveScoreProp.bind(this, prop)})
+      .draggable({stop: my.onStopMoveScoreProp.bind(my, prop)})
   })
+}
 
+preparePreferencesCheckboxes(){
   /**
   * Toutes les préférences checkbox (binary) avec les valeurs par défaut
   ***/
@@ -83,10 +90,12 @@ async prepare(){
     }
     $('#preferences-binaires').append(div)
   }
+}
 
-  /**
-  * Toutes les préférences diverses
-  ***/
+/**
+* Toutes les préférences diverses
+***/
+preparePreferencesDiverses() {
   for (var k in PREFS_DEFAULT_VALUES.divers){
     const dpref   = PREFS_DEFAULT_VALUES.divers[k]
     const defVal  = Preferences.getDiversDefault(k)
@@ -99,37 +108,48 @@ async prepare(){
     ]})
     $('div#preferences-divers').append(div)
   }
+}
 
-  // Position du premier système
-  $('#temoin-first-system').css(
-    'top', px(PREFS_DEFAULT_VALUES.first_page.first_system_top))
+/**
+* Préparation du premier système témoin sur la première page témoin, qui
+* permet de définir où se positionneront les [lignes de pose]
+***/
+prepareFirstSystemTemoin(){
+  $('#temoin-first-system').css('top', px(PREFS_DEFAULT_VALUES.first_page.first_system_top))
   $('img#img-system-temoin')[0].src = 'img/system-exemple.jpg'
-  $('img#img-system-temoin').on('load', ev => {
 
-    // On prend la hauteur de l'image
-    const imgHeight = $('img#img-system-temoin').height()
-    __add(`Hauteur de l'image du système témoin = ${imgHeight}px`)
-    // On définit le top des lignes d'objets d'analyse
-    for ( var otype in PREFS_DEFAULT_VALUES.lignes) {
-      var top = PREFS_DEFAULT_VALUES.lignes[otype]
-      if ( top >= 0 ) top += imgHeight
-      $(`div#pref-line-${otype}`).css('top', `${top}px`).draggable({axis:'y'})
-    }
+  // Attente du chargement de l'image du système témoin (pour les préférences
+  // de positionnement des [lignes de pose])
+  return new Promise((ok,ko) => {
+    $('img#img-system-temoin')
+      .on('load', ev => {
+        // On prend la hauteur de l'image
+        const imgHeight = $('img#img-system-temoin').height()
+        __add(`Hauteur de l'image du système témoin = ${imgHeight}px`)
+        // On définit le top des lignes d'objets d'analyse
+        for ( var otype in PREFS_DEFAULT_VALUES.lignes) {
+          var top = PREFS_DEFAULT_VALUES.lignes[otype]
+          if ( top >= 0 ) top += imgHeight
+          $(`div#pref-line-${otype}`).css('top', `${top}px`).draggable({axis:'y'})
+        }
+        ok()
+      })
+      .on('error', ko)
   })
+}
 
-  /**
-  * On prépare le menu qui va contenir toutes les analyses
-  ***/
-  Ajax.send('get_all_analysis.rb').then(ret => {
-    // console.debug("Analyses: ", ret.analyses)
-    ret.analyses.splice(0,0,{folder:'none', titre:'Choisir l’analyse…'})
-    ret.analyses.forEach(dana => {
-      $('#analyses').append(DCreate('OPTION', {value: dana.folder, text: dana.titre}))
-    })
+/**
+* Préparation du menu qui contient toutes les analyses trouvées dans le
+* dossier _score_ en racine de l'application.
+***/
+async prepareMenuAnalyses(){
+  var ret = await Ajax.send('get_all_analysis.rb')
+  // __add("Retour Ajax de la liste des analyses " + JSON.stringify(ret.analyses), `${this.ref}#prepareMenuAnalyses`)
+  ret.analyses.splice(0,0,{folder:'none', titre:'Choisir l’analyse…'})
+  ret.analyses.forEach(dana => {
+    $('#analyses').append(DCreate('OPTION', {value: dana.folder, text: dana.titre}))
   })
-
-  __out(`${this.ref}#prepare`)
-}// prepare
+}
 
 /**
 * Préparation du panneau pour une partition donnée
@@ -189,6 +209,10 @@ async preparePanneauForCurrentScore(){
 }
 
 get buttonsSaveData(){ return $('.btn-save-analyse-data') }
+
+/**
+* Observation du panneau d'accueil (panneau d'information de la partition)
+***/
 observe(){
   __in(`${this.ref}#observe`)
   super.observe()
@@ -197,7 +221,7 @@ observe(){
   $('#btn-load-analyse-data').on('click', this.onClickLoadButton.bind(this))
   $('#btn-prepare-score').on('click', this.onClickPrepareButton.bind(this))
 
-  // Boutons pour enregistrer les préférences et revenir
+  // Boutons pour enregistrer les préférences ou revenir
   // aux préférences par défaut
   // Note : une class car plusieurs boutons
   $('button.btn-save-preferences').on('click', this.onClickSavePreferences.bind(this))
@@ -209,20 +233,37 @@ observe(){
   __out(`${this.ref}#observe`, {panneau:this.name, observed: this.observed})
 }
 
+getScoreName(){
+  const AnalyseFolder = $('input#analyse_folder_name').val()
+  if ( AnalyseFolder == '' ) return erreur("Il faut définir le nom du dossier d'analyse ! (même s'il n'existe pas encore)")
+  else return AnalyseFolder
+}
+
+/** ---------------------------------------------------------------------
+*   EVENT METHODS
+
+Toutes les méthodes qui réagissent aux évènements et notamment les
+méthode 'on click' des boutons du panneau d'accueil (infos du score)
+
+*** --------------------------------------------------------------------- */
+
 /**
 * Méthode appelée quand on choisit une analyse dans le menu
 * Note : ça ne la change que lorsqu'elle est différente de l'analyse
-* courante
+* courante.
+* Note : c'est un début de segment de programme.
 ***/
-onChooseAnalyse(ev){
+async onChooseAnalyse(ev){
+  __start("Choix d'une analyse dans le menu", 'onChooseAnalyse')
   const folder = $('#analyses').val()
   $('#analyses').val('none')
-  if ( folder == Score.current.folder_name ) {
+  if ( Score.current && folder == Score.current.folder_name ) {
     message("C'est l'analyse courante !")
   } else {
-    Score.resetForm()
-    $('#analyse_folder_name').val(folder)
+    // Score.resetForm()
+    await openAnalyse(folder, {setCurrent: true})
   }
+  __end("Fin du choix de l'analyse à voir", 'onChooseAnalyse', {output:true})
 }
 /**
 Méthode appelée quand on finit de déplacer un élément comme
@@ -363,11 +404,14 @@ onClickSaveButton(ev){
 /**
 * Quand on clique sur le bouton pour charger/créer l'analyse
 ***/
-onClickLoadButton(ev){
-  const folder = Score.current.folder_name
-  if ( folder == '' ) return erreur("Il faut définir le nom du dossier d'analyse ! (même s'il n'existe pas encore)")
-  Ajax.send('set_current_and_load.rb', {data: Score.getAllValuesInHomePage()})
-    .then(Score.initializeWithData.bind(Score))
+async onClickLoadButton(ev){
+  __in(`${this.ref}#onClickLoadButton`)
+  const folder = this.getScoreName()
+  // if ( folder ) {
+  //   await openAnalyse(folder, {setCurrent: true})
+  // }
+  folder && (await openAnalyse(folder, {setCurrent: true}))
+  __end(`${this.ref}#onClickLoadButton`)
 }
 
 showHelp(){
