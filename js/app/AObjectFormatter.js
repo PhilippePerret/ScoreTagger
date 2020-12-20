@@ -97,7 +97,7 @@ get nature(){
 
 get harmony(){
   const harm = this.getHumanPropValue('harmony', this.props.harmony, '0')
-  if ( harm == '' || this.gtype == 'harmony' ) return harm
+  if ( harm == '' || this.gtype == 'harmony' ) return ''
   return `<span class="rel">${harm}</span>`
 }
 
