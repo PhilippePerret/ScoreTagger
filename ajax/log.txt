@@ -9502,3 +9502,370 @@ Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/sy
 Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
 Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
 Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:24:05 +0100] Entrée dans ajax.rb
+--- [2020-12-20 11:24:05 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607848927.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607848927.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607850402.yml
+ERREUR: No such file or directory @ apply2files - /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607848927.yml
+BACTRACE ERREUR: /Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb:59:in `delete'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb:59:in `block in epure'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb:56:in `each'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb:56:in `epure'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb:44:in `backup'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb:134:in `save_system'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/_scripts/save_system.rb:16:in `<top (required)>'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/ajax_class.rb:18:in `require_relative'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/ajax_class.rb:18:in `treate_request'
+/Users/philippeperret/Sites/ScoreTagger/ajax/ajax.rb:13:in `<main>'
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607852604.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607853266.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607854120.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607868864.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608107386.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608182541.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608459845.yml
+--- [2020-12-20 11:24:45 +0100] Entrée dans ajax.rb
+--- [2020-12-20 11:24:45 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607868864.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1607868864.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608107386.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608182541.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608107386.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608459845.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608182541.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608459885.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608459845.yml
+Étude de /Users/philippeperret/Sites/ScoreTagger/_score_/backups/analyse_essai/system-p1-s01/1608459885.yml
+--- [2020-12-20 11:30:31 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:32 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:32 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:32 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:32 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:33 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:33 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:33 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:34 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:34 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:35 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:30:35 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:21 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:21 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:21 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:21 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:22 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:22 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:22 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:22 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:23 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:23 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:23 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
+--- [2020-12-20 11:31:24 +0100] Entrée dans ajax.rb
+APP_FOLDER = "/Users/philippeperret/Sites/ScoreTagger"
+Chargement des modules
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/Score.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/app_constants.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/app/SafeFile.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/handies.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Integer.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/Hash.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/String_RTF.rb'
+Chargement module '/Users/philippeperret/Sites/ScoreTagger/ajax/ajax/required/system/db.rb'
