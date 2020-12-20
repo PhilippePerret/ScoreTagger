@@ -59,7 +59,7 @@ get divTrait(){
   return DCreate('DIV', {class:css.join(' ')})
 }
 get isWithTrait(){
-  return ['modulation','chord','pedale','cadence'].includes(this.gtype)
+  return ['modulation','chord','pedale'].includes(this.gtype)
 }
 
 get fullText(){
