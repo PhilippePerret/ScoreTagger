@@ -178,7 +178,6 @@ async loadSystemsPrepared(){
   return retour.data
 }
 
-
 /**
 * Construction des titre, compositeur, etc. en fonction des données et
 * des préférences
@@ -188,6 +187,7 @@ drawFirstPage(){
   let divHeight = 0
   SCORE_ANALYZE_PROPS.forEach(prop => {
     if ( ! this.data[prop] ) return ;
+    if ( prop == 'tune' ) return ;
     var elements = []
     if (['analyst','analyze_year'].includes(prop)){
       const libelle = prop == 'analyst' ? 'analyste' : 'année'

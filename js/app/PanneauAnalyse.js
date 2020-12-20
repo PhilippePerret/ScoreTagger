@@ -74,10 +74,12 @@ observe(){
 * La méthode `toScaleFactor` fait le contraire.
 ***/
 byScaleFactor(v){
-  return parseInt( v / this.ScaleFactor, 10)
+  return v
+  // return parseInt( v / this.ScaleFactor, 10)
 }
 toScaleFactor(v){
-  return parseInt( v * this.ScaleFactor, 10)
+  return v
+  // return parseInt( v * this.ScaleFactor, 10)
 }
 /**
 * Cf. "Scale Factor" dans l'annexe de la documentation.

@@ -4,12 +4,6 @@ const TABS = ['home','crop','analyse','export'];
 
 class UI {
 
-static init(){
-  return new Promise((ok,ko)=>{
-    ok()
-  })
-}
-
 /**
 * Insertion des éléments HTML (briques)
 ***/
@@ -52,62 +46,57 @@ static observe(){
   })
 }
 
-  // Pour faire des tests en ruby
-  static run_script_essai(){
-    Ajax.send('_essai_.rb').then(onAjaxSuccess).catch(onError)
-  }
+/** ---------------------------------------------------------------------
+    MÉTHODES PUBLIQUES
 
-  /** ---------------------------------------------------------------------
-      MÉTHODES PUBLIQUES
+    !!! NE RIEN TOUCHER CI-DESSOUS !!!
+--------------------------------------------------------------------- **/
 
-      !!! NE RIEN TOUCHER CI-DESSOUS !!!
-  --------------------------------------------------------------------- **/
+/**
+* Quand on doit ajouter/retirer la class CSS +css+ de l'objet +obj+
+* suivant que +condition+ est vrai ou fausse
+***/
+static addClassIf(obj, condition, css){
+  $(obj)[condition?'addClass':'removeClass'](css)
+}
 
-  /**
-  * Quand on doit ajouter/retirer la class CSS +css+ de l'objet +obj+
-  * suivant que +condition+ est vrai ou fausse
-  ***/
-  static addClassIf(obj, condition, css){
-    $(obj)[condition?'addClass':'removeClass'](css)
-  }
+/**
+* Affiche ou masque l'objet +obj+ suivant la condition +condition+
+***/
+static showIf(obj, condition){
+  return this.addClassIf(obj, !condition, 'hidden')
+}
 
-  /**
-  * Affiche ou masque l'objet +obj+ suivant la condition +condition+
-  ***/
-  static showIf(obj, condition){
-    return this.addClassIf(obj, !condition, 'hidden')
-  }
+// Observer le clic sur l'élément DOM +button+ en actionnant la méthode
+// +method+
+static listenClick(button, method){
+  this.listen(button,'click',method)
+}
+// Inverse de la précédente
+static unlistenClick(button, method){
+  this.unlisten(button,'click',method)
+}
 
-  // Observer le clic sur l'élément DOM +button+ en actionnant la méthode
-  // +method+
-  static listenClick(button, method){
-    this.listen(button,'click',method)
-  }
-  // Inverse de la précédente
-  static unlistenClick(button, method){
-    this.unlisten(button,'click',method)
-  }
-
-  static listen(button, evType, method){
-    button.addEventListener(evType,method)
-  }
-  static unlisten(button, evType, method){
-    button.removeEventListener(evType,method)
-  }
+static listen(button, evType, method){
+  button.addEventListener(evType,method)
+}
+static unlisten(button, evType, method){
+  button.removeEventListener(evType,method)
+}
 
 
-  /**
-    Méthode qui insert la brique html de chemin relatif +fname+ (dans ./html)
-    dans le container +container+.
-  **/
-  static insert(fname, container = document.body){
-    return new Promise((ok,ko)=>{
-      Ajax.send('system/get-brique.rb', {rpath: fname})
-      .then(ret => {
-        if ( 'string' == typeof container ) { container = document.querySelector(container) }
-        container.insertAdjacentHTML('beforeend', ret.brique)
-        ok(ret)
-      })
+/**
+  Méthode qui insert la brique html de chemin relatif +fname+ (dans ./html)
+  dans le container +container+.
+**/
+static insert(fname, container = document.body){
+  return new Promise((ok,ko)=>{
+    Ajax.send('system/get-brique.rb', {rpath: fname})
+    .then(ret => {
+      if ( 'string' == typeof container ) { container = document.querySelector(container) }
+      container.insertAdjacentHTML('beforeend', ret.brique)
+      ok(ret)
     })
-  }
+  })
+}
 }

@@ -142,10 +142,10 @@ update(prop, newValue){
 build(){
   // console.debug("Construction de l'objet : ", this.data)
   // On a besoin du score courant
-  const oProps = this.objetProps
-  const score = Score.current
-      , top   = this.system.topPerTypeObjet(oProps.otype, this.data.line)
-      , left  = this.data.left
+  const oProps  = this.objetProps
+  const score   = Score.current
+      , top     = this.system.topPerTypeObjet(oProps.otype, this.data.line)
+      , left    = this.data.left
 
   // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
   this.top = top
@@ -154,21 +154,17 @@ build(){
   * On récupère le DIV qui est renvoyé par le constructeur du texte final
   ***/
   const div = AObjectToolbox.finalTextFor(oProps)
+  div.id = `ao-${this.data.id}`
 
   // ID, zoom, position et taille
   const dobj = {
-      id:`ao-${this.data.id}`
-    , top: TableAnalyse.byScaleFactor(top)
+      top: TableAnalyse.byScaleFactor(top)
     , left: left
-    , zoom: `${TableAnalyse.ScoreScale}%;`
+    // , zoom: `${TableAnalyse.ScoreScale}%;`
   }
   this.data.width && Object.assign(dobj, {width: this.data.width})
 
   div.setAttribute('style', px(dobj, true))
-
-  if ( ['chord','harmony','pedale'].includes(this.otype) ) {
-    div.appendChild(DCreate('DIV', {class:`trait${this.data.width > 60 ?'':' hidden'}`}))
-  }
 
   this._obj = div
 

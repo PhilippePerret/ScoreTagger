@@ -1,4 +1,5 @@
 'use strict'
+
 /** ---------------------------------------------------------------------
 *   Classe
     -------
@@ -16,27 +17,11 @@ class AObjectToolbox {
 ***/
 static init(){
   __in('AObjectToolbox::init()')
-  this.initFormatters()
   this.build()
   this.inited = true
   __out('AObjectToolbox::init()', {inited: AObjectToolbox.inited})
 }
 
-/**
-* Initialisation de tous les formateurs d'objet
-***/
-static initFormatters(){
-  __in('AObjectToolbox::initFormatters')
-  this.ObjectFormatters = {
-      'chord':      new ChordFormatter()
-    , 'harmony':    new HarmonyFormatter()
-    , 'modulation': new ModulationFormatter()
-    , 'cadence':    new CadenceFormatter()
-    , 'segment':    new SegmentFormatter()
-    , 'pedale':     new PedaleFormatter()
-  }
-  __out('AObjectToolbox::initFormatters')
-}
 /**
 * Méthode qui actualise l'aperçu de l'objet qui permet de voir à quoi
 * ressemblera l'objet en fonction des boutons pressés (des paramètres choisis)
@@ -69,9 +54,12 @@ static get OverviewContainer(){
 ***/
 static finalTextFor(objProps){
   const smd = {} // pour SmartDebug
-  Object.assign(smd, objProps)
+  Object.assign(smd, objProps) // idem
   __in('AObjectToolbox::finalTextFor', Object.assign(smd, {skip: true}))
-  const formed = this.ObjectFormatters[objProps.otype].format(objProps)
+  const otype = objProps.otype
+  if ( undefined === this.formatters ) this.formatters = {}
+  this.formatters[otype] || Object.assign(this.formatters, {[otype]: new AObjectFormatter(otype)})
+  const formed = this.formatters[otype].format(objProps)
   __out('AObjectToolbox::finalTextFor', {skip: true})
   return formed
 }
@@ -271,7 +259,9 @@ static observe(){
 *   Properties Methods
 *
 *** --------------------------------------------------------------------- */
-static get container(){return this._cont||(this._cont = DGet('div#aobject-toolbox'))}
-
+static get container(){
+  return this._conteneur || (this._conteneur = this.getContainer() )
+}
+static getContainer(){return DGet('div#aobject-toolbox')}
 
 }// AObjectToolbox

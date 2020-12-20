@@ -80,7 +80,7 @@ div.aobjet
           content: ")"
           font-size: 12px
           vertical-align: super
-    div.vline
+    div.trait
       height: 80px
       margin-top: -2px
       border-left: 2px solid black
@@ -94,13 +94,15 @@ div.aobjet
       border-radius: 20px
 
 
-  div.trait
+  &:not(.modulation) div.trait
     display: inline-block
     height: 20%
     width: 90%
     margin-left: 4px
     border-top: 1px solid
 
-  img.objet-prop-img
-    height: 100%
-    width: auto
+div.system
+  div.mark
+    img.objet-prop-img
+      height: 100%
+      width: 20px

@@ -4,7 +4,7 @@
 *   ----------------
 *   Classe abstraite pour tous les formateurs
 *** --------------------------------------------------------------------- */
-class ObjectFormatter {
+class AObjectFormatter {
 /** ---------------------------------------------------------------------
   *   CLASSE
   *
@@ -21,7 +21,6 @@ static get(fid){return this.table[fid]}
 *** --------------------------------------------------------------------- */
 constructor(gtype) {
   this.gtype = gtype // par exemple 'alteration', 'segment', 'degre'
-  ObjectFormatter.add(this)
 }
 
 /**
@@ -35,19 +34,36 @@ format(withData){
 }
 
 finalDiv(){
-  return this.builtDiv
+  var inner = []
+  inner.push(this.finalContent)
+  this.isWithTrait  && inner.push(this.divTrait)
+  return this.builtDiv(inner)
 }
 
-get builtDiv(){
-  return DCreate('DIV', {class: this.css, text: this.finalContent})
+builtDiv(inner){
+  return DCreate('DIV', {class:this.css, inner:inner})
 }
 
 get finalContent(){
-  return this.mainMarkFormatted
+  return DCreate('DIV', {class:'mark', text: this.fullText})
 }
 
-get fullMark(){
-  var c = this.mainMark
+/**
+* Le Div qui permet de "tirer un trait" après la marque (accord, harmony) ou
+* avant (cadence) ou en dessous (modulation).
+**/
+get divTrait(){
+  var css = ['trait']
+  if ( this.gtype != 'modulation' && this.props.width < 60 ) css.push('hidden')
+  return DCreate('DIV', {class:css.join(' ')})
+}
+get isWithTrait(){
+  return ['modulation','chord','pedale','cadence'].includes(this.gtype)
+}
+
+get fullText(){
+  var c = ""
+  c += this.mainMark
   c += this.alteration
   c += this.nature
   c += this.harmony
@@ -55,8 +71,13 @@ get fullMark(){
   return c
 }
 
-get mainMarkFormatted(){
-  return this.fullMark
+// À surveiller, ça peut produire une erreur
+get mainMark(){
+  var mainKey = this.gtype
+  if ( this.gtype == 'modulation' ) this.mainKey = 'chord'
+  else if (this.gtype == 'pedale' ) this.mainKey = 'degre'
+  else if (this.gtype == 'segment') this.mainKey = 'degre'
+  return this.getHumanPropValue(mainKey, this.props[mainKey])
 }
 
 get css(){
@@ -66,25 +87,21 @@ get css(){
 }
 
 get alteration(){
-  var alter = this.props.alteration
-  if ( alter && alter != 'n' ) return this.getHumanPropValue('alteration', alter)
-  return ""
+  return this.getHumanPropValue('alteration', this.props.alteration, 'n')
 }
 
 get nature(){
-  var nat = this.props.nature
-  if ( nat && nat != 'Maj' ) return this.getHumanPropValue('nature', nat)
-  return ""
+  return this.getHumanPropValue('nature', this.props.nature, 'Maj')
 }
 
-// Sera surclassé par le formatter modulationFormatter
 get harmony(){
-  return ""
+  const harm = this.getHumanPropValue('harmony', this.props.harmony, '0')
+  if ( harm == '' || this.gtype == 'harmony' ) return harm
+  return `<span class="rel">${harm}</span>`
 }
 
-// Sera surclassé dans HarmonyFormatter
 get renversement(){
-  return ""
+  return this.getHumanPropValue('renv', this.props.renv, 0)
 }
 
 /**
@@ -95,9 +112,12 @@ get renversement(){
 *
 * +otype+   {String} Type de l'objet ('harmony', 'chord', etc.)
 * +id+      {String} Identifiant prope au bouton (p.e. 'II', 'c', 'min')
+* +noneValue+ {Any} Si l'identifiant est égal à cette valeur, on renvoie un
+*               String vide.
 *
 ***/
-getHumanPropValue(otype, id){
+getHumanPropValue(otype, id, noneValue){
+  if ( !id || id == noneValue ) return ''
   try {
     const dat = AOBJETS_TOOLBOX_BUTTONS_GROUPS[otype].items[id]
     if ( dat.img ) {

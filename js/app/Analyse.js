@@ -28,9 +28,9 @@ startPlay(){
   $('div.marge-tools').addClass('hidden')
   // On masque les boutons d'onglet
   $('aside#tabs-buttons').addClass('hidden')
-  // On affiche le bouton d'interruption de l'animation
-  // On augmente la taille de la partition
-  $('div#systems-container').css('zoom', '150%')
+  // Bizarrement, il faut mettre le container de systèmes à 100% de zoom pour
+  // que ça tienne dans l'impression…
+  $('div#systems-container').css('zoom', '100%')
   // Pour savoir quand on change de système et pouvoir ajuster le scroll
   // de fenêtre
   this.current_system = null

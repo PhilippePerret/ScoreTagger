@@ -56,9 +56,18 @@ static async setCurrent(panneau){
 // alias de setCurrent
 static show(panneau){ return this.setCurrent(panneau) }
 
-static onClickOnglet(ev){
-  const ongletId = $(ev.target).data('id')
+static onClickOnglet(ongletId, ev){
   this.setCurrent(this.get(ongletId))
+  return stopEvent(ev)
+}
+
+/**
+* Observation des panneaux
+**/
+static observe(){
+  PANNEAU_NAMES.forEach(paneId => {
+    $(`button#btn-panneau-${paneId}`).on('click', this.onClickOnglet.bind(this, paneId))
+  })
 }
 
 /** ---------------------------------------------------------------------

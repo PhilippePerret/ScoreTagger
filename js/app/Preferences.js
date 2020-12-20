@@ -31,7 +31,7 @@ const PREFS_DEFAULT_VALUES = {
       , items: {
             autosave: {name:"Sauvegarde automatique pendant l'analyse", value: true}
           , autochoose_values: {name: "Toujours sélectionner les valeurs par défaut", value: true}
-          , select_just_created: {name: "Sélectionner l'objet nouvellement créé", value: true}
+          , select_just_created: {name: "Toujours sélectionner l'objet qui vient d’être créé", value: false}
         }
       }
     , score: {
