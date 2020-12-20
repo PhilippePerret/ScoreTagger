@@ -16,7 +16,7 @@ const AOBJETS_TOOLBOX_OTYPE_BUTTONS = {
 , selected: 'chord'
 , items: {
       /* note : mettre dans l'ordre des lignes, de haut en bas */
-      'segment':    {id:'segment',    text: 'Segment',    visible:['segment']}
+      'segment':    {id:'segment',    text: 'Segment',    visible:['segment',['degre',null,'0']]}
     , 'modulation': {id:'modulation', text: 'Modulation', visible:['chord',['alteration', null, 'n'],['harmony',['I','II','III','IV','V','VI','VII','0'],'0'],['nature',['Maj','min'],'Maj']]}
     , 'chord':      {id: 'chord',     text: 'Accord',     visible:['chord','alteration','nature']}
     , 'harmony':    {id:'harmony',    text: 'Harmonie',   visible:[ ['alteration', ['n','d','b'], 'n'], 'harmony',['nature',['Maj','min'],'Maj'],'renv']}
