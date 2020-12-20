@@ -54,7 +54,6 @@ get finalContent(){
 **/
 get divTrait(){
   var css = ['trait']
-  console.log("this.props.width = ", this.props.width)
   if ( this.gtype != 'modulation' && (this.props.width || 0) < 60 ) css.push('hidden')
   return DCreate('DIV', {class:css.join(' ')})
 }

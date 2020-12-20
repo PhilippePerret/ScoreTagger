@@ -290,12 +290,16 @@ onWantToMoveSystem(ev){
 topPerTypeObjet(otype, line){
   __in(`${this.ref}#topPerTypeObjet`, {otype:otype, line:line, skip:true})
   if ( undefined != line ) { otype = LINES_POSE[line - 1] }
-  let tpto = Score.current.preferences.ligne(otype)
+  let rTop = Score.current.preferences.ligne(otype)
+  console.log({
+    system: this.ref,
+    otype: otype, line: line, rTop: rTop
+  })
   // Si c'est une valeur positive, donc en dessous du système, il faut
   // ajouter la hauteur du système pour connaitre son vrai 'top'
-  if ( tpto >= 0 ) tpto += this.rHeight
-  __out(`${this.ref}#topPerTypeObjet`, {tpto:tpto, skip:true})
-  return tpto
+  if ( rTop >= 0 ) rTop += this.rHeight
+  __out(`${this.ref}#topPerTypeObjet`, {rTop:rTop, skip:true})
+  return rTop
 }
 
   // La limite vraiment inférieure du système, tout compris

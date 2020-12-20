@@ -73,6 +73,7 @@ constructor(data) {
   this.constructor.add(this)
 }
 
+get ref(){return this._ref || (this._ref = `AObject#${this.id}[${this.otype}]`)}
 /**
 * Pour masquer l'objet (pour le moment, pendant la lecture de l'analyse)
 ***/
@@ -144,11 +145,7 @@ build(){
   // On a besoin du score courant
   const oProps  = this.objetProps
   const score   = Score.current
-      , top     = this.system.topPerTypeObjet(oProps.otype, this.data.line)
       , left    = this.data.left
-
-  // On renseigne this.top qui servira par exemple pour la lecture de l'analyse
-  this.top = top
 
   /**
   * On récupère le DIV qui est renvoyé par le constructeur du texte final
@@ -157,26 +154,36 @@ build(){
   div.id = `ao-${this.data.id}`
 
   // ID, zoom, position et taille
-  const dobj = {
-      top: TableAnalyse.byScaleFactor(top)
-    , left: left
-    // , zoom: `${TableAnalyse.ScoreScale}%;`
-  }
+  const dobj = { left: left }
   this.data.width && Object.assign(dobj, {width: this.data.width})
 
   div.setAttribute('style', px(dobj, true))
 
   this._obj = div
 
+  this.positionne()
   this.observe()
 
   return div // utile pour update
 }
 
-repositionne(){
-  this.top = this.system.topPerTypeObjet(this.otype, this.data.line)
+positionne(){
+  this.repositionne() // pour le moment, la même chose
 }
 
+repositionne(){
+  /**
+  * On renseigne this.top qui servira par exemple pour la lecture de l'analyse
+  * Si une "valeur de rectification" est connue, il faut l'appliquer
+  * Pour le moment, this.data.top contient la valeur réelle à appliquer
+  ***/
+  this.top = (o => {
+    if ( o.data.top ) return o.data.top
+    else return o.system.topPerTypeObjet(o.otype, o.data.line)
+  })(this)
+  console.log(`${this.ref} this.top = %i`, this.top)
+  $(this.obj).css('top', px(this.top))
+}
 edit(){
   this.isEdited = true
   AObjectToolbox.editAObject(this)
