@@ -75,9 +75,9 @@ get fullText(){
 // À surveiller, ça peut produire une erreur
 get mainMark(){
   var mainKey = this.gtype
-  if ( this.gtype == 'modulation' ) this.mainKey = 'chord'
-  else if (this.gtype == 'pedale' ) this.mainKey = 'degre'
-  else if (this.gtype == 'segment') this.mainKey = 'degre'
+  if ( this.gtype == 'modulation' ) mainKey = 'chord'
+  else if (this.gtype == 'pedale' ) mainKey = 'degre'
+  else if (this.gtype == 'segment') mainKey = 'degre'
   return this.getHumanPropValue(mainKey, this.props[mainKey])
 }
 
