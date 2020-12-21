@@ -183,10 +183,16 @@ build(){
   const my = this
   const score = Score.current
   const Prefs = score.preferences
-  my.imageLoaded = false
-  const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid, src: this.imageSrc})
+  // my.imageLoaded = false
+  const img = DCreate('IMG', {id: `image-system-${my.minid}`, class:'system', 'data-id': my.minid})
+  img.src = this.preloadedImg.src
   const div = DCreate('DIV', {id: this.id, class:'system', 'data-id': my.minid, inner:[img]})
+
+  // === PLACEMENT DU DIV DU SYSTÈME DANS LA PAGE ===
   my.container.appendChild(div)
+
+  // Hauteur du système (rappel : les images ont été préchargées)
+  my.rHeight = my.data.rHeight = $(img).height()
 
   /**
   * Pour le numéro de mesure
@@ -196,12 +202,6 @@ build(){
   div.appendChild(numMes)
   $(numMes).on('click', this.onClickNumeroMesure.bind(this))
 
-  // On place un observer sur l'image pour savoir si elle est chargée
-  $(img).on('load', ev => {
-    if ( img.complete && img.naturalHeight != 0) {
-      my.imageLoaded = true
-    }
-  })
   this.obj = div
   this.observe()
 }
@@ -293,7 +293,7 @@ topPerTypeObjet(otype, line){
   let rTop = Score.current.preferences.ligne(otype)
   console.log({
     system: this.ref,
-    otype: otype, line: line, rTop: rTop
+    otype: otype, line: line, rTop: rTop, rHeight: this.rHeight
   })
   // Si c'est une valeur positive, donc en dessous du système, il faut
   // ajouter la hauteur du système pour connaitre son vrai 'top'

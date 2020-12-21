@@ -206,22 +206,38 @@ drawFirstPage(){
 * @révisée
 *
 * Méthode procédant à l'instanciation de tous les systèmes de la partition
-* et leur affichage dans la page, pour le moment, sans les positionner et sans
-* créer leurs objets (s'ils en ont)
-* @note   Dans tous les cas (partition préparée ou non), il faut le faire
+*
 ***/
-async instanciateAndPoseAllSystems(dataSystems){
-  __in(`${this.ref}#instanciateAndPoseAllSystems`)
+async instanciateAllSystems(dataSystems){
+  __in(`${this.ref}#instanciateAllSystems`)
   this.systems = []
-  dataSystems.forEach(dsys => {
-    const system = new ASystem(dsys)
-    system.build()
-    this.systems.push(system)
-  })
-  await this.checkImagesLoading()
-  __out(`${this.ref}#instanciateAndPoseAllSystems`)
+  dataSystems.forEach(dsys => this.systems.push(new ASystem(dsys)))
+  __out(`${this.ref}#instanciateAllSystems`)
 }
 
+async loadAllImageSystems(){
+  __in(`${this.ref}#loadAllImageSystems`)
+  return new Promise((ok,ko) => {
+    var nombreImagesRest = this.systems.length
+    this.systems.forEach(system => {
+      const img = new Image()
+      img.onload = ev => {
+        if ((--nombreImagesRest) == 0) {
+          __out(`${this.ref}#loadAllImageSystems`)
+          ok()
+        }
+      }
+      img.src = system.imageSrc
+      system.preloadedImg = img
+    })
+  })
+}
+
+async poseAllSystems(){
+  __in(`${this.ref}#poseAllSystems`)
+  this.systems.forEach(system => system.build())
+  __out(`${this.ref}#poseAllSystems`)
+}
 /**
 * @révisée
 *
@@ -297,7 +313,10 @@ calcPositionAllSystems(){
 }
 
 /**
-* Méthode qui se charge d'attendre que toutes les images soient chargées
+* Méthode qui se charge d'attendre que toutes les images des systèmes soient
+* chargées. C'est nécessaire pour pouvoir dessiner leurs objets.
+* OBSOLÈTE : maintenant, on lance le dessin du système que lorsque l'image
+* chargée.
 *
 ***/
 async checkImagesLoading(){
@@ -315,6 +334,7 @@ async checkImagesLoading(){
       clearInterval(this.loadingTimer)
       this.loadingTimer = null
       __add("Images toutes chargées", "Score#checkImagesLoading")
+      console.log("Images toutes chargées", "Score#checkImagesLoading")
       __out('Score#checkImagesLoading')
     }
   }
