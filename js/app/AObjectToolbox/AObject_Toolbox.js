@@ -120,6 +120,10 @@ static setInterfaceForType(otype, aobjet){
   // console.debug("-> setInterfaceForType(otype='%s', aobjet=)", otype, aobjet)
   this.OTypeButtons.setSelected(ButtonAOTB.get(`otype-${otype}`))
   MainGButtonAOTB.get(otype).configureToolbox(aobjet && aobjet.objetProps)
+  const widthable  = ['pedale','chord','harmony','segment','cadence'].includes(otype)
+  const heightable = ['modulation','segment'].includes(otype)
+  this.buttonWidth[widthable?'show':'hide']()
+  this.buttonHeight[heightable?'show':'hide']()
   this.editObjectCoordonnates(aobjet) // même si aobjet n'est pas défini
   __out('AObjectToolbox::setInterfaceForType')
 }
@@ -135,14 +139,8 @@ static editObjectCoordonnates(aobjet){
     // Coordonnées x, y, w, et h (selon le type)
     this.buttonPosX.set(aobjet.data.left)
     this.buttonPosY.set(aobjet.data.top || 0)
-    const widthable  = ['pedale','chord','harmony','segment','cadence'].includes(aobjet.otype)
-    const heightable = ['modulation','segment'].includes(aobjet.otype)
-    if ( widthable ) {
-      this.buttonWidth.set( aobjet.data.width || parseInt($(aobjet.obj).width(),10) )
-    }
-    if ( heightable ) {
-      this.buttonHeight.set( aobjet.data.height || parseInt($(aobjet.obj).height(),10) )
-    }
+    this.buttonWidth.set( aobjet.data.width || parseInt($(aobjet.obj).width(),10) )
+    this.buttonHeight.set( aobjet.data.height || parseInt($(aobjet.obj).height(),10) )
     // Menu pour placer sur une autre ligne de pose
     this.menuLignePose.val(aobjet.data.line || LINES_POSE.indexOf(aobjet.otype))
   }
@@ -248,14 +246,6 @@ static bGroup(gtype) { return this.BGroups[gtype] }
 *
 * Méthodes qui ne servent en général qu'une seule fois
 *** --------------------------------------------------------------------- */
-
-// /**
-// * Retourne l'instance {ButtonsGroupAOTB} de nom +name+ ('note','degre',…)
-// ***/
-// static BGroup(name){
-//   console.log("BGroup(%s)", name, this.BGroups)
-//   return this.BGroups[name]
-// }
 
 /**
 * Observation de la boite d'outils en général

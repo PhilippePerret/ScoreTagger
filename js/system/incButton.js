@@ -10,7 +10,7 @@
     La méthode publique 'set' ne provoque plus l'actualisation du propriétaire
     (entendu qu'elle permet de régler dans un premier temps les valeurs
     initiales du propriétaire)
-    
+
   # 1.0.2
     Ajout des méthodes publiques 'min' et 'max' pour redéfinir de l'extérieur
     les valeurs max et min.
@@ -58,6 +58,9 @@ class IncButton {
   // Pour fixer la valeur inférieure
   set min(v){ this.data.min = v }
   get min(){ return this.data.min }
+
+  hide(){this.container.classList.add('hidden')}
+  show(){this.container.classList.remove('hidden')}
 
   // /méthodes publiques
   // ---------------------------------------------------------------------
@@ -173,4 +176,7 @@ class IncButton {
   }
 
   get spanValue(){return this._spanvalue || (this._spanvalue = $(this.obj).find('.incbutton-value')[0])}
+  // Le container, PAS un set jQuery, MAIS un DOM Element
+  get container(){return this._container || (this._container = DGet(`#${this.data.container.id}`))}
+
 }
