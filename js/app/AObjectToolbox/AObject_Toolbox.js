@@ -120,7 +120,7 @@ static setInterfaceForType(otype, aobjet){
   // console.debug("-> setInterfaceForType(otype='%s', aobjet=)", otype, aobjet)
   this.OTypeButtons.setSelected(ButtonAOTB.get(`otype-${otype}`))
   MainGButtonAOTB.get(otype).configureToolbox(aobjet && aobjet.objetProps)
-  this.editObjectCoordonnates(aobjet) // oui, même si aobjet n'est pas défini
+  this.editObjectCoordonnates(aobjet) // même si aobjet n'est pas défini
   __out('AObjectToolbox::setInterfaceForType')
 }
 
@@ -129,14 +129,20 @@ static setInterfaceForType(otype, aobjet){
 * de choix des coordonnées
 * (*) Principalement car d'autres propriétés peuvent également être modifiées
 ***/
-
 static editObjectCoordonnates(aobjet){
   $('div#div-coordonates')[aobjet?'removeClass':'addClass']('hidden')
   if ( aobjet ) {
     // Coordonnées x, y, w, et h (selon le type)
     this.buttonPosX.set(aobjet.data.left)
     this.buttonPosY.set(aobjet.data.top || 0)
-    this.buttonWidth.set( aobjet.data.width || parseInt($(aobjet.obj).width(),10) )
+    const widthable  = ['pedale','chord','harmony','segment','cadence'].includes(aobjet.otype)
+    const heightable = ['modulation','segment'].includes(aobjet.otype)
+    if ( widthable ) {
+      this.buttonWidth.set( aobjet.data.width || parseInt($(aobjet.obj).width(),10) )
+    }
+    if ( heightable ) {
+      this.buttonHeight.set( aobjet.data.height || parseInt($(aobjet.obj).height(),10) )
+    }
     // Menu pour placer sur une autre ligne de pose
     this.menuLignePose.val(aobjet.data.line || LINES_POSE.indexOf(aobjet.otype))
   }
@@ -188,6 +194,8 @@ static build(){
   this.buttonPosY.build()
   this.buttonWidth = new IncButton({container:'#aobj-pos-w', onchange:this.onChangeW.bind(this)})
   this.buttonWidth.build()
+  this.buttonHeight = new IncButton({container:'#aobj-pos-h', onchange:this.onChangeH.bind(this)})
+  this.buttonHeight.build()
 
   // On prépare le menu qui permet de changer de ligne de pose
   this.menuLignePose = $('select#ligne-pose')
@@ -221,6 +229,9 @@ static onChangeY(newValue){
 }
 static onChangeW(newValue){
   this.editedObject.update('width', Number(newValue))
+}
+static onChangeH(newValue){
+  this.editedObject.update('height', Number(newValue))
 }
 static onChangeLignePose(ev){
   const newVal = Number($(this.menuLignePose).val())

@@ -56,7 +56,7 @@ getValues(){
 ***/
 setValues(oData){
   __in("MainGButtonAOTB#setValues()", oData)
-  this.bGroups.forEach(bgroup => bgroup.select(oData[bgroup.gtype]))
+  this.bGroups.forEach(bgroup => bgroup.select(oData[bgroup.gtype] || '0'))
 }
 
 /**

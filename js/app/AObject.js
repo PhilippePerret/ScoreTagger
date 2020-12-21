@@ -130,11 +130,30 @@ updateAll(newObject, newValues){
 ***/
 update(prop, newValue){
   __in(`${this.ref}#update`, {prop: prop, value: newValue})
-  this.data[prop] = newValue
-  $(this.obj).html(this.build().innerHTML)
+  const oldValue = this.data[prop]
+  this.data[prop] = newValue // this.build en a besoin ci-dessous
+  switch(prop){
+  case 'width' : this.changeWidth(newValue, oldValue || $(this.obj).width()); break
+  case 'height': $(this.obj).css('height', px(newValue)); break
+  default:
+      $(this.obj).html(this.build().innerHTML)
+  }
   __out(`${this.ref}#update`)
 }
 
+/**
+* Pour changer la largeur (width) de l'objet
+* Pour une cadence, il faut "reculer" le left, c'est-à-dire allonger par la
+* gauche, pas par la droite.
+***/
+changeWidth(newValue, oldValue){
+  if ( this.otype == 'cadence' ) {
+    var dif = oldValue - newValue
+    this.data.left += dif
+    $(this.obj).css('left', px(this.data.left))
+  }
+  $(this.obj).css('width', px(newValue));
+}
 /**
 * Construction de l'objet d'analyse
 *

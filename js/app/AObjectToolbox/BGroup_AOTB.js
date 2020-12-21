@@ -92,6 +92,10 @@ setSelected(button){
 * sa valeur.
 ***/
 select(vbutton){
+  const btn = ButtonAOTB.get(`${this.gtype}-${vbutton}`)
+  if ( ! btn ) {
+    console.error("Impossible de trouver le bouton '%s' dans ", `${this.gtype}-${vbutton}`, ButtonAOTB.table)
+  }
   this.setSelected(ButtonAOTB.get(`${this.gtype}-${vbutton}`))
 }
 
