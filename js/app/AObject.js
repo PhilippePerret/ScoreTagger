@@ -181,9 +181,12 @@ repositionne(){
     if ( o.data.top ) return o.data.top
     else return o.system.topPerTypeObjet(o.otype, o.data.line)
   })(this)
-  console.log(`${this.ref} this.top = %i`, this.top)
   $(this.obj).css('top', px(this.top))
 }
+
+/**
+* Méthode appelée pour éditer l'objet
+***/
 edit(){
   this.isEdited = true
   AObjectToolbox.editAObject(this)
@@ -204,15 +207,16 @@ observe(){
     {name: 'Mettre sur la ligne de pose supérieure', method: this.onChangeLignePose.bind(this, 1)}
   , {name: 'Mettre sur la ligne de pose inférieur', method: this.onChangeLignePose.bind(this, -1)}
   ]
-  new ContextMenu(this.obj, dataCMenu, {onclick: this.toggleSelect.bind(this)})
+  new ContextMenu(this.obj, dataCMenu)
 }
 
 onMouseDown(ev){
   if (ev.ctrlKey||ev.metaKey||ev.shiftKey||ev.altKey) return true;
+  if ( this.moving ) return stopEvent(ev)
   this.moving = true
+  this.hasBeenMoved = false
   this.offsetXStart = ev.clientX
   this.leftInit = this.data.left
-  // console.debug("Démarrage du drag : ", ev)
   window.onmousemove = this.onMouseMove.bind(this)
   window.onmouseup = this.onMouseUp.bind(this)
   $(this.obj).on('mouseup', this.onMouseUp.bind(this))
@@ -222,6 +226,7 @@ onMouseMove(ev){
   if ( this.moving ) {
     const decalage = TableAnalyse.byScaleFactor(ev.clientX - this.offsetXStart)
     var newLeft = this.leftInit + decalage
+    Math.abs(decalage) > 5 && ( this.hasBeenMoved = true )
     this.data.left = newLeft
     $(this.obj).css('left', px(newLeft))
   }
@@ -232,7 +237,25 @@ onMouseUp(ev){
   window.onmouseup = null
   $(this.obj).off('mouseup', this.onMouseUp.bind(this))
   this.moving = false
+  /**
+  * Si l'objet n'a pas été bougé ("vrai" clic de souris), on le sélectionne
+  * ou désélectionne.
+  * Rappel : on considère qu'il y a eu déplacement si le déplacement a plus
+  * de 5 pixels. Ça évite les faux déplacements quand on veut simplement cliquer
+  * l'objet mais qu'on "glisse" un peu dessus
+  ***/
+  this.hasBeenMoved ? this.onMoved() : this.toggleSelect(ev)
   return stopEvent(ev)
+}
+
+/**
+* Méthode appelée quand on a fini de déplacer l'objet
+* Note : il faut au moins un déplacement de 5 pixels
+* Note 2 : c'est un déplacement à la souris, pas avec les incButtons
+***/
+onMoved(){
+  this.modified = true
+  this.system.modified = true
 }
 
 /**

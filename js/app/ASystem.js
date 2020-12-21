@@ -291,10 +291,10 @@ topPerTypeObjet(otype, line){
   __in(`${this.ref}#topPerTypeObjet`, {otype:otype, line:line, skip:true})
   if ( undefined != line ) { otype = LINES_POSE[line - 1] }
   let rTop = Score.current.preferences.ligne(otype)
-  console.log({
-    system: this.ref,
-    otype: otype, line: line, rTop: rTop, rHeight: this.rHeight
-  })
+  // console.log({
+  //   system: this.ref,
+  //   otype: otype, line: line, rTop: rTop, rHeight: this.rHeight
+  // })
   // Si c'est une valeur positive, donc en dessous du système, il faut
   // ajouter la hauteur du système pour connaitre son vrai 'top'
   if ( rTop >= 0 ) rTop += this.rHeight
