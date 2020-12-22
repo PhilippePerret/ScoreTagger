@@ -131,6 +131,7 @@ updateAll(newObject, newValues){
 update(prop, newValue){
   __in(`${this.ref}#update`, {prop: prop, value: newValue})
   const oldValue = this.data[prop]
+  console.log("oldValue = ", `${oldValue}`)
   this.data[prop] = newValue // this.build en a besoin ci-dessous
   switch(prop){
   case 'width' : this.changeWidth(newValue, oldValue || $(this.obj).width()); break
@@ -153,6 +154,14 @@ changeWidth(newValue, oldValue){
     $(this.obj).css('left', px(this.data.left))
   }
   $(this.obj).css('width', px(newValue));
+  // Faut-il faire apparaitre le trait
+  if ( ['chord', 'harmony', 'pedale'].includes(this.otype) ) {
+    console.log("newValue = ", newValue, ", oldValue = ", oldValue)
+    if ( false == ( (newValue < 60) === (oldValue < 60) ) ) {
+      console.log("Je dois modifier l'état du trait")
+      this.obj.querySelector('div.trait').classList[newValue < 60 ? 'add' : 'remove']('hidden')
+    }
+  }
 }
 /**
 * Construction de l'objet d'analyse

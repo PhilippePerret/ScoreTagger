@@ -49,13 +49,21 @@ div.aobjet
       border-style: dashed
       border-width: 1px
       border-color: black
+      div.mark
+        position: absolute
+        left: calc(50% - 4pt)
+        font-size: 11pt
     &.up
       &:not(.selected)
         border-bottom: none
+        div.mark
+          top: -20px
     &.down
       top: 160px!important // TODO Pouvoir le régler aussi
       &:not(.selected)
         border-top: none
+        div.mark
+          bottom: -20px
 
   // Type particulier de la modulation
   // Cette fois, la marque est mise dans un div.mark
@@ -95,11 +103,13 @@ div.aobjet
 
 
   &:not(.modulation) div.trait
-    display: inline-block
+    position: absolute
     height: 20%
-    width: 90%
-    margin-left: 4px
+    width: calc(100% - 24px)
+    left: 22px
     border-top: 1px solid
+    top: 11px
+    z-index: -1
 
   &.cadence
     border-color: transparent black black transparent
