@@ -49,12 +49,13 @@ const PREFS_DEFAULT_VALUES = {
       }
   }
   , lignes: {
-      segment:      -(100 + 17) // ou garder pour mode analyse structurelle ?
+      segment:      -(100 + 17)
     , modulation:   -(50 + 20)
     , chord:        -(0 + 17)
     , harmony:      0
     , cadence:      20
     , pedale:       40
+    , segment_down: 60
   }
   , first_page: {
       title: {top:3*BASELINE_HEIGHT, left:60}

@@ -252,7 +252,16 @@ La difficulté consiste à les positionner correctement sur la page pour qu’il
 
 Quelle que soit la longueur de la partition, son analyse est présentée intégralement sur la table d’analyse et produira un unique fichier sans assemblage nécessaire.
 
+#### Positionnement dynamique
 
+On utilise un « positionnement dynamique » des systèmes c’est-à-dire qu’il tient compte des éléments qu’on trouve sur la partition. Puisque tous les objets sont « accrochés » au système, il est très simple de déplacer et d’ajuster ces systèmes. Donc, au départ, on laisse juste la place d’écrire l’harmonie et les accords, puis ensuite, en ajoutant les modulations, les cadences, etc. les systèmes ajustent leur position en prenant garde de ne pas se retrouver entre deux pages.
+
+C’est la méthode `ASystem.repositionneAll()` qui s'occupe de se travail.
+
+C'est la méthode `ASystem#addObjet` (utilisée aussi bien au chargement qu'à la création de l'objet) qui :
+
+1. consigne la ligne la plus haute et la plus basse,
+2. demande le recalcul de la position du système (des systèmes) s'il y a changement des valeurs.
 
 #### Éléments d’un système
 
@@ -267,7 +276,7 @@ Pour placer les éléments (les « objets d'analyse ») sur la table d’analyse
 
 C     G							Accord								ligne_chord
 
--------------|
+-------------|			------------ `top` du système
 -------------|
 -------------|
 -------------|
@@ -277,7 +286,11 @@ I    V							Harmonie							ligne_harmony
 
 ___|CP							Cadence								ligne_cadence
 
-	|_________|				Pédale / Seg. inf.		ligne_pedale
+1----------					Pédale	 							ligne_pedale
+
+|_________|					Ligne segment inf.		ligne_segment_down
+
+--------------------- `rBottom` du système
 
 ~~~
 
@@ -574,7 +587,7 @@ visible: ['note',   ['alteration',['n','b','d'], 'b'],   'nature']
 
 Si on doit garder tous les boutons et définir celui qui doit être sélectionné (si ce n’est pas celui par défaut), alors on met le deuxième élément à `null` :
 
-​~~~javascript
+~~~javascript
 visible: ['note',   ['alteration', null, 'b'],   'nature']
 ~~~
 
@@ -655,3 +668,5 @@ Pour faciliter la gestion de l’aspect de l’analyse, des *lignes de pose* per
 
 [onglet Home]: #onglet_home
 [onglet Analyse]: #onglet_analyse
+
+~~~

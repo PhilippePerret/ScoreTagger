@@ -94,6 +94,12 @@ get ScoreScale(){
 }
 
 /**
+* Pour ajouter une ligne repère à la hauteur +top+
+***/
+addLigneRepere(top, options = {}){
+  this.systemsContainer.appendChild(DCreate('DIV',{class:'reperage',style:`top:${top}px;border-color:${options.color||'green'}`}))
+}
+/**
 * Méthode qui dessine les délimiteurs de pages en fonction de la hauteur
 * complète de l'analyse
 ***/
@@ -160,6 +166,7 @@ onClickOnTableAnalyse(ev){
 * Note : en plus, la méthode donne des indications sur les données
 ***/
 repositionneAll(ev){
+  console.error("OBSOLÈTE : on doit utiliser ASystem.repositionneAll")
   __in(`${this.ref}#repositionneAll`)
   var prevSys = null
   Score.current.systems.forEach(system => {
@@ -183,6 +190,7 @@ repositionneAll(ev){
 * de système, etc.)
 ***/
 calcSystemPos(system, debug = false){
+  console.error("OBSOLÈTE : on doit utiliser ASystem.repositionneAll")
   __in(`${this.ref}#calcSystemPos`, {system:system, debug:debug})
   const score = system.score || Score.current
   debug && console.debug("\n=== CALCUL TOP DU SYSTÈME %s ===", system.minid)
@@ -203,8 +211,8 @@ calcSystemPos(system, debug = false){
   } else {
     // Le système précédent (au-dessus)
     const prevSystem = system.prevSystem
-    fromY = prevSystem.bottom_limit
-    debug && console.debug("fromY (prevSystem.bottom_limit) = %i", prevSystem.bottom_limit)
+    fromY = prevSystem.rBottom
+    debug && console.debug("fromY (prevSystem.rBottom) = %i", prevSystem.rBottom)
 
     // La distance entre système (Space Between Systems)
     const SBS = score.preferences.divers('space_between_systems')

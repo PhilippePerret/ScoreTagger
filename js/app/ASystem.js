@@ -20,12 +20,43 @@ static getByMinId(minid){
   return this.itemsByMinId[minid]
 }
 
+/**
+* C'est cette méthode qui se charge du positionnement dynamique des systèmes
+* courant, en écartant les systèmes si nécessaire.
+***/
+static repositionneAll(){
+  __in("ASystem::repositionneAll")
+  const my = this
+  const score = Score.current
+  /**
+  * Plutôt que la notion de "top courant", on prend celle de "baseline" qui
+  * correspond à la ligne sur laquelle se trouve le top du système, de l'image,
+  * et par conséquent du DIV qui contient le système et ses [objets d'analyse]
+  ***/
+  var curBaseline = score.preferences.first_page('first_system_top')
+  console.log("Baseline au départ : ", curBaseline)
+  this.items.forEach(system => {
+    console.log("Baseline courante : ", curBaseline)
+    system.setTop(curBaseline)
+    TableAnalyse.addLigneRepere(system.top + system.highestTop, {color:'orange'})
+    TableAnalyse.addLigneRepere(system.top, {color:'red'})
+    TableAnalyse.addLigneRepere(system.top + system.lowestTop, {color:'purple'})
+    console.log("Hauteur totale du système courant :", system.fullHeight)
+    TableAnalyse.addLigneRepere(curBaseline)
+    // curBaseline = system.rBottom
+    curBaseline = system.top + system.lowestTop + 40
+  })
+  // On ajuste toujours la taille du conteneur
+  TableAnalyse.systemsContainer.style.height = px(curBaseline + 300)
+  __out("ASystem::repositionneAll")
+}
+
 static add(system){
   if (undefined == this.items){
-    this.items = {}
+    this.items = []
     this.itemsByMinId = {}
   }
-  Object.assign(this.items, { [system.index]: system})
+  this.items.push(system)
   Object.assign(this.itemsByMinId, { [system.minid]: system})
 }
 
@@ -41,7 +72,6 @@ constructor(data) {
   this.indexInPage    = data.indexInPage
   this.top            = data.top  // pas forcément défini à l'instanciation
   this.page           = data.page // numéro de page (1-start)
-  this.fullHeight     = data.fullHeight
   this.rHeight        = data.rHeight
   this.nombre_mesures = data.nombre_mesures
   // Propriété volatiles
@@ -156,6 +186,7 @@ createNewAObjet(ev){
 get pref_select_new_objet(){
   return Score.current.preferences.binary('analyse.select_just_created')
 }
+
 /**
 * Pour ajouter l'objet au système.
 * Ça consiste à :
@@ -171,9 +202,31 @@ append(aobj){
 /**
 * Méthode pour ajouter l'objet +obj+ au système (liste), à sa création ou
 * à son chargement.
+* On en profite pour définir la ligne supérieure et la ligne inférieure
+* utilisée actuellement par le système (pour le réglage de la position dynami-
+* que des systèmes)
 ***/
-addObjet(obj){
+addObjet(obj, options = {recalculer: false}){
   this.aobjets.push(obj)
+}
+
+/**
+* Retourne l'objet le plus haut et le plus bas du système (pour calcul du
+* repositionnement)
+***/
+get highestTop(){
+  return this._highesttop || (this._highesttop = this.calcHighLowTop().high)
+}
+get lowestTop(){
+  return this._lowesttop || (this._lowesttop = this.calcHighLowTop().low)
+}
+
+/**
+* Détruit un objet (et recalcule la position des systèmes en cas de changement
+* de hauteur max ou min)
+***/
+removeObjet(obj){
+
 }
 
 /**
@@ -225,11 +278,15 @@ positionneAndDraw(){
 *         afin de pouvoir exporter en page unique
 ***/
 positionne(){
-  this.obj.style.top = `${this.top}px`
-  this.container.style.height = `${this.top + 500}px`
-  ASystem.top_last_system = this.top
+  this.setTop()
 }
-repositionne(){
+
+setTop(top){
+  if ( undefined == top ) top = this.top
+  else {
+    this.top = top
+    this.modified = true
+  }
   this.obj.style.top = `${this.top}px`
 }
 
@@ -274,6 +331,14 @@ onWantToMoveSystem(ev){
 }
 
 /**
+* Retourne la hauteur totale (vraiment totale) du système
+***/
+get fullHeight(){
+  return this._fullHeight || (this._fullHeight = this.calcFullHeight())
+}
+
+
+/**
 * Retourne le top de l'objet d'analyse dans le conteneur du système en
 * fonction de son type +otype+.
 * Quand la valeur est négative, on doit placer l'objet au-dessus du système
@@ -302,43 +367,84 @@ topPerTypeObjet(otype, line){
   return rTop
 }
 
-  // La limite vraiment inférieure du système, tout compris
-  get bottom_limit(){
-    return this._bottom_limit || (this._bottom_limit = this.calcBottomLimit())
-  }
+// La limite vraiment inférieure du système, tout compris
+get rBottom(){
+  return this._rbottom || (this._rbottom = this.calcBottomLimit())
+}
 
-  /**
-  * Données générales
-  ***/
+/**
+* Données générales
+***/
 
-  get bottom(){
-    return this._bottom || (this._bottom = this.top + this.rHeight)
-  }
+get bottom(){
+  return this._bottom || (this._bottom = this.top + this.rHeight)
+}
 
-  get imageSrc(){
-    return this._imgsrc || (this._imgsrc = `_score_/${CURRENT_ANALYSE}/systems/images/${this.imageName}`)
-  }
-  get imageName(){
-    return this._imgname || (this._imgname = `${this.id}.jpg`)
-  }
-  get id(){
-    return this._id || (this._id = `system-${this.minid}` )
-  }
-  // Raccourci vers le conteneur des systèmes de la table d'analyse
-  get container(){
-    return this._cont || (this._cont = TableAnalyse.systemsContainer)
-  }
+get imageSrc(){
+  return this._imgsrc || (this._imgsrc = `_score_/${CURRENT_ANALYSE}/systems/images/${this.imageName}`)
+}
+get imageName(){
+  return this._imgname || (this._imgname = `${this.id}.jpg`)
+}
+get id(){
+  return this._id || (this._id = `system-${this.minid}` )
+}
+// Raccourci vers le conteneur des systèmes de la table d'analyse
+get container(){
+  return this._cont || (this._cont = TableAnalyse.systemsContainer)
+}
 
 /**
 * Méthodes de calcul
 * ------------------
 ***/
-calcFullHeight(firstTopLineType) {
+
+
+/**
+* Retourne la hauteur totale du système, en tenant compte de son objet le plus
+* haut et son objet le plus bas actuel.
+* Rappel : la hauteur/position d'un système est recalculé en permanence en
+* fonction des [objets d'analyse] qu'il affiche.
+***/
+calcFullHeight() {
   const cPrefs = Score.current.preferences
-  return (0 - cPrefs.ligne(firstTopLineType) + this.rHeight + cPrefs.ligne('pedale') + 17)
+  return (0 - this.highestTop + this.rHeight + this.lowestTop + 17)
 }
+
 calcBottomLimit(){
-  return this.top + this.fullHeight
+  return this.top + this.rHeight + this.lowestTop + 17
+}
+
+
+/**
+* Calcul est objets les plus hauts et les plus bas du système.
+* Note : ces hauteurs sont relatives au système.
+* La méthode produit :
+*   - this.highestObject    L'objet le plus haut
+*   - this.lowestObject     L'objet le plus bas
+*   - this.highestTop       Le point le plus haut (indirectement)
+*   - this.lowestTop        Le point le plus bas (hors hauteur)  (indirectement)
+***/
+calcHighLowTop(){
+  return this._highestlowesttop || (this._highestlowesttop = this.calcHLT())
+}
+calcHLT(){
+  var maxTop = 0
+  var maxBot = this.rHeight
+  this.aobjets.forEach(objet => {
+    if ( objet.top < maxTop ) {
+      // <= Le nouvel objet est plus haut que le plus haut des objets
+      // => Il devient l'objet le plus haut
+      maxTop = Number(objet.top)
+      this.highestObject = objet
+    } else if ( objet.top > maxBot ) {
+      // <= L'objet est plus bas que le plus bas des objets du système
+      // => Il devient l'objet le plus bas
+      maxBot = objet.top
+      this.lowestObject = objet
+    }
+  })
+  return {high: maxTop, low: maxBot}
 }
 
 }
