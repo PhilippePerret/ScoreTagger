@@ -74,6 +74,28 @@ constructor(data) {
 }
 
 get ref(){return this._ref || (this._ref = `AObject#${this.id}[${this.otype}]`)}
+
+/** ---------------------------------------------------------------------
+*   Pour les mesures
+*
+*** --------------------------------------------------------------------- */
+// Position relative haute par rapport au système
+// Note : elle est négative si l'objet se trouve au-dessus du système
+get relativeTop(){
+  return  this.data.top
+          ? this.data.top
+          : this.system.topPerTypeObjet(this.type, this.data.line) ;
+}
+// get top(){return this.relativeTop}
+
+// Hauteur de l'objet
+get height(){
+  return this._height || (this._height = $(this.obj).height())
+}
+/** ---------------------------------------------------------------------
+  *   Apparence de l'objet sur la table
+  *
+*** --------------------------------------------------------------------- */
 /**
 * Pour masquer l'objet (pour le moment, pendant la lecture de l'analyse)
 ***/
@@ -200,16 +222,7 @@ positionne(){
 }
 
 repositionne(){
-  /**
-  * On renseigne this.top qui servira par exemple pour la lecture de l'analyse
-  * Si une "valeur de rectification" est connue, il faut l'appliquer
-  * Pour le moment, this.data.top contient la valeur réelle à appliquer
-  ***/
-  this.top = (o => {
-    if ( o.data.top ) return o.data.top
-    else return o.system.topPerTypeObjet(o.otype, o.data.line)
-  })(this)
-  $(this.obj).css('top', px(this.top))
+  $(this.obj).css('top', px(this.relativeTop))
 }
 
 /**

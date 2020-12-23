@@ -97,7 +97,7 @@ get ScoreScale(){
 * Pour ajouter une ligne repère à la hauteur +top+
 ***/
 addLigneRepere(top, options = {}){
-  this.systemsContainer.appendChild(DCreate('DIV',{class:'reperage',style:`top:${top}px;border-color:${options.color||'green'}`}))
+  this.systemsContainer.appendChild(DCreate('DIV',{class:'reperage',style:`top:${top}px;border-width:2px;border-color:${options.color||'green'}`}))
 }
 /**
 * Méthode qui dessine les délimiteurs de pages en fonction de la hauteur

@@ -263,6 +263,25 @@ C'est la méthode `ASystem#addObjet` (utilisée aussi bien au chargement qu'à l
 1. consigne la ligne la plus haute et la plus basse,
 2. demande le recalcul de la position du système (des systèmes) s'il y a changement des valeurs.
 
+#### Les lignes de référence
+
+Un système complet, pour son positionnement, utilise **5 lignes de références** :
+
+~~~
+topLine						C'est la ligne de "départ" du système, sous laquelle se trouve
+									l'objet le plus haut du système.
+topSystemLine			C'est la ligne qui correspond au top du système, au bord haut
+									du système proprement dit.
+bottomSystemLine	C'est la ligne qui correspond au bas du système. C'est à partir
+									de cette ligne que sont placés les objets sous-système.
+bottomLine				C'est la ligne sous laquelle se trouve l'objet le plus bas du
+									système.
+realBottomLine		C'est la ligne la plus inférieure, SOUS l'objet le plus bas du
+									système.
+~~~
+
+
+
 #### Éléments d’un système
 
 Pour placer les éléments (les « objets d'analyse ») sur la table d’analyse, on se sert de trois lignes supérieures et trois lignes inférieures.
@@ -668,5 +687,7 @@ Pour faciliter la gestion de l’aspect de l’analyse, des *lignes de pose* per
 
 [onglet Home]: #onglet_home
 [onglet Analyse]: #onglet_analyse
+
+~~~
 
 ~~~

@@ -37,16 +37,21 @@ static repositionneAll(){
   console.log("Baseline au départ : ", curBaseline)
   this.items.forEach(system => {
     console.log("Baseline courante : ", curBaseline)
-    system.setTop(curBaseline)
-    TableAnalyse.addLigneRepere(system.top + system.highestTop, {color:'orange'})
-    TableAnalyse.addLigneRepere(system.top, {color:'red'})
-    TableAnalyse.addLigneRepere(system.top + system.lowestTop, {color:'purple'})
-    console.log("Hauteur totale du système courant :", system.fullHeight)
-    TableAnalyse.addLigneRepere(curBaseline)
-    // curBaseline = system.rBottom
-    curBaseline = system.top + system.lowestTop + 40
+    system.calcReferenceLinesFrom(curBaseline)
+    system.setTop(system.topSystemLine)
+    if ( true /* DEBUG */ ) {
+      TableAnalyse.addLigneRepere(system.topLine, {color:'blue'})
+      var next = system.topSystemLine
+      if ( next == system.topLine ) next += 3
+      TableAnalyse.addLigneRepere(next, {color:'red'})
+      TableAnalyse.addLigneRepere(system.botSystemLine, {color:'green'})
+      next = system.realBotLine
+      if ( next == system.botSystemLine ) next += 3
+      TableAnalyse.addLigneRepere(next, {color:'purple'})
+    }
+    curBaseline = system.realBotLine + score.preferences.divers('space_between_systems')
   })
-  // On ajuste toujours la taille du conteneur
+  // À la fin, on ajuste toujours la taille du conteneur
   TableAnalyse.systemsContainer.style.height = px(curBaseline + 300)
   __out("ASystem::repositionneAll")
 }
@@ -284,8 +289,8 @@ positionne(){
 setTop(top){
   if ( undefined == top ) top = this.top
   else {
+    if ( this.top != top ) this.modified = true ;
     this.top = top
-    this.modified = true
   }
   this.obj.style.top = `${this.top}px`
 }
@@ -331,14 +336,6 @@ onWantToMoveSystem(ev){
 }
 
 /**
-* Retourne la hauteur totale (vraiment totale) du système
-***/
-get fullHeight(){
-  return this._fullHeight || (this._fullHeight = this.calcFullHeight())
-}
-
-
-/**
 * Retourne le top de l'objet d'analyse dans le conteneur du système en
 * fonction de son type +otype+.
 * Quand la valeur est négative, on doit placer l'objet au-dessus du système
@@ -367,18 +364,9 @@ topPerTypeObjet(otype, line){
   return rTop
 }
 
-// La limite vraiment inférieure du système, tout compris
-get rBottom(){
-  return this._rbottom || (this._rbottom = this.calcBottomLimit())
-}
-
 /**
 * Données générales
 ***/
-
-get bottom(){
-  return this._bottom || (this._bottom = this.top + this.rHeight)
-}
 
 get imageSrc(){
   return this._imgsrc || (this._imgsrc = `_score_/${CURRENT_ANALYSE}/systems/images/${this.imageName}`)
@@ -394,57 +382,69 @@ get container(){
   return this._cont || (this._cont = TableAnalyse.systemsContainer)
 }
 
-/**
-* Méthodes de calcul
-* ------------------
-***/
-
+/* ------------------
+* MÉTHODES DE CALCUL
+* ------------------ */
 
 /**
-* Retourne la hauteur totale du système, en tenant compte de son objet le plus
-* haut et son objet le plus bas actuel.
-* Rappel : la hauteur/position d'un système est recalculé en permanence en
-* fonction des [objets d'analyse] qu'il affiche.
+* Méthode qui calcule les lignes de référence du système.
+*
+* Rappel de leur nom et leur position :
+*   topLine         Ligne la plus haute
+*   topSystemLine   Bord haut du système
+*   botSystemLine   Bord bas du système
+*   bottomLine      Ligne la plus basse
+*   realBottomLine  Limite extrême du système & objet
+*
+* Cette méthode prend en compte la délimitation des pages et
+* vérifie que le système ne se retrouvera pas entre deux pages
+*
 ***/
-calcFullHeight() {
-  const cPrefs = Score.current.preferences
-  return (0 - this.highestTop + this.rHeight + this.lowestTop + 17)
+calcReferenceLinesFrom(top){
+  if (undefined === this.higestObject) this.calcHighestAndLowestObjects() ;
+  this.topLine        = top
+  this.topSystemLine  = this.topLine + this.maxTop
+  this.botSystemLine  = this.topSystemLine + this.rHeight
+  this.realBotLine    = this.botSystemLine + this.maxBottom
+  if ( true /* DEBUG */ ) {
+    const l = ['topLine','topSystemLine','botSystemLine','realBotLine']
+    l.forEach(p => console.log(`${this.ref}.${p} = %i`, this[p]))
+  }
+
+  /**
+  * Si le système dépasse le bord de page courant, il faut le
+  * passer sur la page suivante.
+  ***/
+  // TODO
 }
 
-calcBottomLimit(){
-  return this.top + this.rHeight + this.lowestTop + 17
-}
-
-
-/**
-* Calcul est objets les plus hauts et les plus bas du système.
-* Note : ces hauteurs sont relatives au système.
-* La méthode produit :
-*   - this.highestObject    L'objet le plus haut
-*   - this.lowestObject     L'objet le plus bas
-*   - this.highestTop       Le point le plus haut (indirectement)
-*   - this.lowestTop        Le point le plus bas (hors hauteur)  (indirectement)
-***/
-calcHighLowTop(){
-  return this._highestlowesttop || (this._highestlowesttop = this.calcHLT())
-}
-calcHLT(){
+calcHighestAndLowestObjects(){
   var maxTop = 0
   var maxBot = this.rHeight
+  this.highestObject = null // pour savoir qu'ils ont été calculés (si non existant)
+  this.lowestObject  = null // idem
   this.aobjets.forEach(objet => {
-    if ( objet.top < maxTop ) {
+    const objTop = objet.relativeTop
+    if ( objTop < maxTop ) {
       // <= Le nouvel objet est plus haut que le plus haut des objets
       // => Il devient l'objet le plus haut
-      maxTop = Number(objet.top)
+      maxTop = Number(objTop)
       this.highestObject = objet
-    } else if ( objet.top > maxBot ) {
+    } else if ( objTop + objet.height > maxBot ) {
       // <= L'objet est plus bas que le plus bas des objets du système
       // => Il devient l'objet le plus bas
-      maxBot = objet.top
+      maxBot = objTop + objet.height
       this.lowestObject = objet
     }
   })
   return {high: maxTop, low: maxBot}
+}
+get maxTop(){
+  return this.highestObject ? - this.highestObject.relativeTop : 0
+}
+get maxBottom(){
+  const lo = this.lowestObject
+  return lo ? lo.relativeTop + lo.height : 0
 }
 
 }
