@@ -182,13 +182,18 @@ changeWidth(newValue, oldValue){
     $(this.obj).css('left', px(this.data.left))
   }
   $(this.obj).css('width', px(newValue));
+  this.data.width = newValue
   // Faut-il faire apparaitre le trait
   if ( ['chord', 'harmony', 'pedale'].includes(this.otype) ) {
-    console.log("newValue = ", newValue, ", oldValue = ", oldValue)
     if ( false == ( (newValue < 60) === (oldValue < 60) ) ) {
-      console.log("Je dois modifier l'état du trait")
-      this.obj.querySelector('div.trait').classList[newValue < 60 ? 'add' : 'remove']('hidden')
+      this.setTraitVisibility()
     }
+  }
+}
+
+setTraitVisibility(){
+  if ( this.obj.querySelector('div.trait') ) {
+    this.obj.querySelector('div.trait').classList[this.data.width < 60 ? 'add' : 'remove']('hidden')
   }
 }
 /**
@@ -218,9 +223,10 @@ build(){
   this._obj = div
 
   this.positionne()
+  this.setTraitVisibility()
   this.observe()
 
-  return div // utile pour update
+  return div // utile pour update (?)
 }
 
 positionne(){
@@ -363,4 +369,4 @@ calcTopPerType(){
   return this.system.topPerTypeObjet(ot, this.data.line)
 }
 
-}
+}// class AObject
