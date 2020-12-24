@@ -6,11 +6,6 @@
   *
 *** --------------------------------------------------------------------- */
 
-// Nombre de pixels pour un centimètre
-const CM2PIXELS = 37.795280352161
-const PAGE_HEIGHT_PX = parseInt(CM2PIXELS * 29.7, 10)
-const VMARGE_PX = CM2PIXELS * 2
-
 class ASystem {
 
 static get(index){
@@ -34,26 +29,41 @@ static repositionneAll(){
   * et par conséquent du DIV qui contient le système et ses [objets d'analyse]
   ***/
   var curBaseline = score.preferences.first_page('first_system_top')
-  console.log("Baseline au départ : ", curBaseline)
+  /**
+  * Pour le numéro de page, qui est affecté forcément au cours de cette opéra-
+  * tion de positionnement
+  ***/
+  var curPageNumber = 1
   this.items.forEach(system => {
-    console.log("Baseline courante : ", curBaseline)
+    system.pageNumber = curPageNumber
     system.calcReferenceLinesFrom(curBaseline)
     system.setTop(system.topSystemLine)
-    if ( true /* DEBUG */ ) {
-      TableAnalyse.addLigneRepere(system.topLine, {color:'blue'})
-      var next = system.topSystemLine
-      if ( next == system.topLine ) next += 3
-      TableAnalyse.addLigneRepere(next, {color:'purple'})
-      TableAnalyse.addLigneRepere(system.botSystemLine, {color:'green'})
-      next = system.realBotLine
-      if ( next == system.botSystemLine ) next += 3
-      TableAnalyse.addLigneRepere(next, {color:'red'})
-    }
-    curBaseline = system.realBotLine + score.preferences.divers('space_between_systems')
+    false && this.drawLigneReperes(system) // DEBUG (dessine les lignes)
+    curBaseline   = system.realBotLine + score.preferences.divers('space_between_systems')
+    curPageNumber = system.pageNumber
   })
   // À la fin, on ajuste toujours la taille du conteneur
   TableAnalyse.systemsContainer.style.height = px(curBaseline + 300)
   __out("ASystem::repositionneAll")
+}
+
+/**
+* Uniquement pour le débug, on dessine sur la table d'analyse les
+* lignes de délimitation des systèmes à savoir :
+*   - la ligne supérieure (bleue)
+*   - la ligne de bord haut du système (mauve)
+*   - la ligne de bord bas du système hors objets (verte)
+*   - la ligne de bord bas du système avec objets (rouge)
+***/
+static drawLigneReperes(system){
+  TableAnalyse.addLigneRepere(system.topLine, {color:'blue'})
+  var next = system.topSystemLine
+  if ( next == system.topLine ) next += 3
+  TableAnalyse.addLigneRepere(next, {color:'purple'})
+  TableAnalyse.addLigneRepere(system.botSystemLine, {color:'green'})
+  next = system.realBotLine
+  if ( next == system.botSystemLine ) next += 3
+  TableAnalyse.addLigneRepere(next, {color:'red'})
 }
 
 static add(system){
@@ -74,10 +84,6 @@ constructor(data) {
   this.data = data
   this.minid          = data.minid    // p.e. "2-6" ("<page>-<index+1>")
   this.index          = data.index    // l'index absolu du system (0-start)
-  this.indexInPage    = data.indexInPage
-  this.top            = data.top  // pas forcément défini à l'instanciation
-  this.page           = data.page // numéro de page (1-start)
-  this.rHeight        = data.rHeight
   this.nombre_mesures = data.nombre_mesures
   // Propriété volatiles
   this._modified = false
@@ -410,19 +416,35 @@ calcReferenceLinesFrom(top){
   this.topSystemLine  = this.topLine + this.maxTop
   this.botSystemLine  = this.topSystemLine + this.rHeight
   this.realBotLine    = this.topSystemLine + this.maxBottom
-  if ( true /* DEBUG */ ) {
-    console.log(`${this.ref} Nombre d'objets : ${this.aobjets.length}`)
-    console.log(`${this.ref} highestObject :`, this.highestObject)
-    console.log(`${this.ref} lowestObject :`, this.lowestObject)
-    const l = ['topLine','topSystemLine','botSystemLine','realBotLine','maxTop','maxBottom']
-    l.forEach(p => console.log(`${this.ref}.${p} = %i`, this[p]))
-  }
+  true && this.debugAllMesures() // DEBUG
 
   /**
   * Si le système dépasse le bord de page courant, il faut le
   * passer sur la page suivante.
   ***/
-  // TODO
+  if ( this.realBotLine > this.page.bottom ) {
+    this.pageNumber ++
+    this.calcReferenceLinesFrom(this.page.top)
+  }
+}
+
+/**
+* Les valeurs de page du système (son numéro de page, avec sa hauteur et son bas)
+***/
+get page(){ return Page.get(this.pageNumber)}
+get pageNumber(){return this._pagenum}
+set pageNumber(n){this._pagenum = n}
+
+/**
+* Pour débugguer les valeurs de mesure obtenues après calcul de la position
+* du système
+***/
+debugAllMesures(){
+  console.log(`${this.ref} Nombre d'objets : ${this.aobjets.length}`)
+  console.log(`${this.ref} highestObject :`, this.highestObject)
+  console.log(`${this.ref} lowestObject :`, this.lowestObject)
+  const l = ['pageNumber','pageTop','pageBottom','topLine','topSystemLine','botSystemLine','realBotLine','maxTop','maxBottom']
+  l.forEach(p => console.log(`${this.ref}.${p} = %i`, this[p]))
 }
 
 /**

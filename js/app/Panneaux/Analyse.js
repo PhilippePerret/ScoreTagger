@@ -94,30 +94,10 @@ get ScoreScale(){
 }
 
 /**
-* Pour ajouter une ligne repère à la hauteur +top+
+* Pour ajouter une ligne repère à la hauteur +top+ (à titre de débuggage only)
 ***/
 addLigneRepere(top, options = {}){
   this.systemsContainer.appendChild(DCreate('DIV',{class:'reperage',style:`top:${top}px;border-width:2px;border-color:${options.color||'green'}`}))
-}
-/**
-* Méthode qui dessine les délimiteurs de pages en fonction de la hauteur
-* complète de l'analyse
-***/
-drawPageDelimitors(){
-  __in(`${this.ref}#drawPageDelimitors`)
-  const heightContainer = $(this.systemsContainer).height()
-  var top = 0
-  var ipage = 0
-  while ( top < heightContainer ) {
-    top += HEIGHT_PAGE
-    ++ ipage ;
-    const line = DCreate('DIV', {class:'page-separator', style:`top:${top}px`, inner:[
-      DCreate('SPAN', {class:'page_number', text: String(ipage)})
-    ]})
-    this.systemsContainer.appendChild(line)
-  }
-  this.topLastPage = top
-  __out(`${this.ref}#drawPageDelimitors`, {topLastPage: this.topLastPage})
 }
 
 /**

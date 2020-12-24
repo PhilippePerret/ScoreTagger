@@ -5,9 +5,6 @@ const SCORE_ANALYZE_PROPS = ['title', 'composer','composing_year','analyze_year'
 const SCORE_ANALYZE_FULL_PROPS = [...SCORE_ANALYZE_PROPS]
 SCORE_ANALYZE_FULL_PROPS.push('folder_name','score_ini_path')
 
-// Hauteur exacte d'une page
-const HEIGHT_PAGE = 1065 // (= 28,7cm => marge de 0.5 cm)
-
 class Score {
 
 static get current(){ return this._current }
