@@ -13,7 +13,7 @@ const BASELINE_HEIGHT = 32
 const PREFS_DEFAULT_VALUES = {
   divers: {
     score_scale: {name:"Taille de la partition sur la table", value:150, unity:'%'}
-  , space_between_systems: {name:"Espace entre les systèmes", value:20, unity: 'pixels'}
+  , space_between_systems: {name:"Espace entre les systèmes", value:40, unity: 'pixels'}
   , frequence_animation: {name:"Durée entre deux appararitions d'objets (animation)", value: 2, unity: 'seconds'}
 
   }

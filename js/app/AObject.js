@@ -82,11 +82,17 @@ get ref(){return this._ref || (this._ref = `AObject#${this.id}[${this.otype}]`)}
 // Position relative haute par rapport au système
 // Note : elle est négative si l'objet se trouve au-dessus du système
 get relativeTop(){
-  return  this.data.top
-          ? this.data.top
-          : this.system.topPerTypeObjet(this.type, this.data.line) ;
+  return  this.data.top ? this.data.top : this.naturalTop ;
 }
 // get top(){return this.relativeTop}
+
+/**
+* Retourne le top "naturel" en fonction du type. C'est donc le top
+* qu'aura l'objet si son top n'a pas été rectifié
+***/
+get naturalTop(){
+  return this._relativetop || (this._relativetop = this.calcTopPerType())
+}
 
 // Hauteur de l'objet
 get height(){
@@ -337,5 +343,24 @@ unsetSelected(){
 get left(){return this.data.left}
 get otype(){ return this._otype || (this._otype = this.objetProps.otype) }
 get obj(){return this._obj}
+
+
+/** ---------------------------------------------------------------------
+  *   CALCUL METHODS
+  *
+*** --------------------------------------------------------------------- */
+
+/**
+* Calcule le top "naturel" de l'objet, en fonction de son type et, parfois
+* (comme pour le segment) de sa valeur. Ces valeurs correspondent aux valeurs
+* de préférence qu'on peut déterminer sur la première page (page d'accueil de
+* l'application).
+***/
+calcTopPerType(){
+  const ot = this.otype == 'segment' && this.objetProps.segment == 'down'
+                ? 'segment_down'
+                : this.otype
+  return this.system.topPerTypeObjet(ot, this.data.line)
+}
 
 }

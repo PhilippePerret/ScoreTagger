@@ -43,11 +43,11 @@ static repositionneAll(){
       TableAnalyse.addLigneRepere(system.topLine, {color:'blue'})
       var next = system.topSystemLine
       if ( next == system.topLine ) next += 3
-      TableAnalyse.addLigneRepere(next, {color:'red'})
+      TableAnalyse.addLigneRepere(next, {color:'purple'})
       TableAnalyse.addLigneRepere(system.botSystemLine, {color:'green'})
       next = system.realBotLine
       if ( next == system.botSystemLine ) next += 3
-      TableAnalyse.addLigneRepere(next, {color:'purple'})
+      TableAnalyse.addLigneRepere(next, {color:'red'})
     }
     curBaseline = system.realBotLine + score.preferences.divers('space_between_systems')
   })
@@ -344,15 +344,19 @@ onWantToMoveSystem(ev){
 * trouve SOUS le système. Pour obtenir son top exact, il faut donc ajouter
 * à la valeur de préférence la hauteur réelle (rHeight) du système
 *
++otypeRef+  {String} En général, l'otype de l'objet, mais pour le segment par
+            exemple, il devient 'segment_down' pour indiquer que c'est un
+            segment sous la portée.
+
 * +line+    Si cette valeur est définie (elle est en général undefined), elle
 *           détermine l'indice de la ligne de pose (segment, modulation, chord,
 *           etc.) sur laquelle doit être pausée l'objet, de bas en haut, en
 *           commençant à 1 (pour 'pedale')
 ***/
-topPerTypeObjet(otype, line){
-  __in(`${this.ref}#topPerTypeObjet`, {otype:otype, line:line, skip:true})
-  if ( undefined != line ) { otype = LINES_POSE[line - 1] }
-  let rTop = Score.current.preferences.ligne(otype)
+topPerTypeObjet(otypeRef, line){
+  __in(`${this.ref}#topPerTypeObjet`, {otypeRef:otypeRef, line:line, skip:true})
+  if ( undefined != line ) { otypeRef = LINES_POSE[line - 1] }
+  let rTop = Score.current.preferences.ligne(otypeRef)
   // console.log({
   //   system: this.ref,
   //   otype: otype, line: line, rTop: rTop, rHeight: this.rHeight
@@ -405,9 +409,12 @@ calcReferenceLinesFrom(top){
   this.topLine        = top
   this.topSystemLine  = this.topLine + this.maxTop
   this.botSystemLine  = this.topSystemLine + this.rHeight
-  this.realBotLine    = this.botSystemLine + this.maxBottom
+  this.realBotLine    = this.topSystemLine + this.maxBottom
   if ( true /* DEBUG */ ) {
-    const l = ['topLine','topSystemLine','botSystemLine','realBotLine']
+    console.log(`${this.ref} Nombre d'objets : ${this.aobjets.length}`)
+    console.log(`${this.ref} highestObject :`, this.highestObject)
+    console.log(`${this.ref} lowestObject :`, this.lowestObject)
+    const l = ['topLine','topSystemLine','botSystemLine','realBotLine','maxTop','maxBottom']
     l.forEach(p => console.log(`${this.ref}.${p} = %i`, this[p]))
   }
 
@@ -418,6 +425,10 @@ calcReferenceLinesFrom(top){
   // TODO
 }
 
+/**
+* Méthode pour déterminer l'objet le plus haut (highestObject) et l'objet
+* le plus bas (lowestObject) du système.
+***/
 calcHighestAndLowestObjects(){
   var maxTop = 0
   var maxBot = this.rHeight
@@ -444,7 +455,7 @@ get maxTop(){
 }
 get maxBottom(){
   const lo = this.lowestObject
-  return lo ? lo.relativeTop + lo.height : 0
+  return lo ? lo.relativeTop + lo.height : this.rHeight
 }
 
 }
