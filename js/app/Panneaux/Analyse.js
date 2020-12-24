@@ -118,7 +118,7 @@ drawApercuTonal(){
   }
 
   // On charge le sous-panneau de l'annexe
-  UI.insert('sous_panneau_annexe.html', '#systems-container')
+  return UI.insert('sous_panneau_annexe.html', '#systems-container')
   .then( () => {
     const iTune = new Tune(tuneStr)
     DGet('img#ton-main-gamme').src = iTune.imageScalePath
@@ -126,7 +126,8 @@ drawApercuTonal(){
     DGet('img#ton-sousdom-gamme').src = iTune.SousDominante.imageScalePath
     DGet('img#ton-dominante-gamme').src = iTune.Dominante.imageScalePath
     // Bien placer l'annexe à la fin
-    $('#annexe').css('top', this.topLastPage)
+    Page.addPageAtTheEnd()
+    $('#annexe').css('top', Page.last.top)
     __out(`${this.ref}#drawApercuTonal`)
   })
 }

@@ -31,9 +31,10 @@ static repositionneAll(){
   var curBaseline = score.preferences.first_page('first_system_top')
   /**
   * Pour le numéro de page, qui est affecté forcément au cours de cette opéra-
-  * tion de positionnement
+  * tion de positionnement. On crée aussi la toute première page
   ***/
   var curPageNumber = 1
+  Page.get(1) // ça crée l'instance Page
   this.items.forEach(system => {
     system.pageNumber = curPageNumber
     system.calcReferenceLinesFrom(curBaseline)
@@ -42,8 +43,6 @@ static repositionneAll(){
     curBaseline   = system.realBotLine + score.preferences.divers('space_between_systems')
     curPageNumber = system.pageNumber
   })
-  // À la fin, on ajuste toujours la taille du conteneur
-  TableAnalyse.systemsContainer.style.height = px(curBaseline + 300)
   __out("ASystem::repositionneAll")
 }
 
@@ -219,17 +218,6 @@ append(aobj){
 ***/
 addObjet(obj, options = {recalculer: false}){
   this.aobjets.push(obj)
-}
-
-/**
-* Retourne l'objet le plus haut et le plus bas du système (pour calcul du
-* repositionnement)
-***/
-get highestTop(){
-  return this._highesttop || (this._highesttop = this.calcHighLowTop().high)
-}
-get lowestTop(){
-  return this._lowesttop || (this._lowesttop = this.calcHighLowTop().low)
 }
 
 /**
@@ -416,7 +404,7 @@ calcReferenceLinesFrom(top){
   this.topSystemLine  = this.topLine + this.maxTop
   this.botSystemLine  = this.topSystemLine + this.rHeight
   this.realBotLine    = this.topSystemLine + this.maxBottom
-  true && this.debugAllMesures() // DEBUG
+  false && this.debugAllMesures() // DEBUG
 
   /**
   * Si le système dépasse le bord de page courant, il faut le
@@ -424,7 +412,7 @@ calcReferenceLinesFrom(top){
   ***/
   if ( this.realBotLine > this.page.bottom ) {
     this.pageNumber ++
-    this.calcReferenceLinesFrom(this.page.top)
+    this.calcReferenceLinesFrom(this.page.top + 20)
   }
 }
 

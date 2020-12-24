@@ -83,8 +83,10 @@ window.drawAnalyse = async function drawAnalyse(score, options = {}){
     await score.positionneAndDrawSystems()
     ASystem.repositionneAll() // toujours
     score.setNumerosFirstMesures()
-    TableAnalyse.drawPageDelimitors()
-    score.pref_apercu_tonal && TableAnalyse.drawApercuTonal()
+    score.pref_apercu_tonal && (await TableAnalyse.drawApercuTonal())
+    Page.drawPageDelimitors()
+    // À la fin, on ajuste toujours la taille du conteneur
+    TableAnalyse.systemsContainer.style.height = px(Page.last.bottom + 20)
     await score.finDrawing()
     __end("Fin du dessin de l'analyse",{output: false})
   } catch (e) {
