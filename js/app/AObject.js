@@ -190,9 +190,22 @@ changeWidth(newValue, oldValue){
   }
 }
 
+/**
+* Gestion du trait de prolongation
+*
+* La méthode rend visible ou invisible le trait de prolongation en fonction
+* de la longueur du div contenant et de la marque.
+***/
 setTraitVisibility(){
-  if ( this.obj.querySelector('div.trait') ) {
-    this.obj.querySelector('div.trait').classList[this.data.width < 60 ? 'add' : 'remove']('hidden')
+  if ( this.obj.querySelector('div.trait') && this.otype != 'modulation') {
+    const divMark   = $(this.obj.querySelector('div.mark'))
+    const markWidth = divMark.width()
+    const divWidth  = $(this.obj).width()
+    const divTrait  = this.obj.querySelector('div.trait')
+    // console.log("markWidth = %i / divWidth = %i", markWidth, divWidth)
+    divTrait.style.left   = px(markWidth + 2)
+    divTrait.style.width  = `calc(100% - ${px(markWidth + 2)})`
+    divTrait.classList[(divWidth - markWidth) < 10 ? 'add' : 'remove']('hidden')
   }
 }
 /**
@@ -222,7 +235,7 @@ build(){
   this._obj = div
 
   this.positionne()
-  this.setTraitVisibility()
+  setTimeout(this.setTraitVisibility.bind(this), 500)
   this.observe()
 
   return div // utile pour update (?)
