@@ -277,7 +277,7 @@ onMouseDown(ev){
 // Déplacement
 onMouseMove(ev){
   if ( this.moving ) {
-    const decalage = TableAnalyse.byScaleFactor(ev.clientX - this.offsetXStart)
+    const decalage = ev.clientX - this.offsetXStart
     var newLeft = this.leftInit + decalage
     Math.abs(decalage) > 5 && ( this.hasBeenMoved = true )
     this.data.left = newLeft

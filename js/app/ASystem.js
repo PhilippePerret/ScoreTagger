@@ -66,10 +66,7 @@ static drawLigneReperes(system){
 }
 
 static add(system){
-  if (undefined == this.items){
-    this.items = []
-    this.itemsByMinId = {}
-  }
+  if (undefined == this.items){this.items = []; this.itemsByMinId = {}}
   this.items.push(system)
   Object.assign(this.itemsByMinId, { [system.minid]: system})
 }
@@ -184,7 +181,7 @@ createNewAObjet(ev){
   const objProps = AObject.getObjetProps()
   const odata = {
       id: AObject.newId()
-    , left: TableAnalyse.byScaleFactor(ev.offsetX - 10)
+    , left: ev.offsetX - 10
     , objetProps: objProps
     , system: this.minid
   }
@@ -468,4 +465,4 @@ get maxBottom(){
   return lo ? lo.relativeTop + lo.height : this.rHeight
 }
 
-}
+}// class ASystem

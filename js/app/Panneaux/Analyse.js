@@ -44,7 +44,7 @@ prepareAndObserve(){
 * Maintenant, tous les boutons sont construits à la volée
 ***/
 prepare(){
-  const newWidth = this.toScaleFactor($(this.systemsContainer).width())
+  const newWidth = $(this.systemsContainer).width()
   $(this.systemsContainer).css('width', px(newWidth))
 }
 
@@ -65,32 +65,6 @@ observe(){
 
   // Pour sauver les systèmes de force (en cliquant sur le voyant)
   this.voyantSave.on('click', score.autosave.bind(score))
-}
-
-
-/**
-* Retourne la valeur réelle de la position (x, y, h ou w) +v+ en fonction
-* du "scale factor" (cf. "Scale Factor" dans l'annexe du manuel développeur)
-* La méthode `toScaleFactor` fait le contraire.
-***/
-byScaleFactor(v){
-  return v
-  // return parseInt( v / this.ScaleFactor, 10)
-}
-toScaleFactor(v){
-  return v
-  // return parseInt( v * this.ScaleFactor, 10)
-}
-/**
-* Cf. "Scale Factor" dans l'annexe de la documentation.
-* Si la partition est zoomée de 150% dans les préférences, ce "scale factor"
-* sera de 1.5
-***/
-get ScaleFactor(){
-  return this._scalefactor || (this._scalefactor = this.ScoreScale / 100)
-}
-get ScoreScale(){
-  return Score.current.preferences.divers('score_scale')
 }
 
 /**
