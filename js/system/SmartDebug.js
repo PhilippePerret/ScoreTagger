@@ -98,7 +98,7 @@ static output(options){
 
     const ShowParams = false == (lined.no_args === true || null === lined.pms)
 
-    // --- Écritude ---
+    // --- Écriture ---
     TypeIN && console.group()
     ShowParams && TypeOUT && console.debug(lined.pms)
     console.debug(m)
@@ -126,7 +126,6 @@ static add(type, mname, pms){
 static reset(){
   this.items = []
 }
-
 
 static studyParams(pms){
   if ( !pms ) return [false, false, null]

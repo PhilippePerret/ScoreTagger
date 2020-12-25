@@ -122,7 +122,6 @@ preparePreferencesCheckboxes(){
   * Toutes les préférences checkbox (binary) avec les valeurs par défaut
   ***/
   __in(`${this.ref}#preparePreferencesCheckboxes`)
-  console.log("-> preparePreferencesCheckboxes")
   for ( var k in PREFS_DEFAULT_VALUES.binary ) {
     const section = PREFS_DEFAULT_VALUES.binary[k]
     const div   = DCreate('DIV', {class:'prefs-section-checkbox'})

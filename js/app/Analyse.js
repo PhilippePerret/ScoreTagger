@@ -11,29 +11,34 @@ constructor(score) {
 * Pour jouer l'analyse courante
 ***/
 play(){
+  __start("Lancement de l'animation")
+  __in("Analyse#play")
   this.objetsIni = this.getAllObjectSorted()
   this.objets = [...this.objetsIni]
   this.objets.reverse()
   this.startPlay()
   // Pour le moment, par une boucle (ensuite, on pourra fonctionner par touche)
   this.timer = setInterval(this.showNextObjet.bind(this), this.score.preferences.divers('frequence_animation') * 1000)
+  __out("Analyse#play")
 }
 /**
 * Méthode appelée au lancement de l'animation pour préparer l'interface
 ***/
 startPlay(){
+  __in("Analyse#startPlay")
   $('body').css('background-color', 'white')
   // On masque la marge des outils et des onglets pour ne garder que le
   // bouton d'interruption de l'animation
   $('div.marge-tools').addClass('hidden')
   // On masque les boutons d'onglet
   $('aside#tabs-buttons').addClass('hidden')
-  // Bizarrement, il faut mettre le container de systèmes à 100% de zoom pour
-  // que ça tienne dans l'impression…
-  $('div#systems-container').css('zoom', '100%')
+  // // Bizarrement, il faut mettre le container de systèmes à 100% de zoom pour
+  // // que ça tienne dans l'impression…
+  // $('div#systems-container').css('zoom', '100%')
   // Pour savoir quand on change de système et pouvoir ajuster le scroll
   // de fenêtre
   this.current_system = null
+  __out("Analyse#startPlay")
 }
 /**
 * Méthode appelée à la fin de l'animation pour arrêter l'animation et
@@ -41,6 +46,7 @@ startPlay(){
 ***/
 
 endPlay(){
+  __in("Analyse#endPlay")
   if (this.timer){
     // On arrête le timer s'il existe
     clearInterval(this.timer)
@@ -56,25 +62,47 @@ endPlay(){
   $('div.marge-tools').removeClass('hidden')
   $('div#systems-container').css('zoom', '')
   $('aside#tabs-buttons').removeClass('hidden')
+
+  __out("Analyse#endPlay")
+  __end("Fin de l'animation")
+  __d()
 }
 
+/**
+* Méthode pour afficher les prochain objets
+*
+* Note : par défaut, on les affiche "par colonne", c'est-à-dire en affichant
+* en même temps des objets placés au même left à +/- 10 pixels
+***/
 showNextObjet(){
-  const objet = this.objets.pop()
-  if ( objet ) {
-    // console.log("objet:", objet)
-    if ( objet.system.index != this.current_system ){
-      this.current_system = objet.system.index
+  const firstObjet = this.objets.pop()
+  // console.log("firstObjet : ", firstObjet)
+  if ( ! firstObjet ) {
+    this.endPlay()
+  } else {
+    // S'il reste des objets à afficher
+    var objets = [firstObjet]
+    var nextObjet ;
+    while ( (nextObjet = this.objets[this.objets.length - 1]) && nextObjet.system == firstObjet.system && Math.abs(nextObjet.left - firstObjet.left) < 16 ) {
+      objets.push(this.objets.pop())
+    }
+    // console.log("objets à afficher :", objets)
+    if ( firstObjet.system.index != this.current_system ){
+      this.current_system = firstObjet.system.index
       // console.debug("Passage au système %i", this.current_system)
       // location.hash = `#system-${objet.system.minid}`
       // window.scrollTo(0, window.pageYOffset - 120)
       // const hsys = $(`#system-${objet.system.minid}`).position().top
       const speed = 500
-      $('html, body').animate( { scrollTop: $(`#system-${objet.system.minid}`).position().top }, speed )
+      $('html, body').animate( { scrollTop: firstObjet.system.topLine - 40 }, speed, this.afficheLentementLesObjets.bind(this, objets) )
+    } else {
+      this.afficheLentementLesObjets(objets)
     }
-    objet.showSlowly()
-  } else {
-    this.endPlay()
   }
+}
+
+afficheLentementLesObjets(objets) {
+  objets.forEach(o => o.showSlowly())
 }
 
 /**

@@ -214,7 +214,7 @@ static build(){
 
 // Pour supprimer l'objet (définitivement)
 static removeObjet(ev){
-  if ( confirm("Es-tu certain de vouloir détruire cet objet d'analyse ?")){
+  if ( Score.current.preferences.binary('analyse.confirm_destroy') || confirm("Es-tu certain de vouloir détruire cet objet d'analyse ?")){
     AObject.remove(this.editedObject)
   }
 }

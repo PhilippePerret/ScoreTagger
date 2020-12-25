@@ -14,7 +14,7 @@ const PREFS_DEFAULT_VALUES = {
   divers: {
     score_scale: {name:"Taille de la partition sur la table", value:150, unity:'%'}
   , space_between_systems: {name:"Espace entre les systèmes", value:40, unity: 'pixels'}
-  , frequence_animation: {name:"Durée entre deux appararitions d'objets (animation)", value: 2, unity: 'seconds'}
+  , frequence_animation: {name:"Durée entre deux appararitions d'objets (animation)", value: 4, unity: 'seconds'}
 
   }
   // Les checkboxs (valeurs binaires, d'où le nom)
@@ -32,6 +32,7 @@ const PREFS_DEFAULT_VALUES = {
             autosave: {name:"Sauvegarde automatique pendant l'analyse", value: true}
           , autochoose_values: {name: "Toujours sélectionner les valeurs par défaut", value: true}
           , select_just_created: {name: "Toujours sélectionner l'objet qui vient d’être créé", value: false}
+          , confirm_destroy: {name: "Confirmer la destruction des objets", value: true}
         }
       }
     , score: {
