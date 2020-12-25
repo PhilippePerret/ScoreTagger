@@ -31,12 +31,35 @@ getAllValuesInHomePane(){
   SCORE_ANALYZE_FULL_PROPS.forEach(prop => {
     Object.assign(d, {[prop]: $(`#score-${prop}`).val().trim()})
   })
+  // Checkbox
+  SCORE_ANALYZE_FULL_PROPS.forEach(prop => $(`#score-${prop}`).val(data[prop]))
+  // Réglage des préférences binaires
+  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
+    for ( var kp in PREFS_DEFAULT_VALUES.binary[k].items ) {
+      const ditem = PREFS_DEFAULT_VALUES.binary[k].items[kp]
+      const value = document.querySelector(`#cb-${kp}`).checked
+      Object.assign(d, {[`${k}.${kp}`]: value})
+    }
+  }
   __out(`${this.ref}#getAllValuesInHomePane`, {return: d})
   return d
 }
+
+/**
+* Réglage de la page d'accueil pour la partition courante
+***/
 setAllValuesInHomePane(data){
   __in(`${this.ref}#setAllValuesInHomePane`, {data:data})
   SCORE_ANALYZE_FULL_PROPS.forEach(prop => $(`#score-${prop}`).val(data[prop]))
+  // Réglage des préférences binaires
+  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
+    const section = PREFS_DEFAULT_VALUES.binary[k]
+    for ( var kp in section.items ) {
+      const ditem = section.items[kp]
+      const value = Score.current.preferences.binary(`${k}.${kp}`)
+      document.querySelector(`#cb-${kp}`).checked = value
+    }
+  }
   __out(`${this.ref}#setAllValuesInHomePane`)
 }
 
@@ -74,17 +97,11 @@ async prepareAndObserve(){
 async prepare(){
   __in(`${this.ref}#prepare`)
   const my = this
-
   this.preparePreferencesFirstPage()
-
   this.preparePreferencesCheckboxes()
-
   this.preparePreferencesDiverses()
-
   await this.prepareFirstSystemTemoin()
-
   await this.prepareMenuAnalyses()
-
   __out(`${this.ref}#prepare`)
 }// prepare
 
@@ -104,15 +121,18 @@ preparePreferencesCheckboxes(){
   /**
   * Toutes les préférences checkbox (binary) avec les valeurs par défaut
   ***/
-  for(var k in PREFS_DEFAULT_VALUES.binary){
+  __in(`${this.ref}#preparePreferencesCheckboxes`)
+  console.log("-> preparePreferencesCheckboxes")
+  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
     const section = PREFS_DEFAULT_VALUES.binary[k]
-    const div = DCreate('DIV', {class:'prefs-section-checkbox'})
+    const div   = DCreate('DIV', {class:'prefs-section-checkbox'})
     const titre = DCreate('DIV', {text:section.titre, class:"prefs-section-checkbox-titre"})
     div.appendChild(titre)
     for ( var kp in section.items ) {
       const ditem   = section.items[kp]
       const dinput  = {type:'checkbox', id:`cb-${kp}`}
       const value   = Preferences.getBinaryDefault(`${k}.${kp}`)
+      // const value   = Score.current.preferences.binary(`${k}.${kp}`)// Preferences.getBinaryDefault(`${k}.${kp}`)
       value && Object.assign(dinput, {checked: true})
       const cb = DCreate('DIV', {class:'prefs-checkbox-container', inner:[
           DCreate('INPUT', dinput)
@@ -122,6 +142,7 @@ preparePreferencesCheckboxes(){
     }
     $('#preferences-binaires').append(div)
   }
+  __out(`${this.ref}#preparePreferencesCheckboxes`)
 }
 
 /**

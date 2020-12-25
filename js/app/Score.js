@@ -41,7 +41,6 @@ get ref(){ return this._ref || (this._ref = `Score[${this.name}]`)}
 get modified(){return this._modified}
 set modified(v) {
   this._modified = v
-  console.trace()
   TableAnalyse.voyantSave.css('background-color', v ? 'red' : 'green')
 }
 

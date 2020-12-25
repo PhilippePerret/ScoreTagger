@@ -22,7 +22,8 @@ async onActivate(){
   __in(`${this.ref}#onActivate`)
   const score = Score.current
   await prepareTableAnalyse()
-  score.isDrawn || (await drawAnalyse(score))
+  await ( score.isDrawn || drawAnalyse(score) )
+  console.log("score.pref_auto_save = ", score.pref_auto_save)
   score.pref_auto_save && score.startAutosave()
   __out(`${this.ref}#onActivate`)
 }
