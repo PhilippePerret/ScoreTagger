@@ -159,7 +159,6 @@ updateAll(newObject, newValues){
 update(prop, newValue){
   __in(`${this.ref}#update`, {prop: prop, value: newValue})
   const oldValue = this.data[prop]
-  console.log("oldValue = ", `${oldValue}`)
   this.data[prop] = newValue // this.build en a besoin ci-dessous
   switch(prop){
   case 'width' : this.changeWidth(newValue, oldValue || $(this.obj).width()); break

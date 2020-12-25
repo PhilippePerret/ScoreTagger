@@ -199,4 +199,4 @@ get voyantSave(){
   return this._voyantsave || (this._voyantsave = $('span#voyant_save'))
 }
 
-}
+}// class PanneauAnalyse

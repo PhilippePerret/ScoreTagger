@@ -37,12 +37,12 @@ constructor(data) {
   this._data = data || {}
 }
 
-
 get ref(){ return this._ref || (this._ref = `Score[${this.name}]`)}
 get modified(){return this._modified}
-set modified(v){
+set modified(v) {
   this._modified = v
-  TableAnalyse.voyantSave.css('background-color', v?'red':'green')
+  console.trace()
+  TableAnalyse.voyantSave.css('background-color', v ? 'red' : 'green')
 }
 
 // Sauvegarde les données générales de la partition (titre, auteur,

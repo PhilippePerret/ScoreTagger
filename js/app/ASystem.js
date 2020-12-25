@@ -116,7 +116,9 @@ get data2save(){
   return this.data
 }
 
-
+/**
+* Pour marquer le système modifié
+**/
 get modified(){ return this._modified }
 set modified(v){
   this._modified = v
@@ -275,16 +277,12 @@ positionneAndDraw(){
 *         afin de pouvoir exporter en page unique
 ***/
 positionne(){
-  this.setTop()
+  this.obj.style.top = `${this.top}px`
 }
 
 setTop(top){
-  if ( undefined == top ) top = this.top
-  else {
-    if ( this.top != top ) this.modified = true ;
-    this.top = top
-  }
-  this.obj.style.top = `${this.top}px`
+  this.top = top || this.top
+  this.positionne()
 }
 
 observe(){
