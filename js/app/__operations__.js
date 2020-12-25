@@ -79,7 +79,6 @@ window.drawAnalyse = async function drawAnalyse(score, options = {}){
     await score.instanciateAllSystems(allsystems)
     await score.loadAllImageSystems()
     await score.poseAllSystems()
-    // score.isPrepared || score.calcPositionAllSystems()
     await score.positionneAndDrawSystems()
     ASystem.repositionneAll() // toujours
     score.setNumerosFirstMesures()

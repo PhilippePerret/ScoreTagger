@@ -38,6 +38,7 @@ prepareAndObserve(){
   this.prepare()
   this.observe()
 }
+
 /**
 * Préparation du panneau d'analyse
 *
@@ -61,7 +62,7 @@ observe(){
   $('button#btn-play-analyse').on('click', score.analyse.play.bind(Score.current.analyse))
 
   // Pour repositionner tous les éléments
-  $('button#btn-repositionne-systems').on('click', this.repositionneAll.bind(this))
+  $('button#btn-repositionne-systems').on('click', ASystem.repositionneAll.bind(ASystem))
 
   // Pour sauver les systèmes de force (en cliquant sur le voyant)
   this.voyantSave.on('click', score.autosave.bind(score))
@@ -106,37 +107,12 @@ drawApercuTonal(){
   })
 }
 
-
 /**
 * Quand on clique sur la table d'analyse (conteneur de systèmes)
 ***/
 onClickOnTableAnalyse(ev){
   if ( ev.target.id != 'systems-container' ) return stopEvent(ev);
   AObject.selection.deselectAll()
-}
-
-/**
-* Méthode appelée quand on clique sur le bouton pour repositionner les systèmes
-* ainsi que l'annexe.
-* Note : en plus, la méthode donne des indications sur les données
-***/
-repositionneAll(ev){
-  console.error("OBSOLÈTE : on doit utiliser ASystem.repositionneAll")
-  __in(`${this.ref}#repositionneAll`)
-  var prevSys = null
-  Score.current.systems.forEach(system => {
-    system.prevSystem = prevSys
-    system.top || this.calcSystemPos(system, /* debug = */ true)
-    system.positionne()
-    prevSys = system
-  })
-  // On redessine les délimiteurs de page
-  $('.page-separator').remove()
-  this.drawPageDelimitors()
-  // On repositionne l'annexe
-  $('#annexe').css('top', this.topLastPage)
-
-  __out(`${this.ref}#repositionneAll`)
 }
 
 /**

@@ -286,30 +286,6 @@ finDrawing(ret){
 }
 
 /**
-* Pour repositionner les systèmes quand ils ont déjà été dessinés sur la
-* table d'analyse.
-* Cette méthode est appelée par exemple lorsque l'on change les préférences
-* au niveau des lignes à prendre en compte
-***/
-repositionneAllSystems(){
-  __in('Score#repositionneAllSystems')
-  this.calcPositionAllSystems()
-  this.systems.forEach(system => system.repositionne())
-  __out('Score#repositionneAllSystems')
-}
-
-calcPositionAllSystems(){
-  __in('Score#calcPositionAllSystems')
-  for(var isys in this.systems){
-    const system = this.systems[isys]
-    if ( isys > 0 ) system.prevSystem = this.systems[isys - 1]
-    TableAnalyse.calcSystemPos(system)
-    system.modified = true
-  }
-  __out('Score#calcPositionAllSystems')
-}
-
-/**
 * Méthode qui se charge d'attendre que toutes les images des systèmes soient
 * chargées. C'est nécessaire pour pouvoir dessiner leurs objets.
 * OBSOLÈTE : maintenant, on lance le dessin du système que lorsque l'image

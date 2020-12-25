@@ -395,7 +395,7 @@ onClickSavePreferences(ev){
   ***/
   if ( oldUseSegmentLine != newUseSegmentLine ) {
     AObjectToolbox.setBoutonSegment()
-    Score.current.repositionneAllSystems()
+    ASystem.repositionneAll()
   }
 
 

@@ -178,7 +178,6 @@ subfindraw=>subroutine: Score#finDrawing()
 endDrawing=>inputoutput: Fin du dessin
 - Pose des numéros de mesure
 - Marquer la partition dessinée
-calculPositions=>subroutine: Score#calcPositionAllSystems()
 (calcul des positions de tous les systèmes)
 en=>end: Score affiché
 
