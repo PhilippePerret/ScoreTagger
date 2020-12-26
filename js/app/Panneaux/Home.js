@@ -8,6 +8,15 @@ constructor() {
   super('home')
 }
 
+
+async onActivate(){
+  __in(`${this.ref}#onActivate`)
+  // await ( this.isPrepared || preparePanneauHome() /* segment */)
+  await ( this.isPrepared || runSegment("préparation du panneau HOME", "preparePanneauHome", window.preparePanneauHome.bind(window), true /*output*/))
+  this.setInterface.bind(this)
+  __out(`${this.ref}#onActivate`)
+}
+
 /**
 * Réinitialise toutes les valeurs de la page d'accueil, en vue d'une
 * création d'analyse, et désactive les boutons d'enregistrement (tant qu'on
@@ -34,9 +43,9 @@ getAllValuesInHomePane(){
   // Checkbox
   SCORE_ANALYZE_FULL_PROPS.forEach(prop => $(`#score-${prop}`).val(data[prop]))
   // Réglage des préférences binaires
-  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
-    for ( var kp in PREFS_DEFAULT_VALUES.binary[k].items ) {
-      const ditem = PREFS_DEFAULT_VALUES.binary[k].items[kp]
+  for ( var k in PREFS_DATA.binary ) {
+    for ( var kp in PREFS_DATA.binary[k].items ) {
+      const ditem = PREFS_DATA.binary[k].items[kp]
       const value = document.querySelector(`#cb-${kp}`).checked
       Object.assign(d, {[`${k}.${kp}`]: value})
     }
@@ -48,62 +57,38 @@ getAllValuesInHomePane(){
 /**
 * Réglage de la page d'accueil pour la partition courante
 ***/
-setAllValuesInHomePane(data){
-  __in(`${this.ref}#setAllValuesInHomePane`, {data:data})
+setAllValuesInHomePane(score){
+  __in(`${this.ref}#setAllValuesInHomePane`, {score:score})
+  const sPrefs  = score.preferences
+  const data    = score.data
+
+  // Réglage des titre, compositeur, etc.
   SCORE_ANALYZE_FULL_PROPS.forEach(prop => $(`#score-${prop}`).val(data[prop]))
-  // Réglage des préférences binaires
-  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
-    const section = PREFS_DEFAULT_VALUES.binary[k]
+
+  // Réglage des préférences binaires (CB)
+  for ( var k in PREFS_DATA.binary ) {
+    const section = PREFS_DATA.binary[k]
     for ( var kp in section.items ) {
       const ditem = section.items[kp]
-      const value = Score.current.preferences.binary(`${k}.${kp}`)
+      const value = sPrefs.binary(`${k}.${kp}`)
       document.querySelector(`#cb-${kp}`).checked = value
     }
   }
+
+  /**
+  * Réglages des préférences "divers"
+  ***/
+  for (var k in PREFS_DATA.divers){
+    document.querySelector(`#pref-divers-${k}`).value = sPrefs.divers(k)
+  }
+
   __out(`${this.ref}#setAllValuesInHomePane`)
 }
 
-async onActivate(){
-  __in(`${this.ref}#onActivate`)
-  await this.ObserveOnFirstActivation()
-  await this.setInterface.bind(this)
-  __out(`${this.ref}#onActivate`)
-}
 
 setInterface(){
   document.body.style.width = '1040px'
 }
-
-async ObserveOnFirstActivation(){
-  __in(`${this.ref}#ObserveOnFirstActivation`)
-  this.observed || (await this.prepareAndObserve());
-  __out(`${this.ref}#ObserveOnFirstActivation`)
-}
-
-async prepareAndObserve(){
-  __in(`${this.ref}#prepareAndObserve`)
-  await this.prepare()
-  this.observe()
-  __out(`${this.ref}#prepareAndObserve`)
-}
-
-/**
-* Préparation de la page d'accueil
-*
-* Cette prépartion consiste à disposer les éléments sur la
-* page témoin pour pouvoir définir les positions des lignes
-* et des éléments comme les titres, etc.
-***/
-async prepare(){
-  __in(`${this.ref}#prepare`)
-  const my = this
-  this.preparePreferencesFirstPage()
-  this.preparePreferencesCheckboxes()
-  this.preparePreferencesDiverses()
-  await this.prepareFirstSystemTemoin()
-  await this.prepareMenuAnalyses()
-  __out(`${this.ref}#prepare`)
-}// prepare
 
 /**
 * On positionne les éléments de première page suivant les valeurs par
@@ -111,19 +96,19 @@ async prepare(){
 ***/
 preparePreferencesFirstPage(){
   const my = this
-  Object.keys(PREFS_DEFAULT_VALUES.first_page).forEach(prop => {
+  Object.keys(PREFS_DATA.first_page).forEach(prop => {
     $(`div#pref-${prop}`)
       .draggable({stop: my.onStopMoveScoreProp.bind(my, prop)})
   })
 }
 
-preparePreferencesCheckboxes(){
-  /**
-  * Toutes les préférences checkbox (binary) avec les valeurs par défaut
-  ***/
-  __in(`${this.ref}#preparePreferencesCheckboxes`)
-  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
-    const section = PREFS_DEFAULT_VALUES.binary[k]
+/**
+* Toutes les préférences checkbox (binary) avec les valeurs par défaut
+***/
+buildCheckboxesPreferences(){
+  __in(`${this.ref}#buildCheckboxesPreferences`)
+  for ( var k in PREFS_DATA.binary ) {
+    const section = PREFS_DATA.binary[k]
     const div   = DCreate('DIV', {class:'prefs-section-checkbox'})
     const titre = DCreate('DIV', {text:section.titre, class:"prefs-section-checkbox-titre"})
     div.appendChild(titre)
@@ -131,7 +116,6 @@ preparePreferencesCheckboxes(){
       const ditem   = section.items[kp]
       const dinput  = {type:'checkbox', id:`cb-${kp}`}
       const value   = Preferences.getBinaryDefault(`${k}.${kp}`)
-      // const value   = Score.current.preferences.binary(`${k}.${kp}`)// Preferences.getBinaryDefault(`${k}.${kp}`)
       value && Object.assign(dinput, {checked: true})
       const cb = DCreate('DIV', {class:'prefs-checkbox-container', inner:[
           DCreate('INPUT', dinput)
@@ -141,15 +125,15 @@ preparePreferencesCheckboxes(){
     }
     $('#preferences-binaires').append(div)
   }
-  __out(`${this.ref}#preparePreferencesCheckboxes`)
+  __out(`${this.ref}#buildCheckboxesPreferences`)
 }
 
 /**
 * Toutes les préférences diverses
 ***/
-preparePreferencesDiverses() {
-  for (var k in PREFS_DEFAULT_VALUES.divers){
-    const dpref   = PREFS_DEFAULT_VALUES.divers[k]
+buildPreferencesDiverses() {
+  for (var k in PREFS_DATA.divers){
+    const dpref   = PREFS_DATA.divers[k]
     const defVal  = Preferences.getDiversDefault(k)
     const div = DCreate('DIV', {id: `div-pref-${k}`, class:'row pref-divers', inner:[
         DCreate('SPAN', {class:'libelle', text: dpref.name})
@@ -166,8 +150,8 @@ preparePreferencesDiverses() {
 * Préparation du premier système témoin sur la première page témoin, qui
 * permet de définir où se positionneront les [lignes de pose]
 ***/
-prepareFirstSystemTemoin(){
-  $('#temoin-first-system').css('top', px(PREFS_DEFAULT_VALUES.first_page.first_system_top))
+buildFirstSystemTemoin(){
+  $('#temoin-first-system').css('top', px(PREFS_DATA.first_page.first_system_top))
   $('img#img-system-temoin')[0].src = 'img/system-exemple.jpg'
 
   // Attente du chargement de l'image du système témoin (pour les préférences
@@ -179,8 +163,8 @@ prepareFirstSystemTemoin(){
         const imgHeight = $('img#img-system-temoin').height()
         __add(`Hauteur de l'image du système témoin = ${imgHeight}px`)
         // On définit le top des lignes d'objets d'analyse
-        for ( var otype in PREFS_DEFAULT_VALUES.lignes) {
-          var top = PREFS_DEFAULT_VALUES.lignes[otype]
+        for ( var otype in PREFS_DATA.lignes) {
+          var top = PREFS_DATA.lignes[otype]
           if ( top >= 0 ) top += imgHeight
           $(`div#pref-line-${otype}`).css('top', `${top}px`).draggable({axis:'y'})
         }
@@ -204,61 +188,49 @@ async prepareMenuAnalyses(){
 }
 
 /**
-* Préparation du panneau pour une partition donnée
+* Méthode qui met les titre, compositeur, analyste, etc. dans les champs
+* du tableau Home
 ***/
-async preparePanneauForCurrentScore(){
+fillInfosScoreFields(){
   const score   = Score.current
-  const cPrefs  = score && score.preferences
-
-  /**
-  * Les titre, compositeurs, etc. (seulement si )
-  * On renseigne leur valeur si elles sont définies
-  ***/
   SCORE_ANALYZE_PROPS.forEach(prop => {
     score.data[prop] && $(`.oeuvre-${prop} span.value`).html(score.data[prop])
   })
+}
 
-  /**
-  * On repositionne les titres, compositeurs, etc. en fonction des
-  * préférence du score
-  ***/
-  Object.keys(PREFS_DEFAULT_VALUES.first_page).forEach(prop => {
-    const dprop = cPrefs.first_page(prop)
+/**
+* Méthode qui positionne les éléments de première page (titre, compositeur,
+* etc.) sur le panneau d'accueil
+***/
+positionneElementsFirstPage(score){
+  __in(`${this.ref}#positionneElementsFirstPage`)
+  const sPrefs = score.preferences
+  Object.keys(PREFS_DATA.first_page).forEach(prop => {
+    const dprop = sPrefs.first_page(prop)
     let dcss = {}
     ROSE_DES_VENTS.forEach(pos => {dprop[pos] && Object.assign(dcss, { [pos]: dprop[pos]})})
-    $(`div#pref-${prop}`).css(dcss)
+    $(`div#page-temoin div#pref-${prop}`).css(px(dcss))
   })
+  __out(`${this.ref}#positionneElementsFirstPage`)
+}
 
-  /**
-  * Toutes les préférences checkbox (binary) avec les valeurs par défaut
-  ***/
-  for ( var k in PREFS_DEFAULT_VALUES.binary ) {
-    const section = PREFS_DEFAULT_VALUES.binary[k]
-    for ( var kp in section.items ) {
-      const checked = score.preferences.binary(`${k}.${kp}`)
-      document.querySelector(`input[type="checkbox"]#cb-${kp}`).checked = checked
-    }
-  }
-
-  /**
-  * Réglages des préférences "divers"
-  ***/
-  for (var k in PREFS_DEFAULT_VALUES.divers){
-    document.querySelector(`pref-divers-${k}`).checked = cPrefs.divers(k)
-  }
-
+positionneLignes(score){
+  __in(`${this.ref}#positionneLignes`)
+  const sPrefs = score.preferences
   // Position du premier système
-  $('#temoin-first-system').css('top', `${cPrefs.first_page('first_system_top')}px`)
+  $('#temoin-first-system').css('top', px(sPrefs.first_page('first_system_top')) )
+  const imgHeight = $('#temoin-first-system').height()
+  console.log("imgHeight = %i", imgHeight)
 
   // On définit le top des lignes d'objets d'analyse
-  for ( var otype in PREFS_DEFAULT_VALUES.lignes) {
-    let top = cPrefs.ligne(otype)
+  for ( var otype in PREFS_DATA.lignes) {
+    let top = sPrefs.ligne(otype)
     if ( top >= 0 ) top += imgHeight
-    $(`div#pref-line-${otype}`).css('top', `${top}px`)
+    $(`div#pref-line-${otype}`).css('top', px(top))
   }
-
-  return true
+  __out(`${this.ref}#positionneLignes`)
 }
+
 
 get buttonsSaveData(){ return $('.btn-save-analyse-data') }
 
@@ -354,14 +326,14 @@ onStopMoveScoreProp(prop, ev){
 * Enregistrement des préférences
 ***/
 onClickSavePreferences(ev){
-  if(!CURRENT_ANALYSE)return erreur("Il faut au préalable définir l'analyse.")
+  if ( !Score.current ) return erreur("Il faut définir l'analyse.")
 
   // Pour mettre les préférences à enregistrer
   const Prefs = Score.current.preferences
   const scorePrefs = Prefs.data
   // On compare avec les valeurs par défaut pour ne prendre que celles
   // qui sont différentes.
-  const cPrefs = PREFS_DEFAULT_VALUES
+  const sPrefs = PREFS_DATA
 
   // On aura besoin de la hauteur de l'image pour le positionnement
   // des éléments sous le système témoin
@@ -375,8 +347,8 @@ onClickSavePreferences(ev){
   * visibilité du bouton "Segment", etc.) en cas de changement
   ***/
   const oldUseSegmentLine = Prefs.binary('export.use_segment_line')
-  for (var k in cPrefs.binary) {
-    const dsection = cPrefs.binary[k]
+  for (var k in sPrefs.binary) {
+    const dsection = sPrefs.binary[k]
     for (var kp in dsection.items) {
       const cb = $(`input#cb-${kp}`)[0]
       scorePrefs.binary[`${k}.${kp}`] = cb.checked
@@ -396,7 +368,7 @@ onClickSavePreferences(ev){
     }
   })
 
-  for ( var otype in cPrefs.lignes) {
+  for ( var otype in sPrefs.lignes) {
     const valPref = Prefs.ligne(otype)
     let valCur  = $(`div#pref-line-${otype}`).position().top
     if ( valCur >= 0 ) valCur -= imgHeight ;
@@ -407,7 +379,7 @@ onClickSavePreferences(ev){
     }
   }
   // On enregistre ces nouvelles valeurs
-  Prefs.data = scorePrefs
+  Prefs._data = scorePrefs
   Score.current.save()
 
   /**
@@ -417,8 +389,6 @@ onClickSavePreferences(ev){
     AObjectToolbox.setBoutonSegment()
     ASystem.repositionneAll()
   }
-
-
 }
 
 /**

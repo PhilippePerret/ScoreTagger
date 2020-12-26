@@ -240,6 +240,40 @@ Avant toute chose, un lexique des termes employés.
 </dl>
 
 
+### Jouer un segment dans un try… catch
+
+Pour avoir un retour « tracé » d’une erreur de programme, il faut que le segment se trouve dans un try… catch. Le plus simple est d’utiliser la forme suivante :
+
+~~~javascript
+try {
+  __start("Début du segment", "methode")
+  __in("methode")
+  //...
+  //... Ici le code
+  //...
+} catch(e) {
+  console.error(e)
+} finally {
+  __out("methode")
+  __end("Fin du segment", "methode")
+}
+~~~
+
+
+
+Plutôt que d’utiliser tout ce code répétitif à chaque fois, on peut utiliser tout simplement la méthode `runSegment` avec les paramètres suivants :
+
+~~~javascript
+runSegment(
+	  "Nom du segment (opération)" // il sera ajouté "Début de" et "Fin de" 
+  , "methode_name" // nom de la méthode principale
+  , mainMethod 	// méthode principale (peut être asynchrone)
+  , output			// true ou false pour sortir la trace à la fin du segment
+)
+~~~
+
+
+
 
 #### Exemple
 
@@ -330,6 +364,16 @@ Concrètement, pour tester efficacement le problème en cas d'erreur, il suffit 
 L’utilisation la plus utile de `SmartDebug` peut consister à repérer par ses méthodes tous les « segments de programme » (cf. plus haut ce terme) de l’application. On commence avec `__start("<description>")` par marquer le début du segment et on termine en utilisant `__end("<description>")` pour marquer la fin du segment (quand l’action demandée est achevée).
 
 Ensuite, en cours de débuggage, il suffit d’ajouter `output: true` à la méthode `__end` pour afficher le segment de programme en question.
+
+~~~javascript
+__start("Début du segment", "methode")
+...
+...
+...
+__end("Fin du segment", "methode", {output: true}) // => sort la trace
+~~~
+
+
 
 #### Utilisation dans les méthodes asynchrones
 

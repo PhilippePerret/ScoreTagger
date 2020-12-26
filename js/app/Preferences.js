@@ -10,7 +10,7 @@
 // la hauteur des éléments par défaut ci-dessous.
 const BASELINE_HEIGHT = 32
 // Valeurs par défaut
-const PREFS_DEFAULT_VALUES = {
+const PREFS_DATA = {
   divers: {
     score_scale: {name:"Taille de la partition sur la table", value:150, unity:'%'}
   , space_between_systems: {name:"Espace entre les systèmes", value:40, unity: 'pixels'}
@@ -107,14 +107,14 @@ setData(h){
 * sa valeur par défaut.
 ***/
 ligne(type){
-  return this.data.lignes[type] || PREFS_DEFAULT_VALUES.lignes[type]
+  return this.data.lignes[type] || PREFS_DATA.lignes[type]
 }
 
 /**
 * Pour obtenir une valeur de première page
 ***/
 first_page(prop){
-  return this.data.first_page[prop] || PREFS_DEFAULT_VALUES.first_page[prop]
+  return this.data.first_page[prop] || PREFS_DATA.first_page[prop]
 }
 
 /**
@@ -142,14 +142,14 @@ divers(key){
 static getBinaryDefault(key){
   const [mainkey, subkey] = key.split('.')
   try {
-    return PREFS_DEFAULT_VALUES.binary[mainkey].items[subkey].value
+    return PREFS_DATA.binary[mainkey].items[subkey].value
   } catch (e) {
     console.error("Problème avec la préférence binaire '%s' :", key, e)
     return false
   }
 }
 static getDiversDefault(key){
-  return PREFS_DEFAULT_VALUES.divers[key].value
+  return PREFS_DATA.divers[key].value
 }
 
 

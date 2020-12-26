@@ -3,7 +3,7 @@
 *   Class SmartDebug
 *   ----------------
 *   Pour faciliter le débuggage en encombrant un minimum la console.
-version 0.1.4
+    version 0.2.0
 
 __start("<msg>", "<methode>", pms)
     Point de démarrage d'un débuggage
@@ -19,6 +19,7 @@ __out("<méthode>", pms)
 
 __end("<msg fin>", "<methode name>", pms)
     Pour mettre une fin (reset la liste)
+    Si pms contient {output: true}, on écrit la trace
 
 
 __d({<options>})
@@ -27,6 +28,14 @@ __d({<options>})
 ASync_out("<method name>", {<params>})
     Méthode un peu spéciale à utiliser dans une succession de .then pour
     marquer la fin d'une méthode
+
+# 0.2.0
+  Ajout de la méthode pratique 'runSegment'
+
+# 0.1.6
+  On tient compte du fait que les méthodes __start et __end peuvent ne pas
+  définir le nom de la méthode en second paramètre, mais directement la table
+  d'options.
 
 # 0.1.5
   Ajout de la méthode asynchrone ASync_out
@@ -52,6 +61,24 @@ ASync_out("<method name>", {<params>})
 
 *** --------------------------------------------------------------------- */
 
+/**
+* Méthode pour protéger un segment dans un try… catch
+***/
+window.runSegment = function runSegment(operation, methodName, method, output){
+  try {
+    __start(`Début de ${operation}`, methodName)
+    __in(methodName)
+    return method.call(null)
+  } catch (e) {
+    console.error(e)
+    erreur("Une erreur est survenue, consultez la console.")
+  } finally {
+    __out(methodName)
+    __end(`Fin de ${operation}`, methodName, {output:output})
+  }
+}
+
+
 function __add(msg, nmeth, pms){
   nmeth = nmeth ? ` [in ${nmeth}]` : '' ;
   SmartDebug.add('ARGS', `${msg}${nmeth}`, pms)
@@ -62,6 +89,10 @@ window.ASync_out = (mth, pms) => { return window.__out.bind(window, mth, pms) }
 
 class SmartDebug {
 static start(msg, nmeth, pms){
+  if ( 'object' == typeof(nmeth)) {
+    pms   = nmeth
+    nmeth = null
+  }
   this.reset()
   this.add('START', msg)
   nmeth && this.add('IN', nmeth, pms)
@@ -72,8 +103,11 @@ static addEntry(mname, pms){
 static addExit(mname, pms){
   this.add('OUT', mname, pms)
 }
-// Ne sert à rien pour le moment
 static end(msg, nmeth, pms = {}){
+  if ( 'object' == typeof(nmeth)) {
+    pms   = nmeth
+    nmeth = null
+  }
   nmeth && this.add('OUT', nmeth, pms)
   this.add('END', msg, pms)
 }

@@ -32,7 +32,7 @@ window.openAnalyse = async function openAnalyse(folder, options = {
       if(!retourAjax.data){ return erreur("Analyse introuvable") }
       __add("Données de l'analyse remontées : " + JSON.stringify(retourAjax.data))
       const score = await Score.initCurrentWithData(retourAjax.data)
-      HomePane.setAllValuesInHomePane(score.data)
+      reglePanneauHomeForScore(score)
       await UI.setInterface()
       __end("Fin de l'ouverture de l'analyse","openAnalyse [segment]", {output:false})
       return score
@@ -91,4 +91,25 @@ window.drawAnalyse = async function drawAnalyse(score, options = {}){
   } catch (e) {
     console.error(e)
   }
+}
+
+/**
+* Segment de programme qui prépare le panneau Home (ou des préférences, puisque
+* les préférences se trouvent sur ce panneau)
+***/
+window.preparePanneauHome = async function preparePanneauHome(){
+  HomePane.preparePreferencesFirstPage() // titre, compositeur, etc.
+  HomePane.buildCheckboxesPreferences() // Construction des préférences CB
+  HomePane.buildPreferencesDiverses()   // espace systèmes, etc.
+  await HomePane.buildFirstSystemTemoin() // positions des lignes
+  await HomePane.prepareMenuAnalyses()
+  HomePane.observe()
+  HomePane.isPrepared = true
+}
+
+window.reglePanneauHomeForScore = async function(score){
+  HomePane.fillInfosScoreFields()
+  HomePane.setAllValuesInHomePane(score) // Réglage des préférences CB
+  HomePane.positionneElementsFirstPage(score) // titre, compositeur…
+  HomePane.positionneLignes(score) // lignes segment, chord…
 }
