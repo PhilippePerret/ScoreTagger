@@ -35,6 +35,12 @@ const PREFS_DATA = {
           , confirm_destroy: {name: "Confirmer la destruction des objets", value: true}
         }
       }
+    , animation:{
+        titre: "Animation"
+      , items: {
+          only_one_column: {name: "N'afficher qu'une “colonne” à la fois", value:false}
+      }
+    }
     , score: {
         titre: "La partition"
       , items: {
