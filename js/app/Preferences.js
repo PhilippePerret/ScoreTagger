@@ -50,7 +50,7 @@ const PREFS_DATA = {
       }
   }
   , lignes: {
-      segment:      -(100 + 17)
+      segment:      -(80 + 17)
     , modulation:   -(50 + 20)
     , chord:        -(0 + 17)
     , harmony:      0
@@ -65,7 +65,7 @@ const PREFS_DATA = {
     , analyst: {top:5*BASELINE_HEIGHT, left:420}
     , analyze_year: {top:6*BASELINE_HEIGHT, left:420}
     , incipit:{top:8*BASELINE_HEIGHT, left:60}
-    , first_system_top:16*BASELINE_HEIGHT
+    , first_system_top:{top:16*BASELINE_HEIGHT, left:20}
   }
 
 }

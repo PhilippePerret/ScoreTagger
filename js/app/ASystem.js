@@ -28,7 +28,7 @@ static repositionneAll(){
   * correspond à la ligne sur laquelle se trouve le top du système, de l'image,
   * et par conséquent du DIV qui contient le système et ses [objets d'analyse]
   ***/
-  var curBaseline = score.preferences.first_page('first_system_top')
+  var curBaseline = score.preferences.first_page('first_system_top').top
   /**
   * Pour le numéro de page, qui est affecté forcément au cours de cette opéra-
   * tion de positionnement. On crée aussi la toute première page

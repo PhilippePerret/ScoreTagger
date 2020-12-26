@@ -8,10 +8,8 @@ constructor() {
   super('home')
 }
 
-
 async onActivate(){
   __in(`${this.ref}#onActivate`)
-  // await ( this.isPrepared || preparePanneauHome() /* segment */)
   await ( this.isPrepared || runSegment("préparation du panneau HOME", "preparePanneauHome", window.preparePanneauHome.bind(window), true /*output*/))
   this.setInterface.bind(this)
   __out(`${this.ref}#onActivate`)
@@ -97,8 +95,9 @@ setInterface(){
 preparePreferencesFirstPage(){
   const my = this
   Object.keys(PREFS_DATA.first_page).forEach(prop => {
+    const axe = (prop == 'first_system_top') ? 'y' : undefined
     $(`div#pref-${prop}`)
-      .draggable({stop: my.onStopMoveScoreProp.bind(my, prop)})
+      .draggable({axis: axe, stop: my.onStopMoveScoreProp.bind(my, prop)})
   })
 }
 
@@ -151,7 +150,6 @@ buildPreferencesDiverses() {
 * permet de définir où se positionneront les [lignes de pose]
 ***/
 buildFirstSystemTemoin(){
-  $('#temoin-first-system').css('top', px(PREFS_DATA.first_page.first_system_top))
   $('img#img-system-temoin')[0].src = 'img/system-exemple.jpg'
 
   // Attente du chargement de l'image du système témoin (pour les préférences
@@ -217,15 +215,13 @@ positionneElementsFirstPage(score){
 positionneLignes(score){
   __in(`${this.ref}#positionneLignes`)
   const sPrefs = score.preferences
-  // Position du premier système
-  $('#temoin-first-system').css('top', px(sPrefs.first_page('first_system_top')) )
-  const imgHeight = $('#temoin-first-system').height()
-  console.log("imgHeight = %i", imgHeight)
+  const imgHeight = $('img#img-system-temoin').height()
 
   // On définit le top des lignes d'objets d'analyse
   for ( var otype in PREFS_DATA.lignes) {
     let top = sPrefs.ligne(otype)
     if ( top >= 0 ) top += imgHeight
+    // console.log("On met la ligne '%s' à %ipx (imgHeight = %i)", otype, top, imgHeight)
     $(`div#pref-line-${otype}`).css('top', px(top))
   }
   __out(`${this.ref}#positionneLignes`)
@@ -300,103 +296,130 @@ onStopMoveScoreProp(prop, ev){
   const pos = $(`div#pref-${prop}`).position()
 
   // Ajustement du left
-  const left = pos.left
+  const left = parseInt(pos.left,10)
   let newCss = {}
-  SCORE_ANALYZE_PROPS.forEach(cprop => {
+  Object.keys(PREFS_DATA.first_page).forEach(cprop => {
     if (cprop == prop) return ;
-    const cleft = $(`div#pref-${cprop}`).position().left
-    if ( Math.abs(cleft - left) < 32 ) {
-      console.debug("Élément %s ajusté à %i", prop, cleft)
-      newCss.left = `${cleft}px`
-    }
+    const cleft = parseInt($(`div#pref-${cprop}`).position().left,10)
+    if ( Math.abs(cleft - left) < 32 ) { newCss.left = px(cleft) }
   })
 
   // Ajustement du top
-  const top = pos.top
+  const top = parseInt(pos.top,10)
   const goodTop = parseInt(top / BASELINE_HEIGHT, 10) * BASELINE_HEIGHT
   if ( top != goodTop ) {
     newCss.top = goodTop
-    console.debug("Hauteur de %s : %i. Rectifié à %i.", prop, top, goodTop)
+    // console.debug("Hauteur de %s : %i. Rectifié à %i.", prop, top, goodTop)
   }
 
   // On ajute l'élément
   $(`div#pref-${prop}`).css(newCss)
 }
+
+
+/**
+* Retourne les données préférences pour enregistrement, c'est-à-dire les
+* données qui changent par rapport à celles par défaut
+***/
+getPreferencesDataInPane(){
+  // Pour mettre les préférences à enregistrer
+  const Prefs = Score.current.preferences
+  const newPrefs = {binary:{}, first_page:{}, lignes:{}, divers:{}}
+  // Hauteur du système témoin
+  const imgHeight = parseInt($('img#img-system-temoin').height(),10)
+
+  var curValue ; // pour mettre la valeur courante
+  var defValue ; // pour mettre la valeur par défaut
+
+  // CBs (binary)
+  for (var k in PREFS_DATA.binary) {
+    const dsection = PREFS_DATA.binary[k]
+    for (var kp in dsection.items) {
+      curValue = document.querySelector(`input#cb-${kp}`).checked
+      defValue = dsection.items[kp].value
+      defValue == curValue || Object.assign(newPrefs.binary, {[`${k}.${kp}`]: curValue})
+    }
+  }
+
+  // Éléments de première page (titre, compositeur, etc.)
+  SCORE_ANALYZE_PROPS.forEach(prop => {
+    defValue = PREFS_DATA.first_page[prop]
+    curValue = $(`div#pref-${prop}`).position()
+    // console.debug("Comparaison de %s (ancienne) et %s (nouvelle)", JSON.stringify(defValue), JSON.stringify(curValue))
+    JSON.stringify(defValue) == JSON.stringify(curValue) || Object.assign(newPrefs.first_page, {[prop]: curValue})
+  })
+
+  // Les lignes
+  for ( var otype in PREFS_DATA.lignes) {
+    defValue  = PREFS_DATA.lignes[otype]
+    curValue  = parseInt($(`div#pref-line-${otype}`).position().top, 10)
+    if ( curValue >= 0 ) curValue -= imgHeight ;
+    // console.log("Valeur défaut de '%s' = %i / Nouvelle : %i (hauteur système = %i)", otype, defValue, curValue, imgHeight)
+    curValue == defValue || Object.assign(newPrefs.lignes, {[otype]: curValue})
+  }
+
+  // Les valeurs diverses
+  for ( var prop in PREFS_DATA.divers) {
+    const dProp = PREFS_DATA.divers[prop]
+    defValue  = dProp.value
+    curValue  = $(`input#pref-divers-${prop}`).val()
+    if ( 'string' == dProp.type ) curValue = String(curValue)
+    else curValue = Number(curValue)
+    curValue == defValue || Object.assign(newPrefs.divers, {[prop]: curValue})
+  }
+
+  // console.log("Nouvelles valeurs de préférences ", newPrefs)
+  return newPrefs
+}
+
 /**
 * Enregistrement des préférences
 ***/
 onClickSavePreferences(ev){
-  if ( !Score.current ) return erreur("Il faut définir l'analyse.")
-
-  // Pour mettre les préférences à enregistrer
-  const Prefs = Score.current.preferences
-  const scorePrefs = Prefs.data
-  // On compare avec les valeurs par défaut pour ne prendre que celles
-  // qui sont différentes.
-  const sPrefs = PREFS_DATA
-
-  // On aura besoin de la hauteur de l'image pour le positionnement
-  // des éléments sous le système témoin
-  const imgHeight = $('img#img-system-temoin').height()
-
-  /**
-  * Enregistrement des valeurs checkbox (binaires)
-  *
-  * Avant de changer quoi que ce soit, on prend la valeur de
-  * export.use_segment_line pour updater l'interface (espaces entre systèmes,
-  * visibilité du bouton "Segment", etc.) en cas de changement
-  ***/
-  const oldUseSegmentLine = Prefs.binary('export.use_segment_line')
-  for (var k in sPrefs.binary) {
-    const dsection = sPrefs.binary[k]
-    for (var kp in dsection.items) {
-      const cb = $(`input#cb-${kp}`)[0]
-      scorePrefs.binary[`${k}.${kp}`] = cb.checked
-    }
-  }
-  const newUseSegmentLine = Prefs.binary('export.use_segment_line')
-
-  SCORE_ANALYZE_PROPS.forEach(prop => {
-    const valPref = Prefs.first_page(prop)
-    const valCur  = $(`div#pref-${prop}`).position()
-    console.debug("Comparaison de %s (ancienne) et %s (nouvelle)", JSON.stringify(valPref), JSON.stringify(valCur))
-    if ( valPref == valCur ) {
-      console.debug("La propriété %s est différente de la valeur par défaut.")
-      scorePrefs.first_page[prop] = null
-    } else {
-      scorePrefs.first_page[prop] = valCur
-    }
-  })
-
-  for ( var otype in sPrefs.lignes) {
-    const valPref = Prefs.ligne(otype)
-    let valCur  = $(`div#pref-line-${otype}`).position().top
-    if ( valCur >= 0 ) valCur -= imgHeight ;
-    if ( valCur == valPref ) {
-      scorePrefs.lignes[otype] = null
-    } else {
-      scorePrefs.lignes[otype] = valCur
-    }
-  }
-  // On enregistre ces nouvelles valeurs
-  Prefs._data = scorePrefs
-  Score.current.save()
-
-  /**
-  * Modifications immédiates à faire en cas de changement de préférences
-  ***/
-  if ( oldUseSegmentLine != newUseSegmentLine ) {
-    AObjectToolbox.setBoutonSegment()
-    ASystem.repositionneAll()
-  }
+  try {
+    const score = Score.current
+    score || raise("Il faut définir l'analyse.")
+    // On enregistre ces nouvelles valeurs
+    score.preferences._data = this.getPreferencesDataInPane()
+    score.save()
+  } catch (e) { erreur(e) }
 }
 
 /**
 * Retour aux préférences par défaut
 ***/
 onClickRevenirPrefsDefault(ev){
-  if(!CURRENT_ANALYSE)return erreur("Il faut au préalable définir l'analyse.")
-  console.warn("Il faut implémenter le retour aux préférences par défaut")
+  try {
+    Score.current || raise("Il faut au préalable définir l'analyse !")
+    // CBs
+    for ( var k in PREFS_DATA.binary ) {
+      const section = PREFS_DATA.binary[k]
+      for ( var kp in section.items ) {
+        document.querySelector(`#cb-${kp}`).checked = section.items[kp].value
+      }
+    }
+    // Divers
+    for (var k in PREFS_DATA.divers){
+      document.querySelector(`#pref-divers-${k}`).value = PREFS_DATA.divers[k].value
+    }
+    // Éléments première page
+    Object.keys(PREFS_DATA.first_page).forEach(prop => {
+      const dprop = PREFS_DATA.first_page[prop]
+      let dcss = {}
+      ROSE_DES_VENTS.forEach(pos => {dprop[pos] && Object.assign(dcss, { [pos]: dprop[pos]})})
+      $(`div#page-temoin div#pref-${prop}`).css(px(dcss))
+    })
+    // Lignes
+    const imgHeight = $('img#img-system-temoin').height()
+    for ( var otype in PREFS_DATA.lignes) {
+      let top = PREFS_DATA.lignes[otype]
+      if ( top >= 0 ) top += imgHeight
+      // console.log("On met la ligne '%s' à %ipx (imgHeight = %i)", otype, top, imgHeight)
+      $(`div#pref-line-${otype}`).css('top', px(top))
+    }
+  } catch (e) {
+    erreur(e)
+  }
 }
 
 /**

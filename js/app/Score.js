@@ -47,6 +47,7 @@ set modified(v) {
 // Sauvegarde les données générales de la partition (titre, auteur,
 // chemin d'accès, date, etc.)
 save(callback){
+  console.log("Données sauvées: ", this.data)
   Ajax.send('save_data.rb', {data: this.data}).then(ret => {
     message("Données de l'analyse enregistrées.")
     callback && callback.call()
@@ -124,7 +125,7 @@ getValuesAndSave(){
 * (normalement : en vue de leur enregistrement)
 ***/
 getValuesInFields(){
-  this._data = Panneau.get('home').getAllValuesInHomePane()
+  this._data = HomePane.getAllValuesInHomePane()
   // On ajoute les préférences actuelles
   this._data.preferences = this.preferences.data
   // Pour poursuivre
