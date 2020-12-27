@@ -10,7 +10,7 @@ constructor() {
 
 async onActivate(){
   __in(`${this.ref}#onActivate`)
-  await ( this.isPrepared || runSegment("préparation du panneau HOME", "preparePanneauHome", window.preparePanneauHome.bind(window), true /*output*/))
+  await ( this.isPrepared || runSegment("préparation du panneau HOME", "preparePanneauHome", window.preparePanneauHome.bind(window), false /*output*/))
   this.setInterface.bind(this)
   __out(`${this.ref}#onActivate`)
 }
@@ -218,10 +218,11 @@ positionneLignes(score){
   const imgHeight = $('img#img-system-temoin').height()
 
   // On définit le top des lignes d'objets d'analyse
+  // console.log("Hauteur de l'image système témoin = %ipx", imgHeight)
   for ( var otype in PREFS_DATA.lignes) {
     let top = sPrefs.ligne(otype)
     if ( top >= 0 ) top += imgHeight
-    // console.log("On met la ligne '%s' à %ipx (imgHeight = %i)", otype, top, imgHeight)
+    // console.log("Ligne '%s' mise à %s (valeur initiale = %i / défaut = %i)", otype, px(top), sPrefs.ligne(otype), PREFS_DATA.lignes[otype])
     $(`div#pref-line-${otype}`).css('top', px(top))
   }
   __out(`${this.ref}#positionneLignes`)
@@ -330,6 +331,7 @@ getPreferencesDataInPane(){
 
   var curValue ; // pour mettre la valeur courante
   var defValue ; // pour mettre la valeur par défaut
+  var recValue ; // pour mettre la valeur qui sera enregistrée
 
   // CBs (binary)
   for (var k in PREFS_DATA.binary) {
@@ -337,7 +339,8 @@ getPreferencesDataInPane(){
     for (var kp in dsection.items) {
       curValue = document.querySelector(`input#cb-${kp}`).checked
       defValue = dsection.items[kp].value
-      defValue == curValue || Object.assign(newPrefs.binary, {[`${k}.${kp}`]: curValue})
+      recValue = curValue == defValue ? undefined : curValue ;
+      Object.assign(newPrefs.binary, {[`${k}.${kp}`]: recValue})
     }
   }
 
@@ -346,16 +349,19 @@ getPreferencesDataInPane(){
     defValue = PREFS_DATA.first_page[prop]
     curValue = $(`div#pref-${prop}`).position()
     // console.debug("Comparaison de %s (ancienne) et %s (nouvelle)", JSON.stringify(defValue), JSON.stringify(curValue))
-    JSON.stringify(defValue) == JSON.stringify(curValue) || Object.assign(newPrefs.first_page, {[prop]: curValue})
+    recValue = JSON.stringify(defValue) == JSON.stringify(curValue) ? undefined : curValue ;
+    Object.assign(newPrefs.first_page, {[prop]: recValue})
   })
 
   // Les lignes
+  // console.log("[Enregistrement des hauteurs de ligne]\nHauteur du système témoin = %i", imgHeight)
   for ( var otype in PREFS_DATA.lignes) {
     defValue  = PREFS_DATA.lignes[otype]
     curValue  = parseInt($(`div#pref-line-${otype}`).position().top, 10)
-    if ( curValue >= 0 ) curValue -= imgHeight ;
-    // console.log("Valeur défaut de '%s' = %i / Nouvelle : %i (hauteur système = %i)", otype, defValue, curValue, imgHeight)
-    curValue == defValue || Object.assign(newPrefs.lignes, {[otype]: curValue})
+    curValue < 0 || ( curValue -= imgHeight )
+    recValue = curValue == defValue ? undefined : curValue ;
+    // console.log("Ligne '%s' - Défaut = %i / Position = %i | Valeur enregistrée : ", otype, defValue, curValue, recValue)
+    Object.assign(newPrefs.lignes, {[otype]: recValue})
   }
 
   // Les valeurs diverses
@@ -365,7 +371,8 @@ getPreferencesDataInPane(){
     curValue  = $(`input#pref-divers-${prop}`).val()
     if ( 'string' == dProp.type ) curValue = String(curValue)
     else curValue = Number(curValue)
-    curValue == defValue || Object.assign(newPrefs.divers, {[prop]: curValue})
+    recValue = curValue == defValue ? undefined : curValue ;
+    Object.assign(newPrefs.divers, {[prop]: recValue})
   }
 
   // console.log("Nouvelles valeurs de préférences ", newPrefs)
@@ -379,8 +386,7 @@ onClickSavePreferences(ev){
   try {
     const score = Score.current
     score || raise("Il faut définir l'analyse.")
-    // On enregistre ces nouvelles valeurs
-    score.preferences._data = this.getPreferencesDataInPane()
+    score.updatePreferences(this.getPreferencesDataInPane())
     score.save()
   } catch (e) { erreur(e) }
 }
@@ -411,12 +417,15 @@ onClickRevenirPrefsDefault(ev){
     })
     // Lignes
     const imgHeight = $('img#img-system-temoin').height()
+    console.log("Hauteur du système témoin = %ipx", imgHeight)
+    var top ;
     for ( var otype in PREFS_DATA.lignes) {
-      let top = PREFS_DATA.lignes[otype]
-      if ( top >= 0 ) top += imgHeight
-      // console.log("On met la ligne '%s' à %ipx (imgHeight = %i)", otype, top, imgHeight)
+      top = PREFS_DATA.lignes[otype]
+      top < 0 || ( top += imgHeight )
+      console.log("On met la ligne '%s' à %s (valeur initiale = %i)", otype, px(top), PREFS_DATA.lignes[otype])
       $(`div#pref-line-${otype}`).css('top', px(top))
     }
+    message("Préférences par défaut appliquées.")
   } catch (e) {
     erreur(e)
   }

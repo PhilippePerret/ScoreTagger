@@ -144,6 +144,14 @@ async dispatchData(data){
 }
 
 /**
+* Pour actualiser les préférences
+***/
+updatePreferences(newPrefs){
+  this.preferences.setData(newPrefs)
+  this._data.preferences = newPrefs
+}
+
+/**
 * Méthode qui lance la découpe de la page de partition originale d'après
 * les lignes de découpe définies dans +cropLinesData+
 ***/
