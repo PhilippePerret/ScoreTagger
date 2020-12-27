@@ -354,6 +354,9 @@ get pref_auto_save(){
 get pref_apercu_tonal(){
   return this.preferences.binary('export.apercu_tonal')
 }
+get pref_footer(){
+  return this.preferences.binary('export.footer')
+}
 get pref_no_ligne_segment(){
   return false === this.preferences.binary('export.use_segment_line')
 }

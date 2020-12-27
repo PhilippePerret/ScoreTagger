@@ -52,8 +52,8 @@ static get last(){
 /**
 * Méthode qui dessine les délimiteurs de toutes les pages
 ***/
-static drawPageDelimitors(){
-  Object.values(this.table).forEach(page => page.drawDelimitor())
+static drawPageDelimitorsAndFooter(){
+  Object.values(this.table).forEach(page => page.drawDelimitorAndFooter())
 }
 /**
 * Retourne le nombre total de pages
@@ -71,12 +71,24 @@ constructor(number) {
 /**
 * Méthode dessinant sur la table d'analyse la ligne repère de la page
 ***/
-drawDelimitor(){
+drawDelimitorAndFooter(){
+  var spans = [DCreate('SPAN', {class:'page_number', text: `${this.number}/${Page.count}`})]
+  if ( Score.current.pref_footer ){
+    spans.push(DCreate('SPAN', {class:'footer', text:this.footerText()}))
+  }
+  const top = this.bottom - 22
   TableAnalyse.systemsContainer.appendChild(
-    DCreate('DIV', {class:'page-separator', style:`top:${this.bottom}px`, inner:[
-      DCreate('SPAN', {class:'page_number', text: `${this.number}/${Page.count}`})
-    ]})
+    DCreate('DIV', {class:'page-separator', style:`top:${top}px`, inner:spans})
   )
+}
+
+footerText(){
+  const data = Score.current.data
+  var ary = []
+  ary.push(data.title.toUpperCase())
+  ary.push(data.composer)
+  ary.push(`analyse réalisée par ${data.analyst}`)
+  return ary.join(' — ')
 }
 
 get top(){ return this._top || ( this._top = this.calcTop() ) }

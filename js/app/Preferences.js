@@ -52,6 +52,7 @@ const PREFS_DATA = {
       , items: {
             use_segment_line: {name: "Utiliser la ligne de segment", value: true}
           , apercu_tonal: {name: "Produire un aperçu tonal (ton voisins, en annexe)", value: true}
+          , footer: {name: "Utiliser le pied de page", value: true}
         }
       }
   }
