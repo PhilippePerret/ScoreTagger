@@ -102,6 +102,8 @@ save(){
   __in(`${this.ref}#save`)
   Ajax.send('save_system.rb', {data: this.data2save}).then(ret => {
     console.info("Système %s sauvé avec succès.", this.minid)
+    // On marque tous les objets comme "non modifié"
+    this.aobjets && this.aobjets.forEach(o => o.unsetModified())
     my.modified = false
     __out(`${this.ref}#save`, {modified: this.modified})
   })
@@ -109,9 +111,7 @@ save(){
 
 get data2save(){
   var data_aobjects = []
-  if ( this.aobjets ) {
-    this.aobjets.forEach(aobj => data_aobjects.push(aobj.data2save))
-  }
+  this.aobjets && this.aobjets.forEach(o => data_aobjects.push(o.data2save))
   this.data.aobjects = data_aobjects
   return this.data
 }
@@ -345,7 +345,7 @@ onWantToMoveSystem(ev){
 ***/
 topPerTypeObjet(otypeRef, line){
   __in(`${this.ref}#topPerTypeObjet`, {otypeRef:otypeRef, line:line, skip:true})
-  if ( undefined != line ) { otypeRef = LINES_POSE[line - 1] }
+  if ( undefined != line ) { otypeRef = LINES_POSE[line] }
   let rTop = Score.current.preferences.ligne(otypeRef)
   // console.log({
   //   system: this.ref,

@@ -18,6 +18,7 @@ class AObjectToolbox {
 static init(){
   __in('AObjectToolbox::init()')
   this.build()
+  this.observe()
   this.inited = true
   __out('AObjectToolbox::init()', {inited: AObjectToolbox.inited})
 }
@@ -233,6 +234,7 @@ static onChangeH(newValue){
 }
 static onChangeLignePose(ev){
   const newVal = Number($(this.menuLignePose).val())
+  console.log("Nouvelle ligne de pose : ", newVal)
   this.editedObject.update('line', newVal)
 }
 

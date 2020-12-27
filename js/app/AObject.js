@@ -75,6 +75,15 @@ constructor(data) {
 
 get ref(){return this._ref || (this._ref = `AObject#${this.id}[${this.otype}]`)}
 
+/**
+* Pour marquer l'objet modifié (et donc aussi son système)
+***/
+setModified(){
+  this._modified = true
+  this.system.modified = true
+}
+unsetModified(){this._modified = false}
+
 /** ---------------------------------------------------------------------
 *   Pour les mesures
 *
@@ -145,7 +154,7 @@ fromDataSaved(data){
 * Actualisation de toutes les propriétés de note (accord, degré, etc.)
 ***/
 updateAll(newObject, newValues){
-  this.modified = true
+  this.setModified()
   this.data.objetProps = newValues
   $(this.obj).html(newObject.innerHTML)
 }
@@ -163,10 +172,15 @@ update(prop, newValue){
   switch(prop){
   case 'width' : this.changeWidth(newValue, oldValue || $(this.obj).width()); break
   case 'height': $(this.obj).css('height', px(newValue)); break
+  case 'line':
+    delete this._relativetop
+    this.repositionne();
+    break
   default:
       $(this.obj).html(this.build().innerHTML)
   }
-  __out(`${this.ref}#update`)
+  this.setModified()
+  __out(`${this.ref}#update`, {output:true})
 }
 
 /**
@@ -319,8 +333,7 @@ onMouseUp(ev){
 * Note 2 : c'est un déplacement à la souris, pas avec les incButtons
 ***/
 onMoved(){
-  this.modified = true
-  this.system.modified = true
+  this.setModified()
 }
 
 /**
